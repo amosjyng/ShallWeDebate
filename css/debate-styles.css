@@ -38,9 +38,19 @@ p
 	font-weight: bold;
 }
 
+path
+{
+	stroke-width: 5px;
+	fill: none;
+}
+
+path.support
+{
+	stroke: green;
+
+}
+
 path.oppose
 {
 	stroke: red;
-	stroke-width: 5px;
-	fill: none;
 }

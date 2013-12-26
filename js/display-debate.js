@@ -21,6 +21,12 @@ var node2 = {
     "summary": "You pay taxes in exchange for voluntarily living in a country and using its public services."
 }
 
+var link20 = {
+    "from": node2,
+    "to": node0,
+    "type": "support"
+}
+
 var link21 = {
     "from": node2,
     "to": node1,
@@ -83,7 +89,7 @@ function draw_graph() {
             }).attr("xmlns", "http://www.w3.org/1999/xhtml");
     switch_objects.append("text").attr("x", x_pos).attr("y", y_pos)
         .text("Sorry, your browser is not supported.");
-    var html_links = svg.selectAll("path").data([link21]);
+    var html_links = svg.selectAll("path").data([link21, link20]);
     var new_links = html_links.enter().append("path")
         .attr("class", function(d) {
             return d.type;
