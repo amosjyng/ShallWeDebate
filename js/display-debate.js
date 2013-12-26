@@ -4,6 +4,9 @@ var card_height = 186;
 /* Which card is currently displayed in the middle of the screen? */
 var current_card = null;
 
+/* Height of rendered graph */
+var graph_height = null;
+
 var node0 = {
     "summary": "Why a max length of 140 characters? Well, it sure as hell works for Twitter. Seems like just enough to pack some good info into an argument."
 }
@@ -26,7 +29,7 @@ function x_pos(node, i) {
 
 function y_pos(node, i) {
     if (node == current_card) {
-        return (window.innerHeight / 2) - (card_height / 2);
+        return (graph_height / 2) - (card_height / 2);
     } else {
         return 10;
     }
@@ -51,4 +54,9 @@ function draw_graph() {
             }).attr("xmlns", "http://www.w3.org/1999/xhtml");
     switch_objects.append("text").attr("x", x_pos).attr("y", y_pos)
         .text("Sorry, your browser is not supported.")
+}
+
+window.onload = function () {
+    graph_height = $("#graph").height();
+    draw_graph();
 }
