@@ -1,5 +1,7 @@
 var card_width = 300;
 var card_height = 186;
+var half_card_width = card_width / 2;
+var half_card_height = card_height / 2;
 
 /* Which card is currently displayed in the middle of the screen? */
 var current_card = null;
@@ -19,20 +21,47 @@ var node2 = {
     "summary": "You pay taxes in exchange for voluntarily living in a country and using its public services."
 }
 
+var link21 = {
+    "from": node2,
+    "to": node1,
+    "type": "oppose"
+}
+
 function x_pos(node, i) {
     if (node == current_card) {
-        return (window.innerWidth / 2) - (card_width / 2);
+        node.i = i;
+        return (window.innerWidth / 2) - half_card_width;
     } else {
+        node.i = i;
         return i * (card_width + 10) + 10;
     }
 }
 
 function y_pos(node, i) {
     if (node == current_card) {
-        return (graph_height / 2) - (card_height / 2);
+        node.i = i;
+        return (graph_height / 2) - half_card_height;
     } else {
+        node.i = i;
         return 10;
     }
+}
+
+function pos2str(pos) {
+    return pos[0] + "," + pos[1] + " ";
+}
+
+function compute_link_bezier_curve(link) {
+    var from = link.from;
+    var to = link.to;
+    var start_pos = [x_pos(from, from.i) + half_card_width, y_pos(from, from.i)];
+    var end_pos = [x_pos(to, to.i) + half_card_width,
+                   y_pos(to, to.i) + card_height];
+    var height = end_pos[1] - start_pos[1];
+    var control1 = [start_pos[0], start_pos[1] + (height / 2)];
+    var control2 = [end_pos[0], end_pos[1] - (height / 2)];
+    return "M" + pos2str(start_pos) + "C" + pos2str(control1)
+            + pos2str(control2) + pos2str(end_pos);
 }
 
 function draw_graph() {
@@ -53,7 +82,13 @@ function draw_graph() {
                 return d.summary;
             }).attr("xmlns", "http://www.w3.org/1999/xhtml");
     switch_objects.append("text").attr("x", x_pos).attr("y", y_pos)
-        .text("Sorry, your browser is not supported.")
+        .text("Sorry, your browser is not supported.");
+    var html_links = svg.selectAll("path").data([link21]);
+    var new_links = html_links.enter().append("path")
+        .attr("class", function(d) {
+            return d.type;
+        })
+        .attr("d", compute_link_bezier_curve);
 }
 
 window.onload = function () {
