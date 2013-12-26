@@ -4,13 +4,16 @@
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.min.css">
     <link rel="stylesheet" type="text/css" href="css/debate-styles.css">
+    <script src="js/jquery-2.0.3.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/d3.v3.min.js"></script>
     <script src="js/display-debate.js"></script>
 </head>
-<body onload="resize_canvas(); draw_graph();">
+<body onload="draw_graph();">
     <div id="graph_container">
-        <canvas id="graph">
-            <p>You are using an unsupported browser.</p>
-        </canvas>
+        <svg id="graph">
+            
+        </svg>
     </div>
 </body>
 </html>

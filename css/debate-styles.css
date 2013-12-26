@@ -4,9 +4,35 @@ div#graph_container
 	height: 100%;
 }
 
-canvas#graph
+svg#graph
 {
-	/*width: 100%;
-	height: 100%;*/
+	width: 100%;
+	height: 100%;
 	background-color: #080022;
+}
+
+g.argument
+{
+}
+
+g.argument rect
+{
+	stroke: #1B0071;
+	fill: #ECE6FF;
+	shape-rendering: crispEdges;
+	stroke-width: 1;
+}
+
+div.summary
+{
+	padding: 15px;
+}
+
+p
+{
+	fill: #ECE6FF;
+	font-family: Garamond, 'Times New Roman';
+	font-size: 20;
+	color: #080022;
+	font-weight: bold;
 }
