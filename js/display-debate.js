@@ -10,15 +10,21 @@ var current_card = null;
 var graph_height = null;
 
 var node0 = {
-    "summary": "Why a max length of 140 characters? Well, it sure as hell works for Twitter. Seems like just enough to pack some good info into an argument."
+    "summary": "Why a max length of 140 characters? Well, it sure as hell works for Twitter. Seems like just enough to pack some good info into an argument.",
+    "outgoing": [],
+    "incoming": [node2],
 }
 
 var node1 = {
-    "summary": "Taxation is theft."
+    "summary": "Taxation is theft.",
+    "outgoing": [],
+    "incoming": [node2],
 }
 
 var node2 = {
-    "summary": "You pay taxes in exchange for voluntarily living in a country and using its public services."
+    "summary": "You pay taxes in exchange for voluntarily living in a country and using its public services.",
+    "outgoing": [node0, node1],
+    "incoming": [],
 }
 
 var link20 = {
@@ -47,7 +53,7 @@ function y_pos(node, i) {
     if (node == current_card) {
         node.i = i;
         return (graph_height / 2) - half_card_height;
-    } else {
+    } else if (current_card.outgoing.indexOf(node) != -1) {
         node.i = i;
         return 10;
     }
