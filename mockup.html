@@ -12,7 +12,16 @@
 <body>
     <div id="graph_container">
         <svg id="graph">
-            
+            <defs>
+                <marker id="arrow-support" viewBox="0 0 10 10" refX="0" refY="5"
+                        markerUnits="strokeWidth" orient="auto" fill="green">
+                    <polyline points="0,0 10,5 0,10 "></polyline>
+                </marker>
+                <marker id="arrow-oppose" viewBox="0 0 10 10" refX="0" refY="5"
+                        markerUnits="strokeWidth" orient="auto" fill="red">
+                    <polyline points="0,0 10,5 0,10 "></polyline>
+                </marker>
+            </defs>
         </svg>
     </div>
 </body>

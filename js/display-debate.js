@@ -62,7 +62,7 @@ function compute_link_bezier_curve(link) {
     var to = link.to;
     var start_pos = [x_pos(from, from.i) + half_card_width, y_pos(from, from.i)];
     var end_pos = [x_pos(to, to.i) + half_card_width,
-                   y_pos(to, to.i) + card_height];
+                   y_pos(to, to.i) + card_height + 10];
     var height = end_pos[1] - start_pos[1];
     var control1 = [start_pos[0], start_pos[1] + (height / 2)];
     var control2 = [end_pos[0], end_pos[1] - (height / 2)];
@@ -93,8 +93,10 @@ function draw_graph() {
     var new_links = html_links.enter().append("path")
         .attr("class", function(d) {
             return d.type;
-        })
-        .attr("d", compute_link_bezier_curve);
+        }).attr("d", compute_link_bezier_curve)
+        .attr("marker-end", function(d) {
+            return "url(#arrow-" + d.type + ")"
+        });
 }
 
 window.onload = function () {
