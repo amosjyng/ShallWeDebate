@@ -3,6 +3,9 @@ var card_height = 186;
 var half_card_width = card_width / 2;
 var half_card_height = card_height / 2;
 
+var next_outgoing_i = 0; /* the index of the next node that's outgoing */
+var next_incoming_i = 0;
+
 /* Which card is currently displayed in the middle of the screen? */
 var current_card = null;
 
@@ -39,23 +42,30 @@ var link21 = {
     "type": "oppose"
 }
 
-function x_pos(node, i) {
+function is_outgoing(node) {
+    return current_card.outgoing.indexOf(node) != -1;
+}
+
+function x_pos(node) {
     if (node == current_card) {
-        node.i = i;
+        node.i = 0; // doesn't matter for current_card
         return (window.innerWidth / 2) - half_card_width;
-    } else {
-        node.i = i;
-        return i * (card_width + 10) + 10;
+    } else if (is_outgoing(node)) {
+        if (node.i == null) {
+            node.i = next_outgoing_i;
+            next_outgoing_i++;
+        }
+        return node.i * (card_width + 10) + 10;
     }
 }
 
-function y_pos(node, i) {
+function y_pos(node) {
     if (node == current_card) {
-        node.i = i;
         return (graph_height / 2) - half_card_height;
-    } else if (current_card.outgoing.indexOf(node) != -1) {
-        node.i = i;
+    } else if (is_outgoing(node)) {
         return 10;
+    } else {
+        return -100; // just hide it for now
     }
 }
 
@@ -81,7 +91,7 @@ function draw_graph() {
     current_card = node2;
 
     var svg = d3.select("svg#graph");
-    var html_nodes = svg.selectAll("g").data([node0, node1, node2]);
+    var html_nodes = svg.selectAll("g").data([node0, node2, node1]);
     var new_nodes = html_nodes.enter().append("g").classed("argument", true);
     new_nodes.append("rect").attr("width", card_width)
         .attr("height", card_height).attr("x", x_pos).attr("y", y_pos);
