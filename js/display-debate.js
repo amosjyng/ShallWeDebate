@@ -62,7 +62,8 @@ function compute_link_bezier_curve(link) {
     var to = link.to;
     var start_pos = [x_pos(from, from.i) + half_card_width, y_pos(from, from.i)];
     var end_pos = [x_pos(to, to.i) + half_card_width,
-                   y_pos(to, to.i) + card_height + 10];
+                    /* marker-widht is 3, stroke-width is 5 */
+                   y_pos(to, to.i) + card_height + (5 * 3)];
     var height = end_pos[1] - start_pos[1];
     var control1 = [start_pos[0], start_pos[1] + (height / 2)];
     var control2 = [end_pos[0], end_pos[1] - (height / 2)];
