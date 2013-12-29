@@ -12,6 +12,9 @@ var current_card = null;
 /* Height of rendered graph */
 var graph_height = null;
 
+var nodes = [];
+var cards = [];
+
 var node0 = {
     "summary": "Why a max length of 140 characters? Well, it sure as hell works for Twitter. Seems like just enough to pack some good info into an argument.",
     "outgoing": [],
@@ -43,6 +46,7 @@ var link21 = {
 }
 
 var nodes = [node2, node0, node1];
+current_card = node2;
 
 function is_outgoing(node) {
     return current_card.outgoing.indexOf(node) != -1;
@@ -100,17 +104,12 @@ function reset_globals() {
     next_incoming_i = 0;
 }
 
-current_card = node2;
-
-function draw_graph() {
-    reset_globals();
-
+function make_cards() {
     var svg = d3.select("svg#graph");
-    var html_nodes = svg.selectAll("g").data(nodes);
-    var new_nodes = html_nodes.enter().append("g").classed("argument", true);
-    new_nodes.append("rect").attr("width", card_width)
-        .attr("height", card_height);
-    var switch_objects = new_nodes.append("switch");
+    cards = svg.selectAll("g").data(nodes);
+    new_cards = cards.enter().append("g").classed("argument", true);
+    new_cards.append("rect").attr("width", card_width).attr("height", card_height);
+    var switch_objects = new_cards.append("switch");
     switch_objects.append("foreignObject").classed("foreign-object", true)
             .attr("requiredFeatures", "http://www.w3.org/TR/SVG11/feature#Extensibility")
             .attr("width", card_width).attr("height", card_height)
@@ -120,13 +119,20 @@ function draw_graph() {
             }).attr("xmlns", "http://www.w3.org/1999/xhtml");
     switch_objects.append("text").attr("x", x_pos).attr("y", y_pos)
         .text("Sorry, your browser is not supported.");
-    d3.selectAll("g rect").transition().duration(500).attr("x", x_pos).attr("y", y_pos);
-    // http://stackoverflow.com/a/11743721/257583
-    d3.selectAll(".foreign-object").transition().duration(500).attr("x", x_pos).attr("y", y_pos);
-    html_nodes.on("click", function (d) {
+    new_cards.on("click", function (d) {
         current_card = d;
         draw_graph();
     })
+}
+
+function draw_graph() {
+    reset_globals();
+    make_cards();
+    
+    var svg = d3.select("svg#graph");
+    d3.selectAll("g rect").transition().duration(500).attr("x", x_pos).attr("y", y_pos);
+    // http://stackoverflow.com/a/11743721/257583
+    d3.selectAll(".foreign-object").transition().duration(500).attr("x", x_pos).attr("y", y_pos);
     var html_links = svg.selectAll("path").data([link21, link20]);
     var new_links = html_links.enter().append("path")
         .attr("class", function(d) {
