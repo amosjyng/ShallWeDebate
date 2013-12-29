@@ -120,9 +120,9 @@ function draw_graph() {
             }).attr("xmlns", "http://www.w3.org/1999/xhtml");
     switch_objects.append("text").attr("x", x_pos).attr("y", y_pos)
         .text("Sorry, your browser is not supported.");
-    d3.selectAll("g rect").attr("x", x_pos).attr("y", y_pos);
+    d3.selectAll("g rect").transition().duration(500).attr("x", x_pos).attr("y", y_pos);
     // http://stackoverflow.com/a/11743721/257583
-    d3.selectAll(".foreign-object").attr("x", x_pos).attr("y", y_pos);
+    d3.selectAll(".foreign-object").transition().duration(500).attr("x", x_pos).attr("y", y_pos);
     html_nodes.on("click", function (d) {
         current_card = d;
         draw_graph();
