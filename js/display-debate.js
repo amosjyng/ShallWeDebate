@@ -62,8 +62,13 @@ function is_incoming(node) {
     return current_card.incoming.indexOf(node) != -1;
 }
 
-function currently_displayed(node) {
+function node_visible(node) {
     return (node == current_card) || is_outgoing(node) || is_incoming(node);
+}
+
+function link_visible(link) {
+    // both ends of a link must be visible for a link to be visible
+    return node_visible(link.from) && node_visible(link.to);
 }
 
 function x_pos(node) {
@@ -163,9 +168,6 @@ function make_links() {
     links.enter().append("path")
         .attr("class", function(d) {
             return d.type;
-        }).attr("d", compute_link_bezier_curve)
-        .attr("marker-end", function(d) {
-            return "url(#arrow-" + d.type + ")"
         });
 }
 
@@ -181,21 +183,27 @@ function draw_graph() {
     cards.each(function (d) {
         d.previously_current = false;
         d.previously_outgoing = false;
-        
+
         if (current_card == d) {
             d.previously_current = true;
         } else if (is_outgoing(d)) {
             d.previously_outgoing = true;
         }
     });
-    links.transition().duration(150).attr("opacity", function (d) {
+    links.transition().duration(500).style("opacity", function (d) {
         // if one end of the link is currently displayed, then the other is too
-        if (currently_displayed(d.from)) {
+        if (link_visible(d)) {
             return 1;
         } else {
             return 0;
         }
-    })
+    }).attr("d", compute_link_bezier_curve).attr("marker-end", function(d) {
+        if (link_visible(d)) {
+            return "url(#arrow-" + d.type + ")";
+        } else {
+            return "";
+        }
+    });
 }
 
 window.onload = function () {
