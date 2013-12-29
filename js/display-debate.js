@@ -63,8 +63,11 @@ function x_pos(node) {
         }
         return node.i * (card_width + 10) + 10;
     } else {
-        node.i = 0; // disappear to the top-middle
-        return (window.innerWidth / 2) - half_card_width;
+        if (node.previously_current) {
+            return window.innerWidth + 10;
+        } else if (node.previously_outgoing) {
+            return (window.innerWidth / 2) - half_card_width;
+        }
     }
 }
 
@@ -74,7 +77,13 @@ function y_pos(node) {
     } else if (is_outgoing(node)) {
         return 10;
     } else {
-        return -10 - card_height; // just hide it for now
+        if (node.previously_current) {
+            return (graph_height / 2) - half_card_height;
+        } else if (node.previously_outgoing) {
+            return -10 - card_height;
+        } else {
+            console.log(node);
+        }
     }
 }
 
@@ -98,7 +107,8 @@ function compute_link_bezier_curve(link) {
 
 function reset_globals() {
     for (var i=0; i < nodes.length; i++) {
-        nodes[i].i = null;
+        node = nodes[i];
+        node.i = null;
     }
     next_outgoing_i = 0;
     next_incoming_i = 0;
@@ -133,6 +143,16 @@ function draw_graph() {
     d3.selectAll("g rect").transition().duration(500).attr("x", x_pos).attr("y", y_pos);
     // http://stackoverflow.com/a/11743721/257583
     d3.selectAll(".foreign-object").transition().duration(500).attr("x", x_pos).attr("y", y_pos);
+    for (var i=0; i < nodes.length; i++) {
+        node.previously_current = node.previously_outgoing = null;
+    }
+    cards.each(function (d) {
+        if (current_card == d) {
+            d.previously_current = true;
+        } else if (is_outgoing(d)) {
+            d.previously_outgoing = true;
+        }
+    });
     var html_links = svg.selectAll("path").data([link21, link20]);
     var new_links = html_links.enter().append("path")
         .attr("class", function(d) {
