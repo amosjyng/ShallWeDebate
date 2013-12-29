@@ -42,6 +42,8 @@ var link21 = {
     "type": "oppose"
 }
 
+var nodes = [node2, node0, node1];
+
 function is_outgoing(node) {
     return current_card.outgoing.indexOf(node) != -1;
 }
@@ -56,6 +58,9 @@ function x_pos(node) {
             next_outgoing_i++;
         }
         return node.i * (card_width + 10) + 10;
+    } else {
+        node.i = 0; // disappear to the top-middle
+        return (window.innerWidth / 2) - half_card_width;
     }
 }
 
@@ -65,7 +70,7 @@ function y_pos(node) {
     } else if (is_outgoing(node)) {
         return 10;
     } else {
-        return -100; // just hide it for now
+        return -10 - card_height; // just hide it for now
     }
 }
 
@@ -87,25 +92,41 @@ function compute_link_bezier_curve(link) {
             + pos2str(control2) + pos2str(end_pos);
 }
 
+function reset_globals() {
+    for (var i=0; i < nodes.length; i++) {
+        nodes[i].i = null;
+    }
+    next_outgoing_i = 0;
+    next_incoming_i = 0;
+}
+
+current_card = node2;
+
 function draw_graph() {
-    current_card = node2;
+    reset_globals();
 
     var svg = d3.select("svg#graph");
-    var html_nodes = svg.selectAll("g").data([node0, node2, node1]);
+    var html_nodes = svg.selectAll("g").data(nodes);
     var new_nodes = html_nodes.enter().append("g").classed("argument", true);
     new_nodes.append("rect").attr("width", card_width)
-        .attr("height", card_height).attr("x", x_pos).attr("y", y_pos);
+        .attr("height", card_height);
     var switch_objects = new_nodes.append("switch");
-    switch_objects.append("foreignObject")
+    switch_objects.append("foreignObject").classed("foreign-object", true)
             .attr("requiredFeatures", "http://www.w3.org/TR/SVG11/feature#Extensibility")
             .attr("width", card_width).attr("height", card_height)
-            .attr("x", x_pos).attr("y", y_pos).append("xhtml:div")
-            .attr("class", "summary").append("p")
+            .append("xhtml:div").classed("summary", true).append("p")
             .classed("summary", true).text(function (d) {
                 return d.summary;
             }).attr("xmlns", "http://www.w3.org/1999/xhtml");
     switch_objects.append("text").attr("x", x_pos).attr("y", y_pos)
         .text("Sorry, your browser is not supported.");
+    d3.selectAll("g rect").attr("x", x_pos).attr("y", y_pos);
+    // http://stackoverflow.com/a/11743721/257583
+    d3.selectAll(".foreign-object").attr("x", x_pos).attr("y", y_pos);
+    html_nodes.on("click", function (d) {
+        current_card = d;
+        draw_graph();
+    })
     var html_links = svg.selectAll("path").data([link21, link20]);
     var new_links = html_links.enter().append("path")
         .attr("class", function(d) {
