@@ -11,6 +11,7 @@ var current_card = null;
 
 /* Height of rendered graph */
 var graph_height = null;
+var min_graph_height = 808;
 
 var nodes = [];
 var cards = [];
@@ -154,8 +155,8 @@ function make_cards() {
             .classed("summary", true).text(function (d) {
                 return d.summary;
             }).attr("xmlns", "http://www.w3.org/1999/xhtml");
-    switch_objects.append("text").attr("x", x_pos).attr("y", y_pos)
-        .text("Sorry, your browser is not supported.");
+    switch_objects.append("text").attr("x", 100).attr("y", 100)
+        .text("Sorry, your browser is not currently supported.");
     new_cards.on("click", function (d) {
         current_card = d;
         draw_graph();
@@ -207,6 +208,9 @@ function draw_graph() {
 }
 
 window.onload = function () {
+    if ($("#graph").height() < min_graph_height) {
+        $("#graph").attr("height", min_graph_height);
+    }
     graph_height = $("#graph").height();
     draw_graph();
 }

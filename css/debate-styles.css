@@ -54,3 +54,9 @@ path.oppose
 {
 	stroke: red;
 }
+
+switch text
+{
+	font-size: 20px;
+	fill: red;
+}
