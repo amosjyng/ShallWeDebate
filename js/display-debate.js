@@ -14,6 +14,8 @@ var graph_height = null;
 
 var nodes = [];
 var cards = [];
+var relations = []; // relations are between nodes
+var links = []; // links are between cards
 
 var node0 = {
     "summary": "Why a max length of 140 characters? Well, it sure as hell works for Twitter. Seems like just enough to pack some good info into an argument.",
@@ -46,10 +48,15 @@ var link21 = {
 }
 
 var nodes = [node2, node0, node1];
+var relations = [link21, link20];
 current_card = node2;
 
 function is_outgoing(node) {
     return current_card.outgoing.indexOf(node) != -1;
+}
+
+function currently_displayed(node) {
+    return (node == current_card) || is_outgoing(node);
 }
 
 function x_pos(node) {
@@ -135,9 +142,22 @@ function make_cards() {
     })
 }
 
+function make_links() {
+    var svg = d3.select("svg#graph");
+    links = svg.selectAll("path").data(relations);
+    links.enter().append("path")
+        .attr("class", function(d) {
+            return d.type;
+        }).attr("d", compute_link_bezier_curve)
+        .attr("marker-end", function(d) {
+            return "url(#arrow-" + d.type + ")"
+        });
+}
+
 function draw_graph() {
     reset_globals();
     make_cards();
+    make_links();
     
     var svg = d3.select("svg#graph");
     d3.selectAll("g rect").transition().duration(500).attr("x", x_pos).attr("y", y_pos);
@@ -153,14 +173,14 @@ function draw_graph() {
             d.previously_outgoing = true;
         }
     });
-    var html_links = svg.selectAll("path").data([link21, link20]);
-    var new_links = html_links.enter().append("path")
-        .attr("class", function(d) {
-            return d.type;
-        }).attr("d", compute_link_bezier_curve)
-        .attr("marker-end", function(d) {
-            return "url(#arrow-" + d.type + ")"
-        });
+    links.transition().duration(150).attr("opacity", function (d) {
+        // if one end of the link is currently displayed, then the other is too
+        if (currently_displayed(d.from)) {
+            return 1;
+        } else {
+            return 0;
+        }
+    })
 }
 
 window.onload = function () {
