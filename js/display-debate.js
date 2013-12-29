@@ -35,6 +35,9 @@ var node2 = {
     "incoming": [],
 }
 
+node0.incoming = [node2];
+node1.incoming = [node2];
+
 var link20 = {
     "from": node2,
     "to": node0,
@@ -55,8 +58,12 @@ function is_outgoing(node) {
     return current_card.outgoing.indexOf(node) != -1;
 }
 
+function is_incoming(node) {
+    return current_card.incoming.indexOf(node) != -1;
+}
+
 function currently_displayed(node) {
-    return (node == current_card) || is_outgoing(node);
+    return (node == current_card) || is_outgoing(node) || is_incoming(node);
 }
 
 function x_pos(node) {
@@ -67,6 +74,12 @@ function x_pos(node) {
         if (node.i == null) {
             node.i = next_outgoing_i;
             next_outgoing_i++;
+        }
+        return node.i * (card_width + 10) + 10;
+    } else if (is_incoming(node)) {
+        if (node.i == null) {
+            node.i = next_incoming_i;
+            next_incoming_i++;
         }
         return node.i * (card_width + 10) + 10;
     } else {
@@ -83,6 +96,8 @@ function y_pos(node) {
         return (graph_height / 2) - half_card_height;
     } else if (is_outgoing(node)) {
         return 10;
+    } else if (is_incoming(node)) {
+        return graph_height - 10 - card_height;
     } else {
         if (node.previously_current) {
             return (graph_height / 2) - half_card_height;
@@ -163,10 +178,10 @@ function draw_graph() {
     d3.selectAll("g rect").transition().duration(500).attr("x", x_pos).attr("y", y_pos);
     // http://stackoverflow.com/a/11743721/257583
     d3.selectAll(".foreign-object").transition().duration(500).attr("x", x_pos).attr("y", y_pos);
-    for (var i=0; i < nodes.length; i++) {
-        node.previously_current = node.previously_outgoing = null;
-    }
     cards.each(function (d) {
+        d.previously_current = false;
+        d.previously_outgoing = false;
+        
         if (current_card == d) {
             d.previously_current = true;
         } else if (is_outgoing(d)) {
