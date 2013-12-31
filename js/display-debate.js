@@ -20,24 +20,15 @@ var links = []; // links are between cards
 
 var node0 = {
     "summary": "Why a max length of 140 characters? Well, it sure as hell works for Twitter. Seems like just enough to pack some good info into an argument.",
-    "outgoing": [],
-    "incoming": [node2],
 }
 
 var node1 = {
     "summary": "Taxation is theft.",
-    "outgoing": [],
-    "incoming": [node2],
 }
 
 var node2 = {
     "summary": "You pay taxes in exchange for voluntarily living in a country and using its public services.",
-    "outgoing": [node0, node1],
-    "incoming": [],
 }
-
-node0.incoming = [node2];
-node1.incoming = [node2];
 
 var link20 = {
     "from": node2,
@@ -70,6 +61,19 @@ function node_visible(node) {
 function link_visible(link) {
     // both ends of a link must be visible for a link to be visible
     return node_visible(link.from) && node_visible(link.to);
+}
+
+function set_from_and_to() {
+    for (var i = 0; i < nodes.length; i++) {
+        nodes[i].outgoing = [];
+        nodes[i].incoming = [];
+    }
+
+    for (var i = 0; i < relations.length; i++) {
+        var relation = relations[i];
+        relation.from.outgoing.push(relation.to);
+        relation.to.incoming.push(relation.from);
+    }
 }
 
 function x_pos(node) {
@@ -205,5 +209,6 @@ window.onload = function () {
         $("#graph").attr("height", min_graph_height);
     }
     graph_height = $("#graph").height();
+    set_from_and_to();
     draw_graph();
 }
