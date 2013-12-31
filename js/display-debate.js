@@ -190,7 +190,9 @@ function draw_graph() {
     cards.each(function (d) {
         if (current_card == d) {
             d.previously_current = true;
+            d.previously_outgoing = false;
         } else if (is_outgoing(d)) {
+            d.previously_current = false;
             d.previously_outgoing = true;
         }
     });
