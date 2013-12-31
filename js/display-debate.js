@@ -30,6 +30,26 @@ var node2 = {
     "summary": "You pay taxes in exchange for voluntarily living in a country and using its public services.",
 }
 
+var node3 = {
+    "summary": "You were born involuntarily in a country.",
+}
+
+var node4 = {
+    "summary": "If you don't like living in a country and paying its taxes, you are free to leave.",
+}
+
+var node5 = {
+    "summary": "Not everyone has the financial resources to uproot their family and leave a country.",
+}
+
+var node6 = {
+    "summary": "There is no place to leave to. There is no nation that really recognizes individual rights anymore.",
+}
+
+var node7 = {
+    "summary": "It's not a freedom to leave, it's a requirement to leave unless the individual submits to others' wills.",
+}
+
 var link20 = {
     "from": node2,
     "to": node0,
@@ -42,8 +62,38 @@ var link21 = {
     "type": "oppose"
 }
 
-var nodes = [node2, node0, node1];
-var relations = [link21, link20];
+var link32 = {
+    "from": node3,
+    "to": node2,
+    "type": "oppose"
+}
+
+var link42 = {
+    "from": node4,
+    "to": node2,
+    "type": "support"
+}
+
+var link54 = {
+    "from": node5,
+    "to": node4,
+    "type": "oppose"
+}
+
+var link64 = {
+    "from": node6,
+    "to": node4,
+    "type": "oppose"
+}
+
+var link74 = {
+    "from": node7,
+    "to": node4,
+    "type": "oppose"
+}
+
+var nodes = [node2, node0, node1, node3, node4, node5, node6, node7];
+var relations = [link21, link20, link42, link32, link54, link64, link74];
 current_card = node2;
 
 function is_outgoing(node) {
@@ -95,7 +145,7 @@ function x_pos(node) {
     } else {
         if (node.previously_current) {
             return window.innerWidth + 10;
-        } else if (node.previously_outgoing) {
+        } else if (node.previously_outgoing || node.previously_incoming) {
             return (window.innerWidth / 2) - half_card_width;
         }
     }
@@ -113,6 +163,8 @@ function y_pos(node) {
             return (graph_height / 2) - half_card_height;
         } else if (node.previously_outgoing) {
             return -10 - card_height;
+        } else if (node.previously_incoming) {
+            return graph_height + 10;
         } else {
             console.log(node);
         }
@@ -191,10 +243,16 @@ function draw_graph() {
         if (current_card == d) {
             d.previously_current = true;
             d.previously_outgoing = false;
+            d.previously_incoming = false;
         } else if (is_outgoing(d)) {
             d.previously_current = false;
             d.previously_outgoing = true;
-        }
+            d.previously_incoming = false;
+        } else if (is_incoming(d)) {
+            d.previously_current = false;
+            d.previously_outgoing = false;
+            d.previously_incoming = true;
+        } // else shouldn't happen
     });
     links.transition().duration(500).style("opacity", function (d) {
         // if one end of the link is currently displayed, then the other is too
