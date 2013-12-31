@@ -182,9 +182,6 @@ function draw_graph() {
     // http://stackoverflow.com/a/11743721/257583
     d3.selectAll(".foreign-object").transition().duration(500).attr("x", x_pos).attr("y", y_pos);
     cards.each(function (d) {
-        d.previously_current = false;
-        d.previously_outgoing = false;
-
         if (current_card == d) {
             d.previously_current = true;
         } else if (is_outgoing(d)) {
