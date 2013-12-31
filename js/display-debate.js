@@ -63,7 +63,7 @@ function link_visible(link) {
     return node_visible(link.from) && node_visible(link.to);
 }
 
-function set_from_and_to() {
+function set_incoming_and_outgoing() {
     for (var i = 0; i < nodes.length; i++) {
         nodes[i].outgoing = [];
         nodes[i].incoming = [];
@@ -209,6 +209,6 @@ window.onload = function () {
         $("#graph").attr("height", min_graph_height);
     }
     graph_height = $("#graph").height();
-    set_from_and_to();
+    set_incoming_and_outgoing();
     draw_graph();
 }
