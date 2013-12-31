@@ -3,24 +3,24 @@
         "id": 3,
         "from": 4,
         "to": 2,
-        "type": "support",
+        "type": "support"
     },
     {
         "id": 4,
         "from": 5,
         "to": 4,
-        "type": "oppose",
+        "type": "oppose"
     },
     {
         "id": 5,
         "from": 6,
         "to": 4,
-        "type": "oppose",
+        "type": "oppose"
     },
     {
         "id": 6,
         "from": 7,
         "to": 4,
-        "type": "oppose",
-    },
+        "type": "oppose"
+    }
 ]

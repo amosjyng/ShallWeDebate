@@ -18,14 +18,28 @@ var cards = [];
 var relations = []; // relations are between nodes
 var links = []; // links are between cards
 
-var nodes = [ajax_get_node(0)];
+var nodes = [];
 var relations = [];
-current_card = nodes[0];
 
-function ajax_get_node(node_id) {
+ajax_get_node(1, function (data) {
+    current_card = data;
+    draw_graph();
+})
+
+function ajax_get_node(node_id, callback) {
     // mock ajax function for now
-    // "mock_ajax/" + node_id + ".json"
-    return JSON.parse("{\n\"id\": 0,\n\"summary\": \"Why a max length of 140 characters? Well, it sure as hell works for Twitter. Seems like just enough to pack some good info into an argument.\"\n}");
+    $.ajax({
+        url: "mock_ajax/" + node_id + ".json",
+        type: "GET",
+        dataType: "json",
+    }).done(function (data) {
+        nodes.push(data);
+        if (typeof callback !== 'undefined') {
+            callback(data);
+        }
+    }).fail(function (jqXHR, textStatus, errorThrown) {
+        console.log("Failed to get node: " + errorThrown);
+    });
 }
 
 function is_outgoing(node) {
