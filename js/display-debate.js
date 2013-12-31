@@ -169,6 +169,8 @@ function make_links() {
     links.enter().append("path")
         .attr("class", function(d) {
             return d.type;
+        }).attr("marker-end", function(d) {
+            return "url(#arrow-" + d.type + ")";
         });
 }
 
@@ -195,13 +197,7 @@ function draw_graph() {
         } else {
             return 0;
         }
-    }).attr("d", compute_link_bezier_curve).attr("marker-end", function(d) {
-        if (link_visible(d)) {
-            return "url(#arrow-" + d.type + ")";
-        } else {
-            return "";
-        }
-    });
+    }).attr("d", compute_link_bezier_curve);
 }
 
 window.onload = function () {
