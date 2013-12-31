@@ -208,7 +208,7 @@ function draw_graph() {
 
 window.onload = function () {
     if ($("#graph").height() < min_graph_height) {
-        $("#graph").attr("height", min_graph_height);
+        alert("Whoops, looks like some things won't be displaying correctly. Please tell us about this.");
     }
     graph_height = $("#graph").height();
     set_incoming_and_outgoing();
