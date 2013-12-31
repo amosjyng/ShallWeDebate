@@ -18,83 +18,15 @@ var cards = [];
 var relations = []; // relations are between nodes
 var links = []; // links are between cards
 
-var node0 = {
-    "summary": "Why a max length of 140 characters? Well, it sure as hell works for Twitter. Seems like just enough to pack some good info into an argument.",
-}
+var nodes = [ajax_get_node(0)];
+var relations = [];
+current_card = nodes[0];
 
-var node1 = {
-    "summary": "Taxation is theft.",
+function ajax_get_node(node_id) {
+    // mock ajax function for now
+    // "mock_ajax/" + node_id + ".json"
+    return JSON.parse("{\n\"id\": 0,\n\"summary\": \"Why a max length of 140 characters? Well, it sure as hell works for Twitter. Seems like just enough to pack some good info into an argument.\"\n}");
 }
-
-var node2 = {
-    "summary": "You pay taxes in exchange for voluntarily living in a country and using its public services.",
-}
-
-var node3 = {
-    "summary": "You were born involuntarily in a country.",
-}
-
-var node4 = {
-    "summary": "If you don't like living in a country and paying its taxes, you are free to leave.",
-}
-
-var node5 = {
-    "summary": "Not everyone has the financial resources to uproot their family and leave a country.",
-}
-
-var node6 = {
-    "summary": "There is no place to leave to. There is no nation that really recognizes individual rights anymore.",
-}
-
-var node7 = {
-    "summary": "It's not a freedom to leave, it's a requirement to leave unless the individual submits to others' wills.",
-}
-
-var link20 = {
-    "from": node2,
-    "to": node0,
-    "type": "support"
-}
-
-var link21 = {
-    "from": node2,
-    "to": node1,
-    "type": "oppose"
-}
-
-var link32 = {
-    "from": node3,
-    "to": node2,
-    "type": "oppose"
-}
-
-var link42 = {
-    "from": node4,
-    "to": node2,
-    "type": "support"
-}
-
-var link54 = {
-    "from": node5,
-    "to": node4,
-    "type": "oppose"
-}
-
-var link64 = {
-    "from": node6,
-    "to": node4,
-    "type": "oppose"
-}
-
-var link74 = {
-    "from": node7,
-    "to": node4,
-    "type": "oppose"
-}
-
-var nodes = [node2, node0, node1, node3, node4, node5, node6, node7];
-var relations = [link21, link20, link42, link32, link54, link64, link74];
-current_card = node2;
 
 function is_outgoing(node) {
     return current_card.outgoing.indexOf(node) != -1;
