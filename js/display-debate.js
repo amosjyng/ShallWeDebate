@@ -231,7 +231,8 @@ function make_cards() {
     var svg = d3.select("svg#graph");
     cards = svg.selectAll("g").data(nodes);
     new_cards = cards.enter().append("g").classed("argument", true);
-    new_cards.append("rect").attr("width", card_width).attr("height", card_height);
+    new_cards.append("rect").attr("width", card_width).attr("height", card_height)
+                .style("opacity", 0);
     var switch_objects = new_cards.append("switch");
     switch_objects.append("foreignObject").classed("foreign-object", true)
             .attr("requiredFeatures", "http://www.w3.org/TR/SVG11/feature#Extensibility")
@@ -257,7 +258,7 @@ function make_links() {
             return d.type;
         }).attr("marker-end", function(d) {
             return "url(#arrow-" + d.type + ")";
-        });
+        }).style("opacity", 0);
 }
 
 function draw_graph() {
@@ -266,8 +267,10 @@ function draw_graph() {
     make_links();
     
     var svg = d3.select("svg#graph");
-    d3.selectAll("g rect").transition().duration(500).attr("x", x_pos).attr("y", y_pos);
+    d3.selectAll("g rect").transition().duration(500)
+        .attr("x", x_pos).attr("y", y_pos).style("opacity", 1);
     // http://stackoverflow.com/a/11743721/257583
+    // also, doesn't matter if the text is opaque or not since it's the same color as the background
     d3.selectAll(".foreign-object").transition().duration(500).attr("x", x_pos).attr("y", y_pos);
     cards.each(function (d) {
         if (current_card == d) {
