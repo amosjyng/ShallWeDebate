@@ -88,6 +88,27 @@ function ajax_get_node(node_id, callback) {
     });
 }
 
+function ajax_get_relation_nodes_function(new_relation, existing_node) {
+    // http://stackoverflow.com/a/750506/257583
+    return function () {
+        if (indexOfRelation(new_relation.id) === -1) { // it's a new relation
+            set_relation_id(new_relation, existing_node);
+            var missing_id = get_other_id(new_relation);
+            var missing_index = indexOfNode(missing_id);
+            if (missing_index === -1) { // node is currently missing
+                ajax_get_node(missing_id, function (new_node) {
+                    set_relation_id(new_relation, new_node);
+                    relations.push(new_relation);
+                    draw_graph();
+                })
+            } else { // node already exists, just use it
+                set_relation_id(new_relation, nodes[missing_index]);
+                relations.push(new_relation);
+            }
+        }
+    }
+}
+
 function ajax_get_relations_of(node, callback) {
     // get relations and make sure that nodes for relations get fetched as well
     // mock ajax function for now
@@ -96,23 +117,12 @@ function ajax_get_relations_of(node, callback) {
         type: "GET",
         dataType: "json",
     }).done(function (data) {
+        ajax_relation_nodes_functions = []
         for (var i = 0; i < data.length; i++) {
-            var new_relation = data[i];
-            if (indexOfRelation(new_relation.id) === -1) { // new relation
-                set_relation_id(new_relation, node);
-                var missing_id = get_other_id(new_relation);
-                var missing_index = indexOfNode(missing_id);
-                if (missing_index === -1) { // missing node
-                    ajax_get_node(missing_id, function (new_node) {
-                        set_relation_id(new_relation, new_node);
-                        relations.push(new_relation);
-                        draw_graph();
-                    })
-                } else { // node already exists, just use it
-                    set_relation_id(new_relation, nodes[missing_index]);
-                    relations.push(new_relation);
-                }
-            }
+            ajax_relation_nodes_functions.push(ajax_get_relation_nodes_function(data[i], node));
+        }
+        for (var i = 0; i < ajax_relation_nodes_functions.length; i++) {
+            ajax_relation_nodes_functions[i]();
         }
         if (typeof callback !== 'undefined') {
             callback(data);
@@ -289,7 +299,7 @@ window.onload = function () {
         alert("Whoops, looks like some things won't be displaying correctly. Please tell us about this.");
     }
     graph_height = $("#graph").height();
-    ajax_get_node(1, function (data) {
+    ajax_get_node(2, function (data) {
         current_card = data;
         draw_graph();
 
