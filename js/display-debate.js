@@ -21,24 +21,109 @@ var links = []; // links are between cards
 var nodes = [];
 var relations = [];
 
-ajax_get_node(1, function (data) {
-    current_card = data;
-    draw_graph();
-})
+function indexOfNode(node_id) {
+    for (i = 0; i < nodes.length; i++) {
+        if (nodes[i].id === node_id) {
+            return i;
+        }
+    }
+    return -1; // not found
+}
+
+function indexOfRelation(relation_id) {
+    for (i = 0; i < relations.length; i++) {
+        if (relations[i].id === relation_id) {
+            return i;
+        }
+    }
+    return -1; // not found
+}
+
+function set_incoming_and_outgoing(relation) {
+    if (get_other_id(relation) === null) {
+        relation.from.outgoing.push(relation.to);
+        relation.to.incoming.push(relation.from);
+    }
+} 
+
+function set_relation_id(relation, node) {
+    if (relation.from === node.id) {
+        relation.from = node;
+    } else if (relation.to === node.id) {
+        relation.to = node;
+    } else {
+        console.log("Uh oh, node " + node.id + " not found for relation " + relation.id);
+    }
+
+    set_incoming_and_outgoing(relation);
+}
+
+function get_other_id(relation) {
+    // call this after calling "set_relation_id"
+    if (typeof relation.from === 'number') {
+        return relation.from;
+    } else if (typeof relation.to === 'number') {
+        return relation.to;
+    } else {
+        return null;
+    }
+}
 
 function ajax_get_node(node_id, callback) {
+    // if node already exists, DON'T evenn call this function!
     // mock ajax function for now
     $.ajax({
         url: "mock_ajax/" + node_id + ".json",
         type: "GET",
         dataType: "json",
     }).done(function (data) {
+        data.incoming = [];
+        data.outgoing = [];
         nodes.push(data);
         if (typeof callback !== 'undefined') {
             callback(data);
         }
     }).fail(function (jqXHR, textStatus, errorThrown) {
-        console.log("Failed to get node: " + errorThrown);
+        console.log("Failed to get node " + node_id + ": " + errorThrown);
+    });
+}
+
+function ajax_get_relations_of(node, callback) {
+    // get relations and make sure that nodes for relations get fetched as well
+    // mock ajax function for now
+    $.ajax({
+        url: "mock_ajax/arg_" + node.id + "_relations.json",
+        type: "GET",
+        dataType: "json",
+    }).done(function (data) {
+        for (i = 0; i < data.length; i++) {
+            if (indexOfRelation(data[i].id) === -1) { // new relation
+                var new_relation = data[i];
+                set_relation_id(new_relation, node);
+                var missing_id = get_other_id(new_relation);
+                if (indexOfNode(missing_id) === -1) { // missing node
+                    ajax_get_node(missing_id, function (new_node) {
+                        set_relation_id(new_relation, new_node);
+                        relations.push(new_relation);
+                        draw_graph();
+                    })
+                } else { // node already exists, just use it
+                    set_relation_id(new_relation, nodes[missing_id]);
+                    relations.push(new_relation);
+                }
+            }
+        }
+        if (typeof callback !== 'undefined') {
+            callback(data);
+        }
+    }).fail(function (jqXHR, textStatus, errorThrown) {
+        console.log("Failed to get relations of node " + node.id + ": " + errorThrown);
+    });
+}
+
+function ajax_get_card(node) {
+    ajax_get_relations_of(node.id, function (relations) {
+        draw_graph();
     });
 }
 
@@ -57,19 +142,6 @@ function node_visible(node) {
 function link_visible(link) {
     // both ends of a link must be visible for a link to be visible
     return node_visible(link.from) && node_visible(link.to);
-}
-
-function set_incoming_and_outgoing() {
-    for (var i = 0; i < nodes.length; i++) {
-        nodes[i].outgoing = [];
-        nodes[i].incoming = [];
-    }
-
-    for (var i = 0; i < relations.length; i++) {
-        var relation = relations[i];
-        relation.from.outgoing.push(relation.to);
-        relation.to.incoming.push(relation.from);
-    }
 }
 
 function x_pos(node) {
@@ -215,6 +287,14 @@ window.onload = function () {
         alert("Whoops, looks like some things won't be displaying correctly. Please tell us about this.");
     }
     graph_height = $("#graph").height();
-    set_incoming_and_outgoing();
+    ajax_get_node(1, function (data) {
+        current_card = data;
+        draw_graph();
+
+        ajax_get_relations_of(nodes[0], function (data) {
+            draw_graph();
+        })
+    })
+    
     draw_graph();
 }
