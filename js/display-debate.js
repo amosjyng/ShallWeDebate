@@ -96,19 +96,20 @@ function ajax_get_relations_of(node, callback) {
         type: "GET",
         dataType: "json",
     }).done(function (data) {
-        for (i = 0; i < data.length; i++) {
-            if (indexOfRelation(data[i].id) === -1) { // new relation
-                var new_relation = data[i];
+        for (var i = 0; i < data.length; i++) {
+            var new_relation = data[i];
+            if (indexOfRelation(new_relation.id) === -1) { // new relation
                 set_relation_id(new_relation, node);
                 var missing_id = get_other_id(new_relation);
-                if (indexOfNode(missing_id) === -1) { // missing node
+                var missing_index = indexOfNode(missing_id);
+                if (missing_index === -1) { // missing node
                     ajax_get_node(missing_id, function (new_node) {
                         set_relation_id(new_relation, new_node);
                         relations.push(new_relation);
                         draw_graph();
                     })
                 } else { // node already exists, just use it
-                    set_relation_id(new_relation, nodes[missing_id]);
+                    set_relation_id(new_relation, nodes[missing_index]);
                     relations.push(new_relation);
                 }
             }
@@ -122,7 +123,7 @@ function ajax_get_relations_of(node, callback) {
 }
 
 function ajax_get_card(node) {
-    ajax_get_relations_of(node.id, function (relations) {
+    ajax_get_relations_of(node, function (relations) {
         draw_graph();
     });
 }
@@ -233,6 +234,7 @@ function make_cards() {
         .text("Sorry, your browser is not currently supported.");
     new_cards.on("click", function (d) {
         current_card = d;
+        ajax_get_card(d);
         draw_graph();
     })
 }
