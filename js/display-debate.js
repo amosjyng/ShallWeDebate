@@ -13,6 +13,10 @@ var current_card = null;
 var graph_height = null;
 var min_graph_height = 808;
 
+// scrolling
+var top_row_offset = 0;
+var bottom_row_offset = 0;
+
 var nodes = [];
 var cards = [];
 var relations = []; // relations are between nodes
@@ -164,7 +168,7 @@ function x_pos(node) {
             node.i = next_outgoing_i;
             next_outgoing_i++;
         }
-        return node.i * (card_width + 10) + 10;
+        return top_row_offset + (node.i * (card_width + 10) + 10);
     } else if (is_incoming(node)) {
         if (node.i == null) {
             node.i = next_incoming_i;
@@ -200,6 +204,15 @@ function y_pos(node) {
     }
 }
 
+var drag = d3.behavior.drag()
+            .on("drag", function () {
+                console.log("woo");
+                if (d3.event.y <= (card_height + 20)) {
+                    top_row_offset += d3.event.dx;
+                    draw_graph();
+                }
+            })
+
 function pos2str(pos) {
     return pos[0] + "," + pos[1] + " ";
 }
@@ -232,7 +245,7 @@ function make_cards() {
     cards = svg.selectAll("g").data(nodes);
     new_cards = cards.enter().append("g").classed("argument", true);
     new_cards.append("rect").attr("width", card_width).attr("height", card_height)
-                .style("opacity", 0);
+                .style("opacity", 0).call(drag);
     var switch_objects = new_cards.append("switch");
     switch_objects.append("foreignObject").classed("foreign-object", true)
             .attr("requiredFeatures", "http://www.w3.org/TR/SVG11/feature#Extensibility")
@@ -244,6 +257,7 @@ function make_cards() {
     switch_objects.append("text").attr("x", 100).attr("y", 100)
         .text("Sorry, your browser is not currently supported.");
     new_cards.on("click", function (d) {
+        if (d3.event.defaultPrevented) return;
         current_card = d;
         ajax_get_card(d);
         draw_graph();
@@ -302,7 +316,7 @@ window.onload = function () {
         alert("Whoops, looks like some things won't be displaying correctly. Please tell us about this.");
     }
     graph_height = $("#graph").height();
-    ajax_get_node(2, function (data) {
+    ajax_get_node(1, function (data) {
         current_card = data;
         draw_graph();
 
