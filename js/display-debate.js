@@ -258,6 +258,8 @@ function make_cards() {
         .text("Sorry, your browser is not currently supported.");
     new_cards.on("click", function (d) {
         if (d3.event.defaultPrevented) return;
+        top_row_offset = 0;
+        
         current_card = d;
         ajax_get_card(d);
         draw_graph();
