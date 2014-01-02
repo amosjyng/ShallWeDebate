@@ -209,7 +209,7 @@ var drag = d3.behavior.drag()
                 console.log("woo");
                 if (d3.event.y <= (card_height + 20)) {
                     top_row_offset += d3.event.dx;
-                    draw_graph();
+                    draw_graph(0);
                 }
             })
 
@@ -275,17 +275,21 @@ function make_links() {
         }).style("opacity", 0);
 }
 
-function draw_graph() {
+function draw_graph(transition_time) {
+    transition_time = typeof transition_time === 'undefined' ? 500 : transition_time;
+
     reset_globals();
     make_cards();
     make_links();
     
     var svg = d3.select("svg#graph");
-    d3.selectAll("g rect").transition().duration(500)
+    d3.selectAll("g rect").transition().duration(transition_time)
         .attr("x", x_pos).attr("y", y_pos).style("opacity", 1);
     // http://stackoverflow.com/a/11743721/257583
-    // also, doesn't matter if the text is opaque or not since it's the same color as the background
-    d3.selectAll(".foreign-object").transition().duration(500).attr("x", x_pos).attr("y", y_pos);
+    // also, doesn't matter if the text is opaque or not since it's the
+    // same color as the background
+    d3.selectAll(".foreign-object").transition().duration(transition_time)
+        .attr("x", x_pos).attr("y", y_pos);
     cards.each(function (d) {
         if (current_card == d) {
             d.previously_current = true;
@@ -301,7 +305,7 @@ function draw_graph() {
             d.previously_incoming = true;
         } // else shouldn't happen
     });
-    links.transition().duration(500).style("opacity", function (d) {
+    links.transition().duration(transition_time).style("opacity", function (d) {
         // if one end of the link is currently displayed, then the other is too
         if (link_visible(d)) {
             return 1;
