@@ -249,7 +249,7 @@ function make_cards() {
     new_cards = cards.enter().append("g").classed("argument", true);
     new_cards.append("rect").attr("width", card_width).attr("height", card_height)
                 .style("opacity", 0).call(drag);
-    var switch_objects = new_cards.append("switch");
+    var switch_objects = new_cards.append("switch").call(drag);
     switch_objects.append("foreignObject").classed("foreign-object", true)
             .attr("requiredFeatures", "http://www.w3.org/TR/SVG11/feature#Extensibility")
             .attr("width", card_width).attr("height", card_height)
@@ -261,7 +261,7 @@ function make_cards() {
         .text("Sorry, your browser is not currently supported.");
     new_cards.on("click", function (d) {
         if (d3.event.defaultPrevented) return;
-        
+
         top_row_offset = 0;
         bottom_row_offset = 0;
 
