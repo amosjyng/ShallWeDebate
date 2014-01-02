@@ -174,7 +174,7 @@ function x_pos(node) {
             node.i = next_incoming_i;
             next_incoming_i++;
         }
-        return node.i * (card_width + 10) + 10;
+        return bottom_row_offset + (node.i * (card_width + 10) + 10);
     } else {
         if (node.previously_current) {
             return window.innerWidth + 10;
@@ -209,6 +209,9 @@ var drag = d3.behavior.drag()
                 console.log("woo");
                 if (d3.event.y <= (card_height + 20)) {
                     top_row_offset += d3.event.dx;
+                    draw_graph(0);
+                } else if (d3.event.y >= (graph_height - card_height - 20)) {
+                    bottom_row_offset += d3.event.dx;
                     draw_graph(0);
                 }
             })
@@ -258,8 +261,10 @@ function make_cards() {
         .text("Sorry, your browser is not currently supported.");
     new_cards.on("click", function (d) {
         if (d3.event.defaultPrevented) return;
-        top_row_offset = 0;
         
+        top_row_offset = 0;
+        bottom_row_offset = 0;
+
         current_card = d;
         ajax_get_card(d);
         draw_graph();
