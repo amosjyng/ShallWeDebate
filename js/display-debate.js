@@ -204,15 +204,33 @@ function y_pos(node) {
     }
 }
 
+function max_top_row_offset() {
+    return Math.min(0, window.innerWidth - (10 + next_outgoing_i * (card_width + 10)));
+}
+
+function max_bottom_row_offset() {
+    return Math.min(0, window.innerWidth - (10 + next_incoming_i * (card_width + 10)));
+}
+
 var drag = d3.behavior.drag()
             .on("drag", function () {
                 console.log("woo");
                 if (d3.event.y <= (card_height + 20)) {
                     top_row_offset += d3.event.dx;
                     draw_graph(0);
+
+                    if ((top_row_offset < 0) && (top_row_offset < max_top_row_offset())) {
+                        top_row_offset = max_top_row_offset();
+                        draw_graph(0);
+                    }
                 } else if (d3.event.y >= (graph_height - card_height - 20)) {
                     bottom_row_offset += d3.event.dx;
                     draw_graph(0);
+
+                    if ((bottom_row_offset < 0) && (bottom_row_offset < max_bottom_row_offset())) {
+                        bottom_row_offset = max_bottom_row_offset();
+                        draw_graph(0);
+                    }
                 }
             })
 
