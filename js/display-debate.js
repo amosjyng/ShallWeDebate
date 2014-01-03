@@ -222,7 +222,10 @@ function min_bottom_row_offset() {
 }
 
 function max_top_row_offset() {
-    return Math.min(0, window.innerWidth - (10 + next_outgoing_i * (card_width + 10)));
+    // how far can you move the top row to the right?
+    // if window contains entire row, then move as far to the right without breaching it
+    // otherwise, don't move right at all from the start position
+    return Math.max(0, window.innerWidth - (10 + next_outgoing_i * (card_width + 10)));
 }
 
 function max_bottom_row_offset() {
@@ -236,8 +239,11 @@ var drag = d3.behavior.drag()
                     draw_graph(0);
 
                     // note: this code won't be called on a refresh. move to draw_graph?
-                    if ((top_row_offset < 0) && (top_row_offset < min_top_row_offset())) {
+                    if (top_row_offset < min_top_row_offset()) {
                         top_row_offset = min_top_row_offset();
+                        draw_graph(0);
+                    } else if (top_row_offset > max_top_row_offset()) {
+                        top_row_offset = max_top_row_offset();
                         draw_graph(0);
                     }
                 } else if (d3.event.y >= (graph_height - card_height - 20)) {
