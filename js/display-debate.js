@@ -209,11 +209,11 @@ function row_width(num_cards) {
 }
 
 function min_top_row_offset() {
-    if (row_width(next_outgoing_i) > window.innerWidth) { // must allow scrolling 
-        return window.innerWidth - row_width(next_outgoing_i);
-    } else {
-        return 0;
-    }
+    // how far can you go to the left?
+    // if window contains entire row, then 0 because you don't need to
+    // move any more to the left
+    // otherwise, move only as much as needed
+    return Math.min(0, window.innerWidth - row_width(next_outgoing_i));
 }
 
 function min_bottom_row_offset() {
