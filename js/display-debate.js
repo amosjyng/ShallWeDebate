@@ -204,8 +204,16 @@ function y_pos(node) {
     }
 }
 
+function row_width(num_cards) {
+    return 10 + (num_cards * (card_width + 10));
+}
+
 function min_top_row_offset() {
-    return Math.min(0, window.innerWidth - (20 + next_outgoing_i * (card_width + 11)));
+    if (row_width(next_outgoing_i) > window.innerWidth) { // must allow scrolling 
+        return window.innerWidth - row_width(next_outgoing_i);
+    } else {
+        return 0;
+    }
 }
 
 function min_bottom_row_offset() {
@@ -222,14 +230,13 @@ function max_bottom_row_offset() {
 
 var drag = d3.behavior.drag()
             .on("drag", function () {
-                console.log("woo");
                 if (d3.event.y <= (card_height + 20)) {
                     top_row_offset += d3.event.dx;
                     draw_graph(0);
 
                     if ((top_row_offset < 0) && (top_row_offset < min_top_row_offset())) {
                         top_row_offset = min_top_row_offset();
-                        draw_graph();
+                        draw_graph(0);
                     }
                 } else if (d3.event.y >= (graph_height - card_height - 20)) {
                     bottom_row_offset += d3.event.dx;
