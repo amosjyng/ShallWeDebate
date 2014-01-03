@@ -209,7 +209,7 @@ function row_width(num_cards) {
 }
 
 function min_top_row_offset() {
-    // how far can you go to the left?
+    // how far can you move the top row to the left?
     // if window contains entire row, then 0 because you don't need to
     // move any more to the left
     // otherwise, move only as much as needed
@@ -217,7 +217,8 @@ function min_top_row_offset() {
 }
 
 function min_bottom_row_offset() {
-    return Math.min(0, window.innerWidth - (20 + next_incoming_i * (card_width + 11)));
+    // how far can you move the bottom row to the left?
+    return Math.min(0, window.innerWidth - row_width(next_incoming_i));
 }
 
 function max_top_row_offset() {
@@ -234,6 +235,7 @@ var drag = d3.behavior.drag()
                     top_row_offset += d3.event.dx;
                     draw_graph(0);
 
+                    // note: this code won't be called on a refresh. move to draw_graph?
                     if ((top_row_offset < 0) && (top_row_offset < min_top_row_offset())) {
                         top_row_offset = min_top_row_offset();
                         draw_graph(0);
@@ -244,7 +246,7 @@ var drag = d3.behavior.drag()
 
                     if ((bottom_row_offset < 0) && (bottom_row_offset < min_bottom_row_offset())) {
                         bottom_row_offset = min_bottom_row_offset();
-                        draw_graph();
+                        draw_graph(0);
                     }
                 }
             })
