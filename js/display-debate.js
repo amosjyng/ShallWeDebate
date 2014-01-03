@@ -229,7 +229,7 @@ function max_top_row_offset() {
 }
 
 function max_bottom_row_offset() {
-    return Math.min(0, window.innerWidth - (20 + next_incoming_i * (card_width + 10)));
+    return Math.max(0, window.innerWidth - (10 + next_incoming_i * (card_width + 10)));
 }
 
 var drag = d3.behavior.drag()
@@ -252,6 +252,9 @@ var drag = d3.behavior.drag()
 
                     if ((bottom_row_offset < 0) && (bottom_row_offset < min_bottom_row_offset())) {
                         bottom_row_offset = min_bottom_row_offset();
+                        draw_graph(0);
+                    } else if (bottom_row_offset > max_bottom_row_offset()) {
+                        bottom_row_offset = max_bottom_row_offset();
                         draw_graph(0);
                     }
                 }
