@@ -204,12 +204,20 @@ function y_pos(node) {
     }
 }
 
+function min_top_row_offset() {
+    return Math.min(0, window.innerWidth - (20 + next_outgoing_i * (card_width + 11)));
+}
+
+function min_bottom_row_offset() {
+    return Math.min(0, window.innerWidth - (20 + next_incoming_i * (card_width + 11)));
+}
+
 function max_top_row_offset() {
     return Math.min(0, window.innerWidth - (10 + next_outgoing_i * (card_width + 10)));
 }
 
 function max_bottom_row_offset() {
-    return Math.min(0, window.innerWidth - (10 + next_incoming_i * (card_width + 10)));
+    return Math.min(0, window.innerWidth - (20 + next_incoming_i * (card_width + 10)));
 }
 
 var drag = d3.behavior.drag()
@@ -219,17 +227,17 @@ var drag = d3.behavior.drag()
                     top_row_offset += d3.event.dx;
                     draw_graph(0);
 
-                    if ((top_row_offset < 0) && (top_row_offset < max_top_row_offset())) {
-                        top_row_offset = max_top_row_offset();
-                        draw_graph(0);
+                    if ((top_row_offset < 0) && (top_row_offset < min_top_row_offset())) {
+                        top_row_offset = min_top_row_offset();
+                        draw_graph();
                     }
                 } else if (d3.event.y >= (graph_height - card_height - 20)) {
                     bottom_row_offset += d3.event.dx;
                     draw_graph(0);
 
-                    if ((bottom_row_offset < 0) && (bottom_row_offset < max_bottom_row_offset())) {
-                        bottom_row_offset = max_bottom_row_offset();
-                        draw_graph(0);
+                    if ((bottom_row_offset < 0) && (bottom_row_offset < min_bottom_row_offset())) {
+                        bottom_row_offset = min_bottom_row_offset();
+                        draw_graph();
                     }
                 }
             })
