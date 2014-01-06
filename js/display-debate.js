@@ -236,26 +236,26 @@ var drag = d3.behavior.drag()
             .on("drag", function () {
                 if (d3.event.y <= (card_height + 20)) {
                     top_row_offset += d3.event.dx;
-                    draw_graph(0);
+                    draw_graph(false, 0);
 
                     // note: this code won't be called on a refresh. move to draw_graph?
                     if (top_row_offset < min_top_row_offset()) {
                         top_row_offset = min_top_row_offset();
-                        draw_graph(0);
+                        draw_graph(false, 0);
                     } else if (top_row_offset > max_top_row_offset()) {
                         top_row_offset = max_top_row_offset();
-                        draw_graph(0);
+                        draw_graph(false, 0);
                     }
                 } else if (d3.event.y >= (graph_height - card_height - 20)) {
                     bottom_row_offset += d3.event.dx;
-                    draw_graph(0);
+                    draw_graph(false, 0);
 
                     if ((bottom_row_offset < 0) && (bottom_row_offset < min_bottom_row_offset())) {
                         bottom_row_offset = min_bottom_row_offset();
-                        draw_graph(0);
+                        draw_graph(false, 0);
                     } else if (bottom_row_offset > max_bottom_row_offset()) {
                         bottom_row_offset = max_bottom_row_offset();
-                        draw_graph(0);
+                        draw_graph(false, 0);
                     }
                 }
             })
@@ -285,6 +285,19 @@ function reset_globals() {
     }
     next_outgoing_i = 0;
     next_incoming_i = 0;
+}
+
+function center_cards_offset(num_cards) {
+    if (row_width(num_cards) >= window.innerWidth) {
+        return 0;
+    } else {
+        return (window.innerWidth - row_width(num_cards)) / 2;
+    }
+}
+
+function center_cards() {
+    top_row_offset = center_cards_offset(next_outgoing_i);
+    bottom_row_offset = center_cards_offset(next_incoming_i);
 }
 
 function make_cards() {
@@ -326,13 +339,18 @@ function make_links() {
         }).style("opacity", 0);
 }
 
-function draw_graph(transition_time) {
+function draw_graph(center, transition_time) {
+    center = typeof center === 'undefined' ? true : transition_time;
     transition_time = typeof transition_time === 'undefined' ? 500 : transition_time;
 
     reset_globals();
     make_cards();
     make_links();
-    
+
+    if (center) {
+        center_cards();
+    }
+
     var svg = d3.select("svg#graph");
     d3.selectAll("g rect").transition().duration(transition_time)
         .attr("x", x_pos).attr("y", y_pos).style("opacity", 1);
