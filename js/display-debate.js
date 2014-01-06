@@ -159,21 +159,28 @@ function link_visible(link) {
     return node_visible(link.from) && node_visible(link.to);
 }
 
-function x_pos(node) {
+function determine_i(node) {
     if (node == current_card) {
-        node.i = 0; // doesn't matter for current_card
-        return (window.innerWidth / 2) - half_card_width;
+        node.i = 0; // doesn't matter what i is for current_card
     } else if (is_outgoing(node)) {
         if (node.i == null) {
             node.i = next_outgoing_i;
             next_outgoing_i++;
         }
-        return top_row_offset + (node.i * (card_width + 10) + 10);
     } else if (is_incoming(node)) {
         if (node.i == null) {
             node.i = next_incoming_i;
             next_incoming_i++;
         }
+    }
+}
+
+function x_pos(node) {
+    if (node == current_card) {
+        return (window.innerWidth / 2) - half_card_width;
+    } else if (is_outgoing(node)) {
+        return top_row_offset + (node.i * (card_width + 10) + 10);
+    } else if (is_incoming(node)) {
         return bottom_row_offset + (node.i * (card_width + 10) + 10);
     } else {
         if (node.previously_current) {
@@ -347,11 +354,11 @@ function draw_graph(center, transition_time) {
     make_cards();
     make_links();
 
+    var svg = d3.select("svg#graph");
+    d3.selectAll("g rect").each(determine_i);
     if (center) {
         center_cards();
     }
-
-    var svg = d3.select("svg#graph");
     d3.selectAll("g rect").transition().duration(transition_time)
         .attr("x", x_pos).attr("y", y_pos).style("opacity", 1);
     // http://stackoverflow.com/a/11743721/257583
