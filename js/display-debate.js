@@ -1,29 +1,48 @@
+/** Width of the card representation of a node */
 var card_width = 300;
+/** Height of the card representation of a node */
 var card_height = 186;
+/** Often-used unit that is exactly half of the card_width */
 var half_card_width = card_width / 2;
+/** Often-used unit that is exactly half of the card_height */
 var half_card_height = card_height / 2;
 
-var next_outgoing_i = 0; /* the index of the next node that's outgoing */
+
+/** Index of the next outgoing node (relative to the current node) to be
+    displayed (in the top row) */
+var next_outgoing_i = 0;
+/** Index of the next incoming node (relative to the current node) to be
+    displayed (in the bottom row) */
 var next_incoming_i = 0;
 
-/* Which card is currently displayed in the middle of the screen? */
+
+/** The currently-selected card that is displayed in the middle of the screen */
 var current_card = null;
 
-/* Height of rendered graph */
+/** Height of final rendered graph. @todo Make this height scalable */
 var graph_height = null;
+/** What the minimum height of the final graph should be for optimal display
+    of the arguments */
 var min_graph_height = 808;
 
-// scrolling
+
+/** Determines how much the top row is offset from the left side of the window.
+    Used for scrolling the top row */
 var top_row_offset = 0;
+/** Determines how much the bottom row is offset from the left side of the window.
+    Used for scrolling the bottom row */
 var bottom_row_offset = 0;
 
+/** All the arguments currently fetched */
 var nodes = [];
+/** The SVG representations of all the nodes */
 var cards = [];
-var relations = []; // relations are between nodes
-var links = []; // links are between cards
-
-var nodes = [];
+/** All the relations arguments have with each other, as well as with other relations */
 var relations = [];
+/** The SVG representations of all the relations */
+var links = [];
+
+
 
 function indexOfNode(node_id) {
     for (i = 0; i < nodes.length; i++) {
