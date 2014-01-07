@@ -260,21 +260,41 @@ function ajax_get_card(node) {
     draw_graph(); // re-center the graph immediately
 }
 
+/**
+ * Is a node part of the outgoing nodes of the currently selected node?
+ * @param {Node} The node in question
+ * @returns Whether or not this node should be displayed in the top row
+ */
 function is_outgoing(node) {
     return current_card.outgoing.indexOf(node) != -1;
 }
 
+/**
+ * Is a node part of the incoming nodes of the currently selected node?
+ * @param {Node} The node in question
+ * @returns Whether or not this node should be displayed in the bottom row
+ */
 function is_incoming(node) {
     return current_card.incoming.indexOf(node) != -1;
 }
 
+/**
+ * Should a node be shown in the graph at all?
+ * @param {Node} The node in question
+ * @returns Whether or not this node is the currently selected node, or one of
+ * its outgoing nodes, or one of its incoming nodes
+ */
 function node_visible(node) {
     return (node == current_card) || is_outgoing(node) || is_incoming(node);
 }
 
-function link_visible(link) {
-    // both ends of a link must be visible for a link to be visible
-    return node_visible(link.from) && node_visible(link.to);
+/**
+ * Should a relation be shown in the graph at all?
+ * @param {Relation} The relation in question
+ * @returns Whether or not both ends of the relation are visible
+ */
+function relation_visible(relation) {
+    return node_visible(relation.from) && node_visible(relation.to);
 }
 
 function determine_i(node) {
@@ -513,7 +533,7 @@ function draw_graph(center, transition_time) {
     });
     links.transition().duration(transition_time).style("opacity", function (d) {
         // if one end of the link is currently displayed, then the other is too
-        if (link_visible(d)) {
+        if (relation_visible(d)) {
             return 1;
         } else {
             return 0;
