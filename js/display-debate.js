@@ -73,13 +73,38 @@ function indexOfRelation(relation_id) {
     return -1; // not found
 }
 
+/**
+ * Adds incoming and outgoing nodes directly to the "to" and "from" nodes at
+ * the opposite ends of a relation. This is for convenience.
+ * @param {Relation} relation A relation which should already have its IDs
+ * at both ends replaced by actual node objects using "set_relation_id". If
+ * this is not the case, however, no harm is done as this funtion checks for
+ * that before taking action.
+ */
 function set_incoming_and_outgoing(relation) {
+    // See if node IDs are already replaced by "set_relation_id"
     if (get_other_id(relation) === null) {
+        // add the "to" node of this relation to the set of outgoing nodes
+        // relative to the "from" node of this relation
         relation.from.outgoing.push(relation.to);
+        // add the "to" node of this relation to the set of outgoing nodes
+        // relative to the "from" node of this relation
         relation.to.incoming.push(relation.from);
     }
-} 
+}
 
+/**
+ * Given a node, replaces the node_id in the relation with the actual node.
+ * If appropriate, modifies the incoming and outgoing arrays of the nodes
+ * at both ends of the relation.
+ *
+ * This is for convenience, to prevent searching the entire set of nodes
+ * every time.
+ * @param {Relation} relation A relation which has at least one end which is
+ * just a node's ID and not the actual node.
+ * @param {Node} node One of the nodes at either side of the relation. One of
+ * the ends of the relation should be the ID of this node.
+ */
 function set_relation_id(relation, node) {
     if (relation.from === node.id) {
         relation.from = node;
