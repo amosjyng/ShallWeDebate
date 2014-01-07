@@ -106,14 +106,16 @@ function set_incoming_and_outgoing(relation) {
  * the ends of the relation should be the ID of this node.
  */
 function set_relation_id(relation, node) {
+    // Check if it's the "from" end of a relation that needs to be replaced
     if (relation.from === node.id) {
-        relation.from = node;
-    } else if (relation.to === node.id) {
-        relation.to = node;
-    } else {
+        relation.from = node; // if so, replace it
+    } else if (relation.to === node.id) { // else check if it's the "to" end
+        relation.to = node; // if so, replace it
+    } else { // otherwise this function should not be called. Log it
         console.log("Uh oh, node " + node.id + " not found for relation " + relation.id);
     }
 
+    // Modify incoming and outgoing arrays of "from" and "to" nodes, if appropriate.
     set_incoming_and_outgoing(relation);
 }
 
