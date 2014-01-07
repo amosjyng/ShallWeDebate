@@ -392,27 +392,42 @@ function y_pos(node) {
     }
 }
 
+/**
+ * How far left (in pixels) can you move the top row?
+ * @returns {Number} The most negative value that top_row_offset can take on
+ * @todo Account for scrollbars
+ */
 function min_top_row_offset() {
-    // how far can you move the top row to the left?
-    // if window contains entire row, then 0 because you don't need to
+    // if window already contains entire row, then 0 because you don't need to
     // move any more to the left
-    // otherwise, move only as much as needed
+    // otherwise, move only as much as needed to display the right side of the row
     return Math.min(0, window.innerWidth - row_width(next_outgoing_i));
 }
 
-function min_bottom_row_offset() {
-    // how far can you move the bottom row to the left?
+/**
+ * How far left (in pixels) can you move the bottom row?
+ * @returns {Number} The most negative value that bottom_row_offset can take on
+ * @todo Account for scrollbars
+ */
+function min_bottom_row_offset() { // same logic as above
     return Math.min(0, window.innerWidth - row_width(next_incoming_i));
 }
 
+/**
+ * How far right (in pixels) can you move the top row?
+ * @returns {Number} The most positive value that top_row_offset can take on
+ */
 function max_top_row_offset() {
-    // how far can you move the top row to the right?
-    // if window contains entire row, then move as far to the right without breaching it
-    // otherwise, don't move right at all from the start position
+    // if window contains entire row, then move as far as possible to the right
+    //  without breaching it. otherwise, don't move right at all from the start position
     return Math.max(0, window.innerWidth - row_width(next_outgoing_i));
 }
 
-function max_bottom_row_offset() {
+/**
+ * How far right (in pixels) can you move the bottom row?
+ * @returns {Number} The most positive value that bottom_row_offset can take on
+ */
+function max_bottom_row_offset() { // same logic as above
     return Math.max(0, window.innerWidth - row_width(next_incoming_i));
 }
 
