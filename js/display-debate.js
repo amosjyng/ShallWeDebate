@@ -220,7 +220,7 @@ function ajax_get_relation_nodes_function(new_relation, existing_node) {
     }
 }
 
-function ajax_get_relations_of(node, callback) {
+function ajax_get_relations_of(node) {
     // get relations and make sure that nodes for relations get fetched as well
     // mock ajax function for now
     $.ajax({
@@ -235,9 +235,6 @@ function ajax_get_relations_of(node, callback) {
         for (var i = 0; i < ajax_relation_nodes_functions.length; i++) {
             ajax_relation_nodes_functions[i]();
         }
-        if (typeof callback !== 'undefined') {
-            callback(data);
-        }
     }).fail(function (jqXHR, textStatus, errorThrown) {
         console.log("Failed to get relations of node " + node.id + ": " + errorThrown);
     });
@@ -245,9 +242,9 @@ function ajax_get_relations_of(node, callback) {
 
 function ajax_get_card(node) {
     // todo: make sure this hasn't already been called for this node
-    ajax_get_relations_of(node, function (relations) {
-        draw_graph();
-    });
+    ajax_get_relations_of(node);
+    draw_graph(); // not that it matters when we draw the graph,
+    // since the call is async
 }
 
 function is_outgoing(node) {
@@ -520,9 +517,7 @@ window.onload = function () {
         current_card = data;
         draw_graph();
 
-        ajax_get_relations_of(nodes[0], function (data) {
-            draw_graph();
-        })
+        ajax_get_relations_of(nodes[0]);
     })
     
     draw_graph();
