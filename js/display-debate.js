@@ -301,7 +301,7 @@ function relation_visible(relation) {
 /**
  * Determine the logical (not screen) position of a card in its row. Be sure to
  * call "reset_globals" before calling this function on all nodes.
- * @param {Node} The node which the card in question represents
+ * @param {Node} node The node which the card in question represents
  */
 function determine_i(node) {
     if (node == current_card) { // if it's the card in the middle of the screen
