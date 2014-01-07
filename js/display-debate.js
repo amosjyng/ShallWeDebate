@@ -475,20 +475,40 @@ var drag = d3.behavior.drag()
                 }
             })
 
+/**
+ * Convert a screen position represented by a 2-element array to a string, for
+ * use in an SVG attribute
+ * @param {Array} pos The 2-element array consisting of x and y coordinates
+ * @returns {String} A string for use in specifying coordinates in an SVG attribute
+ */
 function pos2str(pos) {
     return pos[0] + "," + pos[1] + " ";
 }
 
+/**
+ * Return a string specifying the path of the Bezier curve that a link should
+ * be displayed as
+ * @param {Link} link The link which is to be displayed
+ * @returns {String} A string for the "d" attribute of an SVG "path" object
+ */
 function compute_link_bezier_curve(link) {
+    // for convenience, define these two variables for each end of the link
     var from = link.from;
     var to = link.to;
+    // calculate the start and end positions of the Bezier curve. It should
+    // start at the top-middle of the "from" card and end at the bottom-middle
+    // of the "to" card (under the current scheme, "to" cards are always above
+    // "from" cards)
     var start_pos = [x_pos(from, from.i) + half_card_width, y_pos(from, from.i)];
     var end_pos = [x_pos(to, to.i) + half_card_width,
-                    /* marker-widht is 3, stroke-width is 5 */
+                    /* account for arrow: marker-width is 3, stroke-width is 5 */
                    y_pos(to, to.i) + card_height + (5 * 3)];
+    // find the difference in height between the two cards
     var height = end_pos[1] - start_pos[1];
+    // have the controls be half-height away from the start/end points
     var control1 = [start_pos[0], start_pos[1] + (height / 2)];
     var control2 = [end_pos[0], end_pos[1] - (height / 2)];
+    // build the final string
     return "M" + pos2str(start_pos) + "C" + pos2str(control1)
             + pos2str(control2) + pos2str(end_pos);
 }
