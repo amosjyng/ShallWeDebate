@@ -137,6 +137,7 @@ function ajax_get_relations_of(node, callback) {
 }
 
 function ajax_get_card(node) {
+    // todo: make sure this hasn't already been called for this node
     ajax_get_relations_of(node, function (relations) {
         draw_graph();
     });
@@ -307,12 +308,18 @@ function center_cards() {
     bottom_row_offset = center_cards_offset(next_incoming_i);
 }
 
+/**
+ * Create card representations of all unrepresented nodes.
+ */
 function make_cards() {
-    var svg = d3.select("svg#graph");
-    cards = svg.selectAll("g").data(nodes);
+    // bind node data to cards
+    cards = d3.select("svg#graph").selectAll("g").data(nodes);
+    // add new card representations of nodes
     new_cards = cards.enter().append("g").classed("argument", true);
+    // create background rectangle for the cards
     new_cards.append("rect").attr("width", card_width).attr("height", card_height)
                 .style("opacity", 0).call(drag);
+    // create foreignObject containing node text
     var switch_objects = new_cards.append("switch").call(drag);
     switch_objects.append("foreignObject").classed("foreign-object", true)
             .attr("requiredFeatures", "http://www.w3.org/TR/SVG11/feature#Extensibility")
@@ -321,16 +328,22 @@ function make_cards() {
             .classed("summary", true).text(function (d) {
                 return d.summary;
             }).attr("xmlns", "http://www.w3.org/1999/xhtml");
+    // add fallback text in case user's browser doesn't support SVG foreignObject
     switch_objects.append("text").attr("x", 100).attr("y", 100)
         .text("Sorry, your browser is not currently supported.");
+    // define action when card is selected
     new_cards.on("click", function (d) {
+        // stop here if the click was merely a drag
         if (d3.event.defaultPrevented) return;
 
-        top_row_offset = 0;
-        bottom_row_offset = 0;
+        // no need to reset the top and bottom row offsets to zero
+        // because that's already done in "draw_graph"
 
+        // set the current_card to the node of the card that was just clicked
         current_card = d;
+        // get all the related links and nodes associated with the newly selected node
         ajax_get_card(d);
+        // redraw graph
         draw_graph();
     })
 }
