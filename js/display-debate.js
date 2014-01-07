@@ -265,7 +265,7 @@ function ajax_get_card(node) {
 
 /**
  * Is a node part of the outgoing nodes of the currently selected node?
- * @param {Node} The node in question
+ * @param {Node} node The node in question
  * @returns Whether or not this node should be displayed in the top row
  */
 function is_outgoing(node) {
@@ -274,7 +274,7 @@ function is_outgoing(node) {
 
 /**
  * Is a node part of the incoming nodes of the currently selected node?
- * @param {Node} The node in question
+ * @param {Node} node The node in question
  * @returns Whether or not this node should be displayed in the bottom row
  */
 function is_incoming(node) {
@@ -283,7 +283,7 @@ function is_incoming(node) {
 
 /**
  * Should a node be shown in the graph at all?
- * @param {Node} The node in question
+ * @param {Node} node The node in question
  * @returns Whether or not this node is the currently selected node, or one of
  * its outgoing nodes, or one of its incoming nodes
  */
@@ -293,7 +293,7 @@ function node_visible(node) {
 
 /**
  * Should a relation be shown in the graph at all?
- * @param {Relation} The relation in question
+ * @param {Relation} relation The relation in question
  * @returns Whether or not both ends of the relation are visible
  */
 function relation_visible(relation) {
