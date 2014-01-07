@@ -6,6 +6,8 @@ var card_height = 186;
 var half_card_width = card_width / 2;
 /** Often-used unit that is exactly half of the card_height */
 var half_card_height = card_height / 2;
+/** Spacing between adjacent cards in the graph */
+var card_spacing = 10;
 
 
 /** Index of the next outgoing node (relative to the current node) to be
@@ -319,12 +321,12 @@ function x_pos(node) {
     if (node == current_card) {
         return (window.innerWidth / 2) - half_card_width;
     } else if (is_outgoing(node)) {
-        return top_row_offset + (node.i * (card_width + 10) + 10);
+        return top_row_offset + (node.i * (card_width + card_spacing) + card_spacing);
     } else if (is_incoming(node)) {
-        return bottom_row_offset + (node.i * (card_width + 10) + 10);
+        return bottom_row_offset + (node.i * (card_width + card_spacing) + card_spacing);
     } else {
         if (node.previously_current) {
-            return window.innerWidth + 10;
+            return window.innerWidth + card_spacing;
         } else if (node.previously_outgoing || node.previously_incoming) {
             return (window.innerWidth / 2) - half_card_width;
         }
@@ -335,16 +337,16 @@ function y_pos(node) {
     if (node == current_card) {
         return (graph_height / 2) - half_card_height;
     } else if (is_outgoing(node)) {
-        return 10;
+        return card_spacing;
     } else if (is_incoming(node)) {
-        return graph_height - 10 - card_height;
+        return graph_height - card_spacing - card_height;
     } else {
         if (node.previously_current) {
             return (graph_height / 2) - half_card_height;
         } else if (node.previously_outgoing) {
-            return -10 - card_height;
+            return -card_spacing - card_height;
         } else if (node.previously_incoming) {
-            return graph_height + 10;
+            return graph_height + card_spacing;
         } else {
             console.warn("Anomalous node " + node.id + " encountered");
         }
@@ -352,7 +354,7 @@ function y_pos(node) {
 }
 
 function row_width(num_cards) {
-    return 10 + (num_cards * (card_width + 10));
+    return card_spacing + (num_cards * (card_width + card_spacing));
 }
 
 function min_top_row_offset() {
@@ -372,11 +374,11 @@ function max_top_row_offset() {
     // how far can you move the top row to the right?
     // if window contains entire row, then move as far to the right without breaching it
     // otherwise, don't move right at all from the start position
-    return Math.max(0, window.innerWidth - (10 + next_outgoing_i * (card_width + 10)));
+    return Math.max(0, window.innerWidth - (card_spacing + next_outgoing_i * (card_width + card_spacing)));
 }
 
 function max_bottom_row_offset() {
-    return Math.max(0, window.innerWidth - (10 + next_incoming_i * (card_width + 10)));
+    return Math.max(0, window.innerWidth - (card_spacing + next_incoming_i * (card_width + card_spacing)));
 }
 
 var drag = d3.behavior.drag()
