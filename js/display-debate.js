@@ -317,13 +317,23 @@ function determine_i(node) {
     }
 }
 
+/**
+ * How many pixels wide would a row of "num_cards" cards be, assuming
+ * "card_spacing" pixels before, in-between, and after all the cards?
+ */
+function row_width(num_cards) {
+    // num_cards number of cards, and (num_cards + 1) number of spaces before,
+    // in-between, and after cards
+    return (num_cards * card_width) + ((num_cards + 1) * card_spacing);
+}
+
 function x_pos(node) {
     if (node == current_card) {
         return (window.innerWidth / 2) - half_card_width;
     } else if (is_outgoing(node)) {
-        return top_row_offset + (node.i * (card_width + card_spacing) + card_spacing);
+        return top_row_offset + row_width(node.i);
     } else if (is_incoming(node)) {
-        return bottom_row_offset + (node.i * (card_width + card_spacing) + card_spacing);
+        return bottom_row_offset + row_width(node.i);
     } else {
         if (node.previously_current) {
             return window.innerWidth + card_spacing;
@@ -353,10 +363,6 @@ function y_pos(node) {
     }
 }
 
-function row_width(num_cards) {
-    return card_spacing + (num_cards * (card_width + card_spacing));
-}
-
 function min_top_row_offset() {
     // how far can you move the top row to the left?
     // if window contains entire row, then 0 because you don't need to
@@ -374,11 +380,11 @@ function max_top_row_offset() {
     // how far can you move the top row to the right?
     // if window contains entire row, then move as far to the right without breaching it
     // otherwise, don't move right at all from the start position
-    return Math.max(0, window.innerWidth - (card_spacing + next_outgoing_i * (card_width + card_spacing)));
+    return Math.max(0, window.innerWidth - row_width(next_outgoing_i));
 }
 
 function max_bottom_row_offset() {
-    return Math.max(0, window.innerWidth - (card_spacing + next_incoming_i * (card_width + card_spacing)));
+    return Math.max(0, window.innerWidth - row_width(next_incoming_i));
 }
 
 var drag = d3.behavior.drag()
