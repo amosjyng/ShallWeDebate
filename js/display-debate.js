@@ -453,16 +453,21 @@ function enforce_row_offsets() {
     }
 }
 
+/** Allow top and bottom rows to be dragged around whilst respecting offset limits */
 var drag = d3.behavior.drag()
             .on("drag", function () {
-                if (d3.event.y <= (card_height + 20)) {
+                if (d3.event.y <= (card_height + 20)) { // check if dragging top row
+                    // if so, add drag distance to top row offset
                     top_row_offset += d3.event.dx;
+                    // and redraw immediately
                     draw_graph(false, 0);
 
                     // note: this code won't be called on a refresh. move to draw_graph?
                     enforce_row_offsets();
-                } else if (d3.event.y >= (graph_height - card_height - 20)) {
+                } else if (d3.event.y >= (graph_height - card_height - 20)) { // check if dragging bottom row
+                    // if so, add drag distance to bottom row offset
                     bottom_row_offset += d3.event.dx;
+                    // and redraw immediately
                     draw_graph(false, 0);
 
                     // note: this code won't be called on a refresh. move to draw_graph?
