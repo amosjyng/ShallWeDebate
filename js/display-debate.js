@@ -43,7 +43,12 @@ var relations = [];
 var links = [];
 
 
-
+/**
+ * Finds the node with node_id in "nodes"
+ * @param {Number} node_id The ID of the node which you wish to search for
+ * @returns {Number} If found, the position of the node in the "nodes" array.
+ * If not found, -1.
+ */
 function indexOfNode(node_id) {
     for (i = 0; i < nodes.length; i++) {
         if (nodes[i].id === node_id) {
@@ -53,6 +58,12 @@ function indexOfNode(node_id) {
     return -1; // not found
 }
 
+/**
+ * Finds the relation with relation_id in "relations"
+ * @param {Number} relation_id The ID of the relation which you wish to search for
+ * @returns {Number} If found, the position of the relation in the "relations" array.
+ * If not found, -1.
+ */
 function indexOfRelation(relation_id) {
     for (i = 0; i < relations.length; i++) {
         if (relations[i].id === relation_id) {
