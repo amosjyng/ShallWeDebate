@@ -220,31 +220,44 @@ function ajax_get_relation_nodes_function(new_relation, existing_node) {
     }
 }
 
+/**
+ * Get all relations associated with a particular node, and all other nodes
+ * associated with those relations as well
+ * @param {Node} node The node to retrieve all the relations for
+ * @todo Display error message onscreen when there's a failure
+ */
 function ajax_get_relations_of(node) {
-    // get relations and make sure that nodes for relations get fetched as well
-    // mock ajax function for now
     $.ajax({
+        // use mock JSON files until backend is ready
         url: "mock_ajax/arg_" + node.id + "_relations.json",
         type: "GET",
         dataType: "json",
     }).done(function (data) {
+        // collect all callback functions first
         ajax_relation_nodes_functions = []
         for (var i = 0; i < data.length; i++) {
             ajax_relation_nodes_functions.push(ajax_get_relation_nodes_function(data[i], node));
         }
+        // then call each of those callback functions
         for (var i = 0; i < ajax_relation_nodes_functions.length; i++) {
             ajax_relation_nodes_functions[i]();
         }
     }).fail(function (jqXHR, textStatus, errorThrown) {
+        // todo: display error message to user
         console.log("Failed to get relations of node " + node.id + ": " + errorThrown);
     });
 }
 
+/**
+ * After a card is selected (i.e. clicked on), call this function to retrieve
+ * all relevant information for the node that the card represents
+ * @param {Node} node The node of the card that was clicked on
+ * @todo Do nothing except for redrawing the graph if information for this node
+ * has already been retrieved
+ */
 function ajax_get_card(node) {
-    // todo: make sure this hasn't already been called for this node
-    ajax_get_relations_of(node);
-    draw_graph(); // not that it matters when we draw the graph,
-    // since the call is async
+    ajax_get_relations_of(node); // get all relevant relations and related nodes
+    draw_graph(); // re-center the graph immediately
 }
 
 function is_outgoing(node) {
