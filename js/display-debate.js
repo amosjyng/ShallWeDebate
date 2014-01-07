@@ -16,7 +16,8 @@ var next_outgoing_i = 0;
 var next_incoming_i = 0;
 
 
-/** The currently-selected card that is displayed in the middle of the screen */
+/** The currently-selected node whose card is displayed in the middle of the screen
+    @todo Change name to current_node? */
 var current_card = null;
 
 /** Height of final rendered graph. @todo Make this height scalable */
@@ -297,19 +298,20 @@ function relation_visible(relation) {
     return node_visible(relation.from) && node_visible(relation.to);
 }
 
+/**
+ * Determine the logical (not screen) position of a card in its row. Be sure to
+ * call "reset_globals" before calling this function on all nodes.
+ * @param {Node} The node which the card in question represents
+ */
 function determine_i(node) {
-    if (node == current_card) {
-        node.i = 0; // doesn't matter what i is for current_card
-    } else if (is_outgoing(node)) {
-        if (node.i == null) {
-            node.i = next_outgoing_i;
-            next_outgoing_i++;
-        }
-    } else if (is_incoming(node)) {
-        if (node.i == null) {
-            node.i = next_incoming_i;
-            next_incoming_i++;
-        }
+    if (node == current_card) { // if it's the card in the middle of the screen
+        node.i = 0; // it doesn't really matter what i is
+    } else if (is_outgoing(node)) { // if it's in the top row
+        node.i = next_outgoing_i;
+        next_outgoing_i++;
+    } else if (is_incoming(node)) { // if it's in the bottom row
+        node.i = next_incoming_i;
+        next_incoming_i++;
     }
 }
 
@@ -424,10 +426,6 @@ function compute_link_bezier_curve(link) {
 }
 
 function reset_globals() {
-    for (var i=0; i < nodes.length; i++) {
-        node = nodes[i];
-        node.i = null;
-    }
     next_outgoing_i = 0;
     next_incoming_i = 0;
 }
