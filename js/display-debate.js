@@ -124,8 +124,8 @@ function set_relation_id(relation, node) {
  * with an actual node, finds the ID that is yet to be replaced.
  * @param {Relation} relation Should be a relation which has already had
  * "set_relation_id" called on it at least once already.
- * @returns The ID which has not yet been replaced, or null if both IDs have
- * been replaced by actual objects.
+ * @returns {Number} The ID which has not yet been replaced, or null if both
+ * IDs have been replaced by actual objects.
  */
 function get_other_id(relation) {
     // see if the "from" end is still an ID
@@ -138,40 +138,82 @@ function get_other_id(relation) {
     }
 }
 
+/**
+ * Asynchronously retrieve a node from the server and push it into the "nodes"
+ * array. Do not call this function once a node has already been retrieved.
+ * @param {Number} node_id The ID of the node to retrieve
+ * @param {Function} callback The callback function which, when specified, will
+ * be called with the newly retrieved node as the sole argument
+ * @todo Display error message onscreen when there's a failure
+ */
 function ajax_get_node(node_id, callback) {
-    // if node already exists, DON'T evenn call this function!
-    // mock ajax function for now
     $.ajax({
+        // use mock JSON files for now, until backend is ready
         url: "mock_ajax/" + node_id + ".json",
         type: "GET",
         dataType: "json",
     }).done(function (data) {
+        // initialized arrays of incoming and outgoing objects for
+        // "set_incoming_and_outgoing" to take care of later
         data.incoming = [];
         data.outgoing = [];
+        // add new piece of data to array of nodes
         nodes.push(data);
+        // if callback is defined, call it with the new node
         if (typeof callback !== 'undefined') {
             callback(data);
         }
     }).fail(function (jqXHR, textStatus, errorThrown) {
+        // todo: display error message to user
         console.log("Failed to get node " + node_id + ": " + errorThrown);
     });
 }
 
+/**
+ * Get callback function for retrieving nodes associated with a "new_relation"
+ * @param {Relation} new_relation The newly-retrieved relation which still has
+ * IDs at both ends instead of objects
+ * @param {Node} existing_node The existing node whose ID must already be at
+ * one end of the "new_relation"
+ * @returns {Function} A function that when called, will replaced both ends of
+ * "new_relation" with the appropriate object, making another asynchronous GET
+ * request for a node if necessary
+ */
 function ajax_get_relation_nodes_function(new_relation, existing_node) {
-    // http://stackoverflow.com/a/750506/257583
+    // This function is necessary if you want to bind variables in the function
+    // to different values for different iterations of a for loop.
+    // See http://stackoverflow.com/a/750506/257583
     return function () {
-        if (indexOfRelation(new_relation.id) === -1) { // it's a new relation
+        // first check if this relation has already been retrieved
+        //
+        // unlike for nodes, we can't simply not retrieve relations that are
+        // already retrieved. Since two different nodes would be attached to
+        // the same relation, when we ask the server for all relations
+        // associated with a node, it may return some of the same relations
+        // that have already been retrieved
+        if (indexOfRelation(new_relation.id) === -1) {
+            // replace the ID of one end of the relationship with the actual node
             set_relation_id(new_relation, existing_node);
+            // find what the ID of the other unreplaced end is
             var missing_id = get_other_id(new_relation);
+            // find where the node with that ID is
             var missing_index = indexOfNode(missing_id);
-            if (missing_index === -1) { // node is currently missing
+            // if the node with that ID is not found, just retrieve it
+            if (missing_index === -1) {
                 ajax_get_node(missing_id, function (new_node) {
+                    // and once retrieved, replace the other ID with it
                     set_relation_id(new_relation, new_node);
+                    // add this relation to the array of currently retrieved
+                    // relations
                     relations.push(new_relation);
+                    // and redraw the graph
                     draw_graph();
+                    // note: could this add a relation twice?
                 })
             } else { // node already exists, just use it
+                // replace other ID with actual object
                 set_relation_id(new_relation, nodes[missing_index]);
+                // add this to the array of currently retrieved relations
                 relations.push(new_relation);
             }
         }
