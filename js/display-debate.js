@@ -320,6 +320,7 @@ function determine_i(node) {
 /**
  * How many pixels wide would a row of "num_cards" cards be, assuming
  * "card_spacing" pixels before, in-between, and after all the cards?
+ * @param {Number} num_cards The number of cards in the hypothetical row of cards
  */
 function row_width(num_cards) {
     // num_cards number of cards, and (num_cards + 1) number of spaces before,
@@ -327,37 +328,65 @@ function row_width(num_cards) {
     return (num_cards * card_width) + ((num_cards + 1) * card_spacing);
 }
 
+/**
+ * Find the x-coordinate of the screen position of a node
+ * @param {Node} node The node whose screen position you wish to find
+ * @returns The x-coordinate of that node
+ */
 function x_pos(node) {
-    if (node == current_card) {
+    if (node == current_card) { // if current card, just center it
         return (window.innerWidth / 2) - half_card_width;
-    } else if (is_outgoing(node)) {
+    } else if (is_outgoing(node)) { // if top row
+        // since the i attributes of a node in a row start from 0, node.i
+        // effectively denotes how many nodes were before this one
+        // so simply add "top_row_offset" to how wide a row of all the nodes
+        // before this one would be
         return top_row_offset + row_width(node.i);
-    } else if (is_incoming(node)) {
+    } else if (is_incoming(node)) { // if bottom row, same logic as for top row
         return bottom_row_offset + row_width(node.i);
-    } else {
+    } else { // otherwise it's a hidden node, so move it offscreen
+        // if it was previously a current node and no longer displayed
+        // (impossible under the current scheme since each newly selected node
+        // must have been related to the current node before being selected,
+        // and therefore the current node would still be visible; however, this
+        // may be useful in the future when we have equivlaent nodes, only one
+        // of which is selected), then move it off to the right side of the screen
         if (node.previously_current) {
             return window.innerWidth + card_spacing;
         } else if (node.previously_outgoing || node.previously_incoming) {
+            // otherwise it was previously a node on either the top or the
+            // bottom of the screen. Either way, the x-coordinate will be the
+            // middle of the screen, so that the node will be moved to either
+            // the top-middle or bottom-middle of the screen
             return (window.innerWidth / 2) - half_card_width;
         }
     }
 }
 
+/**
+ * Find the y-coordinate of the screen position of a node
+ * @param {Node} node The node whose screen position you wish to find
+ * @returns The y-coordinate of that node
+ */
 function y_pos(node) {
-    if (node == current_card) {
+    if (node == current_card) { // if current card, just center it
         return (graph_height / 2) - half_card_height;
-    } else if (is_outgoing(node)) {
+    } else if (is_outgoing(node)) { // if it's in the top row
+        // position it slightly offset from the top of the graph
         return card_spacing;
-    } else if (is_incoming(node)) {
+    } else if (is_incoming(node)) { // if it's in the bottom row
+        // position it slightly offset from the bottom of the graph
         return graph_height - card_spacing - card_height;
-    } else {
-        if (node.previously_current) {
+    } else { // otherwise it's a hidden node, so move it offscreen
+        if (node.previously_current) { // if previously current
+            // just center it. Again, not currently used, but may be useful in
+            // the future
             return (graph_height / 2) - half_card_height;
-        } else if (node.previously_outgoing) {
-            return -card_spacing - card_height;
-        } else if (node.previously_incoming) {
-            return graph_height + card_spacing;
-        } else {
+        } else if (node.previously_outgoing) { // if previously in the top row
+            return -card_spacing - card_height; // move it to the top center
+        } else if (node.previously_incoming) { // else if previously in the bottom row
+            return graph_height + card_spacing; // move it to the bottom center
+        } else { // Inconceivable!
             console.warn("Anomalous node " + node.id + " encountered");
         }
     }
