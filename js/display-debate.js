@@ -431,6 +431,28 @@ function max_bottom_row_offset() { // same logic as above
     return Math.max(0, window.innerWidth - row_width(next_incoming_i));
 }
 
+/**
+ * Ensure that top and bottom row offset limits are respected
+ */
+function enforce_row_offsets() {
+    // check top row offset limits. If violated, fix immediately
+    if (top_row_offset < min_top_row_offset()) {
+        top_row_offset = min_top_row_offset();
+        draw_graph(false, 0);
+    } else if (top_row_offset > max_top_row_offset()) {
+        top_row_offset = max_top_row_offset();
+        draw_graph(false, 0);
+    }
+    // check bottom row offset limits. If violated, fix immediately
+    if (bottom_row_offset < min_bottom_row_offset()) {
+        bottom_row_offset = min_bottom_row_offset();
+        draw_graph(false, 0);
+    } else if (bottom_row_offset > max_bottom_row_offset()) {
+        bottom_row_offset = max_bottom_row_offset();
+        draw_graph(false, 0);
+    }
+}
+
 var drag = d3.behavior.drag()
             .on("drag", function () {
                 if (d3.event.y <= (card_height + 20)) {
@@ -438,24 +460,13 @@ var drag = d3.behavior.drag()
                     draw_graph(false, 0);
 
                     // note: this code won't be called on a refresh. move to draw_graph?
-                    if (top_row_offset < min_top_row_offset()) {
-                        top_row_offset = min_top_row_offset();
-                        draw_graph(false, 0);
-                    } else if (top_row_offset > max_top_row_offset()) {
-                        top_row_offset = max_top_row_offset();
-                        draw_graph(false, 0);
-                    }
+                    enforce_row_offsets();
                 } else if (d3.event.y >= (graph_height - card_height - 20)) {
                     bottom_row_offset += d3.event.dx;
                     draw_graph(false, 0);
 
-                    if ((bottom_row_offset < 0) && (bottom_row_offset < min_bottom_row_offset())) {
-                        bottom_row_offset = min_bottom_row_offset();
-                        draw_graph(false, 0);
-                    } else if (bottom_row_offset > max_bottom_row_offset()) {
-                        bottom_row_offset = max_bottom_row_offset();
-                        draw_graph(false, 0);
-                    }
+                    // note: this code won't be called on a refresh. move to draw_graph?
+                    enforce_row_offsets();
                 }
             })
 
