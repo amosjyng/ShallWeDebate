@@ -111,8 +111,8 @@ function set_relation_id(relation, node) {
         relation.from = node; // if so, replace it
     } else if (relation.to === node.id) { // else check if it's the "to" end
         relation.to = node; // if so, replace it
-    } else { // otherwise this function should not be called. Log it
-        console.log("Uh oh, node " + node.id + " not found for relation " + relation.id);
+    } else { // otherwise this function should not be called. Log the error
+        console.error("Node " + node.id + " not found in relation " + relation.id);
     }
 
     // Modify incoming and outgoing arrays of "from" and "to" nodes, if appropriate.
@@ -324,7 +324,7 @@ function y_pos(node) {
         } else if (node.previously_incoming) {
             return graph_height + 10;
         } else {
-            console.log(node);
+            console.warn("Anomalous node " + node.id + " encountered");
         }
     }
 }
