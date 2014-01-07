@@ -1,7 +1,7 @@
 ShallWeDebate
 =============
 
-Open source website designed to facilitate debate
+This is the source code of an [open source website](http://www.shallwedebate.com/) designed to facilitate debate
 
 Setup
 -----
