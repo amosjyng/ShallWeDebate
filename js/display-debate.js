@@ -119,13 +119,21 @@ function set_relation_id(relation, node) {
     set_incoming_and_outgoing(relation);
 }
 
+/**
+ * Given a relation which already has one of the IDs at either end replaced
+ * with an actual node, finds the ID that is yet to be replaced.
+ * @param {Relation} relation Should be a relation which has already had
+ * "set_relation_id" called on it at least once already.
+ * @returns The ID which has not yet been replaced, or null if both IDs have
+ * been replaced by actual objects.
+ */
 function get_other_id(relation) {
-    // call this after calling "set_relation_id"
+    // see if the "from" end is still an ID
     if (typeof relation.from === 'number') {
-        return relation.from;
-    } else if (typeof relation.to === 'number') {
-        return relation.to;
-    } else {
+        return relation.from; // if so, return it
+    } else if (typeof relation.to === 'number') { // else check "to" end
+        return relation.to; // and if still an ID, return it
+    } else { // otherwise both IDs are replaced
         return null;
     }
 }
