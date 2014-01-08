@@ -578,12 +578,19 @@ function make_cards() {
         ajax_get_card(d);
         // redraw graph
         draw_graph();
+
+        // todo: change URL once new card is selected
     })
 }
 
+/**
+ * Create link representations of all unrepresented relations
+ */
 function make_links() {
-    var svg = d3.select("svg#graph");
-    links = svg.selectAll("path").data(relations);
+    // bind relation data to links
+    links = d3.select("svg#graph").selectAll("path").data(relations);
+    // create the paths for every link, and start them off with full
+    // transparency so that they can smoothly enter the graph
     links.enter().append("path")
         .attr("class", function(d) {
             return d.type;
@@ -592,26 +599,45 @@ function make_links() {
         }).style("opacity", 0);
 }
 
+/**
+ * Redraw the entire graph
+ * @param {boolean} [center=true] Whether or not the top and bottom rows should
+ * be re-centered. Put false when you want to keep the current offsets.
+ * @param {number} [transition=500] The time it takes for all the nodes and
+ * links to transition to their final positions and opacities. Put 0 for an
+ * instantaneous change.
+ */
 function draw_graph(center, transition_time) {
+    // ensure default values for optional arguments
     center = typeof center === 'undefined' ? true : transition_time;
     transition_time = typeof transition_time === 'undefined' ? 500 : transition_time;
 
-    reset_globals();
+    // bring in the new cards and links
     make_cards();
     make_links();
 
-    var svg = d3.select("svg#graph");
+    // recalculate logical positions for each card
+    reset_globals();
     d3.selectAll("g rect").each(determine_i);
+
+    // if specified, re-center top and bottom rows of cards
     if (center) {
         center_cards();
     }
+
+    // transition cards to their new positions within transition_time
     d3.selectAll("g rect").transition().duration(transition_time)
         .attr("x", x_pos).attr("y", y_pos).style("opacity", 1);
+    // Can't select for foreignObject directly due to
     // http://stackoverflow.com/a/11743721/257583
     // also, doesn't matter if the text is opaque or not since it's the
     // same color as the background
     d3.selectAll(".foreign-object").transition().duration(transition_time)
         .attr("x", x_pos).attr("y", y_pos);
+
+    // for the record, set whether the card is current/outgoing/incoming so
+    // that the next time this is called, the x_pos and y_pos functions know
+    // how to handle cards that are no longer shown
     cards.each(function (d) {
         if (current_card == d) {
             d.previously_current = true;
@@ -627,6 +653,9 @@ function draw_graph(center, transition_time) {
             d.previously_incoming = true;
         } // else shouldn't happen
     });
+
+    // finally, transition the links to their final paths as well while
+    // toggling the opacity for those links that are now invisible/visible
     links.transition().duration(transition_time).style("opacity", function (d) {
         // if one end of the link is currently displayed, then the other is too
         if (relation_visible(d)) {
@@ -638,16 +667,18 @@ function draw_graph(center, transition_time) {
 }
 
 window.onload = function () {
+    // if graph height is not as small as the suggested minimum graph height,
+    // then chances are there's something very wrong, so try not to alarm the user
     if ($("#graph").height() < min_graph_height) {
+        console.warn("Graph height is only " + $("#graph").height());
         alert("Whoops, looks like some things won't be displaying correctly. Please tell us about this.");
     }
-    graph_height = $("#graph").height();
-    ajax_get_node(1, function (data) {
-        current_card = data;
-        draw_graph();
 
-        ajax_get_relations_of(nodes[0]);
-    })
-    
-    draw_graph();
+    // get our first card. todo: get first card based on what the URL is
+    ajax_get_node(1, function (data) {
+        current_card = data; // set current card
+        draw_graph(); // and let "draw_graph" take care of the rest
+
+        ajax_get_relations_of(nodes[0]); // get related cards as well
+    });
 }
