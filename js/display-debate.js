@@ -667,10 +667,12 @@ function draw_graph(center, transition_time) {
 }
 
 window.onload = function () {
+    graph_height = $("#graph").height();
+
     // if graph height is not as small as the suggested minimum graph height,
     // then chances are there's something very wrong, so try not to alarm the user
-    if ($("#graph").height() < min_graph_height) {
-        console.warn("Graph height is only " + $("#graph").height());
+    if (graph_height < min_graph_height) {
+        console.warn("Graph height is only " + graph_height);
         alert("Whoops, looks like some things won't be displaying correctly. Please tell us about this.");
     }
 
