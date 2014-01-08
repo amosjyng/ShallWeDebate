@@ -48,8 +48,8 @@ var links = [];
 
 /**
  * Finds the node with node_id in "nodes"
- * @param {Number} node_id The ID of the node which you wish to search for
- * @returns {Number} If found, the position of the node in the "nodes" array.
+ * @param {number} node_id The ID of the node which you wish to search for
+ * @returns {number} If found, the position of the node in the "nodes" array.
  * If not found, -1.
  */
 function indexOfNode(node_id) {
@@ -63,8 +63,8 @@ function indexOfNode(node_id) {
 
 /**
  * Finds the relation with relation_id in "relations"
- * @param {Number} relation_id The ID of the relation which you wish to search for
- * @returns {Number} If found, the position of the relation in the "relations" array.
+ * @param {number} relation_id The ID of the relation which you wish to search for
+ * @returns {number} If found, the position of the relation in the "relations" array.
  * If not found, -1.
  */
 function indexOfRelation(relation_id) {
@@ -127,7 +127,7 @@ function set_relation_id(relation, node) {
  * with an actual node, finds the ID that is yet to be replaced.
  * @param {Relation} relation Should be a relation which has already had
  * "set_relation_id" called on it at least once already.
- * @returns {Number} The ID which has not yet been replaced, or null if both
+ * @returns {number} The ID which has not yet been replaced, or null if both
  * IDs have been replaced by actual objects.
  */
 function get_other_id(relation) {
@@ -144,7 +144,7 @@ function get_other_id(relation) {
 /**
  * Asynchronously retrieve a node from the server and push it into the "nodes"
  * array. Do not call this function once a node has already been retrieved.
- * @param {Number} node_id The ID of the node to retrieve
+ * @param {number} node_id The ID of the node to retrieve
  * @param {Function} callback The callback function which, when specified, will
  * be called with the newly retrieved node as the sole argument
  * @todo Display error message onscreen when there's a failure
@@ -320,7 +320,7 @@ function determine_i(node) {
 /**
  * How many pixels wide would a row of "num_cards" cards be, assuming
  * "card_spacing" pixels before, in-between, and after all the cards?
- * @param {Number} num_cards The number of cards in the hypothetical row of cards
+ * @param {number} num_cards The number of cards in the hypothetical row of cards
  */
 function row_width(num_cards) {
     // num_cards number of cards, and (num_cards + 1) number of spaces before,
@@ -394,7 +394,7 @@ function y_pos(node) {
 
 /**
  * How far left (in pixels) can you move the top row?
- * @returns {Number} The most negative value that top_row_offset can take on
+ * @returns {number} The most negative value that top_row_offset can take on
  * @todo Account for scrollbars
  */
 function min_top_row_offset() {
@@ -406,7 +406,7 @@ function min_top_row_offset() {
 
 /**
  * How far left (in pixels) can you move the bottom row?
- * @returns {Number} The most negative value that bottom_row_offset can take on
+ * @returns {number} The most negative value that bottom_row_offset can take on
  * @todo Account for scrollbars
  */
 function min_bottom_row_offset() { // same logic as above
@@ -415,7 +415,7 @@ function min_bottom_row_offset() { // same logic as above
 
 /**
  * How far right (in pixels) can you move the top row?
- * @returns {Number} The most positive value that top_row_offset can take on
+ * @returns {number} The most positive value that top_row_offset can take on
  */
 function max_top_row_offset() {
     // if window contains entire row, then move as far as possible to the right
@@ -425,7 +425,7 @@ function max_top_row_offset() {
 
 /**
  * How far right (in pixels) can you move the bottom row?
- * @returns {Number} The most positive value that bottom_row_offset can take on
+ * @returns {number} The most positive value that bottom_row_offset can take on
  */
 function max_bottom_row_offset() { // same logic as above
     return Math.max(0, window.innerWidth - row_width(next_incoming_i));
@@ -479,7 +479,7 @@ var drag = d3.behavior.drag()
  * Convert a screen position represented by a 2-element array to a string, for
  * use in an SVG attribute
  * @param {Array} pos The 2-element array consisting of x and y coordinates
- * @returns {String} A string for use in specifying coordinates in an SVG attribute
+ * @returns {string} A string for use in specifying coordinates in an SVG attribute
  */
 function pos2str(pos) {
     return pos[0] + "," + pos[1] + " ";
@@ -489,7 +489,7 @@ function pos2str(pos) {
  * Return a string specifying the path of the Bezier curve that a link should
  * be displayed as
  * @param {Link} link The link which is to be displayed
- * @returns {String} A string for the "d" attribute of an SVG "path" object
+ * @returns {string} A string for the "d" attribute of an SVG "path" object
  */
 function compute_link_bezier_curve(link) {
     // for convenience, define these two variables for each end of the link
@@ -524,7 +524,7 @@ function reset_globals() {
 
 /**
  * Calculate the desired offset in order to center a row of cards
- * @returns {Number} The offset needed to either center a row of cards in the
+ * @returns {number} The offset needed to either center a row of cards in the
  * middle of the screen, or to simply put the row of cards next to the left of
  * the screen if the screen cannot display the entire row at once
  */
