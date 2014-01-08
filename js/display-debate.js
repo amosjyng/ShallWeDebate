@@ -513,19 +513,29 @@ function compute_link_bezier_curve(link) {
             + pos2str(control2) + pos2str(end_pos);
 }
 
+/**
+ * Reset "next_outgoing_i" and "next_incoming_i" global variables
+ */
 function reset_globals() {
     next_outgoing_i = 0;
     next_incoming_i = 0;
+    // don't touch the offsets because "draw_graph" will handle that
 }
 
+/**
+ * Calculate the desired offset in order to center a row of cards
+ * @returns {Number} The offset needed to either center a row of cards in the
+ * middle of the screen, or to simply put the row of cards next to the left of
+ * the screen if the screen cannot display the entire row at once
+ */
 function center_cards_offset(num_cards) {
-    if (row_width(num_cards) >= window.innerWidth) {
-        return 0;
-    } else {
-        return (window.innerWidth - row_width(num_cards)) / 2;
-    }
+    return Math.max(0, (window.innerWidth - row_width(num_cards)) / 2);
 }
 
+/**
+ * Updates "top_row_offset" and "bottom_row_offset" to the necessary values in
+ * order to (when possible) center the top and bottom rows
+ */
 function center_cards() {
     top_row_offset = center_cards_offset(next_outgoing_i);
     bottom_row_offset = center_cards_offset(next_incoming_i);
