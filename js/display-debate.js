@@ -145,7 +145,7 @@ function get_other_id(relation) {
  * Asynchronously retrieve a node from the server and push it into the "nodes"
  * array. Do not call this function once a node has already been retrieved.
  * @param {number} node_id The ID of the node to retrieve
- * @param {Function} callback The callback function which, when specified, will
+ * @param {Function} [callback] The callback function which, when specified, will
  * be called with the newly retrieved node as the sole argument
  * @todo Display error message onscreen when there's a failure
  */
