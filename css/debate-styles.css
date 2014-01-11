@@ -38,12 +38,21 @@ path
 path.support
 {
 	stroke: green;
+}
 
+path.support.highlight
+{
+	stroke: #1aff1a;
 }
 
 path.oppose
 {
 	stroke: red;
+}
+
+path.oppose.highlight
+{
+	stroke: #ff1a1a;
 }
 
 switch text

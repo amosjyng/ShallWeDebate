@@ -596,7 +596,11 @@ function make_links() {
             return d.type;
         }).attr("marker-end", function(d) {
             return "url(#arrow-" + d.type + ")";
-        }).style("opacity", 0);
+        }).style("opacity", 0).on("mouseover", function () {
+            d3.select(this).classed("highlight", true);
+        }).on("mouseout", function () {
+            d3.select(this).classed("highlight", false);
+        });
 }
 
 /**
