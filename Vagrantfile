@@ -12,12 +12,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Every Vagrant virtual environment requires a box to build off of.
   config.vm.box = "precise64"
 
-  # Bootstrap script to be run upon initial setup of the box
-  config.vm.provision :shell, :path => "bootstrap.sh"
-  # don't know what this does exactly, but I'm adding it because
-  # https://github.com/mitchellh/vagrant/issues/1673
-  config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
-
   # The url from where the 'config.vm.box' box will be fetched if it
   # doesn't already exist on the user's system.
   config.vm.box_url = "http://files.vagrantup.com/precise64.box"
@@ -88,8 +82,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # path, and data_bags path (all relative to this Vagrantfile), and adding
   # some recipes and/or roles.
   #
-  # config.vm.provision :chef_solo do |chef|
-  #   chef.cookbooks_path = "../my-recipes/cookbooks"
+  config.vm.provision :chef_solo do |chef|
+    chef.cookbooks_path = "chef/cookbooks"
+    chef.add_recipe "apache2"
+    chef.add_recipe "jsdoc-toolkit"
+    chef.add_recipe "make"
   #   chef.roles_path = "../my-recipes/roles"
   #   chef.data_bags_path = "../my-recipes/data_bags"
   #   chef.add_recipe "mysql"
@@ -97,7 +94,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #
   #   # You may also specify custom JSON attributes:
   #   chef.json = { :mysql_password => "foo" }
-  # end
+  end
 
   # Enable provisioning with chef server, specifying the chef server URL,
   # and the path to the validation key (relative to this Vagrantfile).
