@@ -10,11 +10,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # please see the online documentation at vagrantup.com.
 
   # Every Vagrant virtual environment requires a box to build off of.
-  config.vm.box = "precise64-ruby1.9.3"
+  config.vm.box = "precise64"
 
   # The url from where the 'config.vm.box' box will be fetched if it
   # doesn't already exist on the user's system.
-  config.vm.box_url = "https://dl.dropbox.com/u/14292474/vagrantboxes/precise64-ruby-1.9.3-p194.box"
+  config.vm.box_url = "http://files.vagrantup.com/precise64.box"
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
@@ -77,6 +77,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #   puppet.manifests_path = "manifests"
   #   puppet.manifest_file  = "site.pp"
   # end
+
+  # http://stackoverflow.com/a/17355041/257583
+  config.vm.provision :shell, inline: 'apt-get update'
+  config.vm.provision :shell, inline: 'apt-get install -y build-essential ruby1.9.3'
+  config.vm.provision :shell, inline: 'gem install chef --version 11.8.0 --no-rdoc --no-ri'
 
   # Enable provisioning with chef solo, specifying a cookbooks path, roles
   # path, and data_bags path (all relative to this Vagrantfile), and adding
