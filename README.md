@@ -6,7 +6,15 @@ This is the source code of an [open source website](http://www.shallwedebate.com
 Setup
 -----
 
-Install [Vagrant](http://www.vagrantup.com/downloads.html), run `vagrant up` and `vagrant provision`, and go to [127.0.0.1:8080/mockup.html](http://127.0.0.1:8080/mockup.html).
+For first-time set up:
+
+1. Run `git submodule init`
+2. Run `git submodule update`
+2. Install [Vagrant](http://www.vagrantup.com/downloads.html)
+2. Run `vagrant up`
+6. Go to [127.0.0.1:8080/mockup.html](http://127.0.0.1:8080/mockup.html).
+
+To re-provision the Vagrant machine after pulling new changes, run `vagrant provision`.
 
 Note that the project directory on your host computer is linked to the `/vagrant/` directory of the Vagrant virtual machine.
 
