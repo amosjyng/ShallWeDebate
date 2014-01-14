@@ -84,6 +84,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #
   config.vm.provision :chef_solo do |chef|
     chef.cookbooks_path = "chef/cookbooks"
+    # run apt-get update first
+    chef.add_recipe "apt"
+    # install other dependencies
     chef.add_recipe "apache2"
     chef.add_recipe "jsdoc-toolkit"
     chef.add_recipe "make"
