@@ -20,6 +20,17 @@ test-result
 server.pid
 *.iml
 *.eml
+.history
+dist
+/.idea
+/*.iml
+/out
+/.idea_modules
+/.classpath
+/.project
+/RUNNING_PID
+/.settings
+
 
 # Ignore auto-generated documentation files
 js/doc
