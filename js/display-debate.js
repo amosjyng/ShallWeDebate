@@ -676,6 +676,12 @@ window.onload = function () {
         alert("Whoops, looks like some things won't be displaying correctly. Please tell us about this.");
     }
 
+    // if there's extra space, make sure graph fills entire browser window
+    if (graph_height < window.innerHeight) {
+        $("#graph").attr("height", window.innerHeight);
+        graph_height = window.innerHeight;
+    }
+
     // get our first card. todo: get first card based on what the URL is
     ajax_get_node(1, function (data) {
         current_card = data; // set current card
