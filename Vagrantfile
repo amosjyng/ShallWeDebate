@@ -87,9 +87,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # run apt-get update first
     chef.add_recipe "apt"
     # install other dependencies
-    chef.add_recipe "apache2"
     chef.add_recipe "jsdoc-toolkit"
     chef.add_recipe "make"
+    chef.add_recipe "play2"
   #   chef.roles_path = "../my-recipes/roles"
   #   chef.data_bags_path = "../my-recipes/data_bags"
   #   chef.add_recipe "mysql"
