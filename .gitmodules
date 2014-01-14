@@ -1,3 +1,6 @@
 [submodule "chef/cookbooks/apt"]
 	path = chef/cookbooks/apt
 	url = https://github.com/opscode-cookbooks/apt.git
+[submodule "chef/cookbooks/play2"]
+	path = chef/cookbooks/play2
+	url = https://github.com/njin-fr/play2.git
