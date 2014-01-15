@@ -10,7 +10,8 @@
 package("default-jdk")
 
 bash "Set up and run Play server" do
-  code << -EOH
+  user "vagrant"
+  code <<-EOH
   play compile stage
   /vagrant/target/start
   EOH

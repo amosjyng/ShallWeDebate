@@ -1,0 +1,15 @@
+{
+    "name": "play2",
+    "chef_type": "role",
+    "json_class": "Chef::Role",
+    "description": "Set up Play 2 framework installation",
+    "override_attributes": {
+        "play2": {
+            "version": "2.2.1",
+            "checksum": "08fad782828df77be24ec42afa1980bb"
+        }
+    },
+    "run_list": [
+        "recipe[play2]"
+    ]
+}

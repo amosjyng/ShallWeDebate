@@ -89,14 +89,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #
   config.vm.provision :chef_solo do |chef|
     chef.cookbooks_path = "chef/cookbooks"
+    chef.roles_path = "chef/roles"
     # run apt-get update first
     chef.add_recipe "apt"
     # install other dependencies
     chef.add_recipe "jsdoc-toolkit"
     chef.add_recipe "make"
-    chef.add_recipe "play2"
+    chef.add_role "play2"
     chef.add_recipe "debate"
-  #   chef.roles_path = "../my-recipes/roles"
   #   chef.data_bags_path = "../my-recipes/data_bags"
   #   chef.add_recipe "mysql"
   #   chef.add_role "web"
