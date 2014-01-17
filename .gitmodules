@@ -4,3 +4,6 @@
 [submodule "chef/cookbooks/play2"]
 	path = chef/cookbooks/play2
 	url = https://github.com/njin-fr/play2.git
+[submodule "chef/cookbooks/postgresql"]
+	path = chef/cookbooks/postgresql
+	url = https://github.com/hw-cookbooks/postgresql.git
