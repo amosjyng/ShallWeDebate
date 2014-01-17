@@ -1,1 +1,0 @@
-/vagrant/target/universal/stage/bin/shallwedebate > ~/debate-$(date +%s).log &
