@@ -9,6 +9,4 @@
 
 package("default-jdk")
 
-bash "Set up and run Play server" do
-  # nothing for now
-end
+FileUtils.copy '/vagrant/chef/cookbooks/debate/play.conf', '/etc/init/play.conf'
