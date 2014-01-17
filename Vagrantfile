@@ -96,6 +96,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     chef.add_recipe "jsdoc-toolkit"
     chef.add_recipe "make"
     chef.add_role "play2"
+    chef.add_recipe "postgresql"
     chef.add_recipe "debate"
   #   chef.data_bags_path = "../my-recipes/data_bags"
   #   chef.add_recipe "mysql"
