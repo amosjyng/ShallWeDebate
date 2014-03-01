@@ -1,0 +1,23 @@
+{
+    "name": "database",
+    "chef_type": "role",
+    "json_class": "Chef::Role",
+    "description": "Set up database",
+    "override_attributes": {
+        "postgresql": {
+            "version": "9.3",
+            "dir": "",
+            "password": {
+                "postgres": "dev_password"
+            },
+            "server": {
+                "packages": [
+                    "postgresql-9.3"
+                ]
+            }
+        }
+    },
+    "run_list": [
+        "recipe[postgresql::server]"
+    ]
+}
