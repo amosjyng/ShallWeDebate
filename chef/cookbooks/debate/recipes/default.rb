@@ -9,4 +9,5 @@
 
 package("default-jdk")
 
+system( "cd /vagrant; play compile stage" )
 FileUtils.copy '/vagrant/chef/cookbooks/debate/play.conf', '/etc/init/play.conf'
