@@ -106,6 +106,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #   chef.json = { :mysql_password => "foo" }
   end
 
+  # automatic restart after provision
+  config.trigger.after :provision, :execute => "vagrant reload"
+
   # Enable provisioning with chef server, specifying the chef server URL,
   # and the path to the validation key (relative to this Vagrantfile).
   #
