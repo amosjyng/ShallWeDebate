@@ -8,11 +8,9 @@ Setup
 
 For first-time set up:
 
-1. Run `git submodule init`
-2. Run `git submodule update`
-2. Install [Vagrant](http://www.vagrantup.com/downloads.html)
+1. Install [Vagrant](http://www.vagrantup.com/downloads.html)
 2. Run `vagrant up`
-6. Go to [127.0.0.1:8080/mockup.html](http://127.0.0.1:8080/mockup.html).
+3. Go to [127.0.0.1:8080/mockup.html](http://127.0.0.1:8080/).
 
 To re-provision the Vagrant machine after pulling new changes, run `vagrant provision`.
 
