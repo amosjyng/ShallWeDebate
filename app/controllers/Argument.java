@@ -9,6 +9,6 @@ public class Argument extends Controller
 {
     public static Result viewTask(Long id)
     {
-        return TODO;
+        return ok(views.html.arguments.view.render());
     }
 }
