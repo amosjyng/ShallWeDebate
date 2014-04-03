@@ -9,4 +9,5 @@ GET     /                           controllers.Application.index()
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
 # Arguments
-GET     /arguments/:id/             controllers.Argument.viewTask(id: Long)
+GET     /arguments/:id/             controllers.Argument.viewArgument(id: Long)
+POST    /arguments/                 controllers.Argument.newArgument

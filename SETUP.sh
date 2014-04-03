@@ -6,6 +6,7 @@ apt-get install -y default-jdk dos2unix unzip postgresql-client-9.1 postgresql-9
 
 # set up Postgres
 sudo -u postgres psql postgres -c "alter user postgres with password 'dev_password';"
+sudo -u postgres createdb debate
 
 # set up Play framework
 sudo -u vagrant wget -O /home/vagrant/play.zip http://downloads.typesafe.com/play/${PLAY_VERSION}/play-${PLAY_VERSION}.zip
