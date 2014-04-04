@@ -541,8 +541,12 @@ function make_cards() {
 
         // set the current_card to the node of the card that was just clicked
         current_card = d;
-        // get all the related links and nodes associated with the newly selected node
-        ajax_get_card(d);
+        if (!d.gotten) // if its relevant information hasn't been obtained already
+        {
+            // get all the related links and nodes associated with the newly selected node
+            ajax_get_card(d);
+            d.gotten = true; // mark it as already having obtained relevant info
+        }
         // redraw graph
         draw_graph();
 
