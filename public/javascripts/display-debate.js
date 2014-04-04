@@ -45,6 +45,9 @@ var relations = [];
 /** The SVG representations of all the relations */
 var links = [];
 
+/** What the different types mean */
+TYPE_MEANINGS = ["support", "oppose"];
+
 
 /**
  * Finds a node in "nodes"
@@ -179,6 +182,8 @@ function process_new_relation(new_relation) {
     // associated with a node, it may return some of the same relations
     // that have already been retrieved for another node
     if (indexOfRelation(new_relation.id) === -1) {
+        // set type to be string instead of int
+        new_relation.type = TYPE_MEANINGS[new_relation.type];
         // remove redundancies associated with nodes at either end of the
         // relation
         set_relation_nodes(new_relation);
