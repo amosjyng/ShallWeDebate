@@ -5,7 +5,7 @@
 
 create table argument (
   id                        bigint not null,
-  summary                   varchar(255),
+  summary                   varchar(140),
   constraint pk_argument primary key (id))
 ;
 

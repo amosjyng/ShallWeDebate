@@ -1,9 +1,11 @@
 package models;
 
+import org.hibernate.validator.constraints.NotEmpty;
 import play.db.ebean.*;
 import play.data.validation.Constraints.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 
 @Entity
 public class Argument extends Model
@@ -11,7 +13,7 @@ public class Argument extends Model
     @Id
     public Long id;
 
-    @Required
+    @Required @NotEmpty @Size(max = 140)
     public String summary;
 
     @SuppressWarnings("unchecked")
@@ -19,7 +21,7 @@ public class Argument extends Model
 
     public static Argument get(Long id)
     {
-        return null; // TODO
+        return find.ref(id);
     }
 
     public static void create(Argument argument)
