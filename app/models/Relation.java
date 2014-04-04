@@ -5,6 +5,8 @@ import play.db.ebean.Model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class Relation extends Model
@@ -12,11 +14,13 @@ public class Relation extends Model
     @Id
     public Long Id;
 
-    @Required
+    @Required @NotNull
     public Argument from;
-    @Required
-    public Long toId;
-    @Required
+    @ManyToOne
+    public Argument toArgument;
+    @ManyToOne
+    public Relation toRelation;
+    @Required @NotNull
     public Integer type;
 
     @SuppressWarnings("unchecked")
