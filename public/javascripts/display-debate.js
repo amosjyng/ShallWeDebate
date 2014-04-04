@@ -152,9 +152,12 @@ function get_other_id(relation) {
 function ajax_get_node(node_id, callback) {
     $.ajax({
         // use mock JSON files for now, until backend is ready
-        url: "mock_ajax/" + node_id + ".json",
+        url: "/arguments/" + node_id + "/",
         type: "GET",
         dataType: "json",
+        headers: {
+            Accept: "application/json"
+        }
     }).done(function (data) {
         // initialized arrays of incoming and outgoing objects for
         // "set_incoming_and_outgoing" to take care of later

@@ -12,17 +12,13 @@ public class Argument extends Controller
     public static Result viewArgument(Long id)
     {
 
-        if (false && request().accepts("text/html"))
+        if (request().accepts("text/html"))
         {
             return ok(views.html.arguments.view.render());
         }
         else
         {
             models.Argument argument = models.Argument.get(id);
-            if (argument == null)
-            {
-                return Controller.notFound();
-            }
 
             return ok(Json.toJson(argument));
         }
