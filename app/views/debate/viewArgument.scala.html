@@ -1,0 +1,31 @@
+<html>
+<head>
+    <title>Debate Graph Mockup</title>
+    <link rel="stylesheet" type="text/css" href="/assets/stylesheets/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/assets/stylesheets/bootstrap-theme.min.css">
+    <link rel="stylesheet" type="text/css" href="/assets/stylesheets/debate-styles.css">
+    <script src="/assets/javascripts/jquery-2.0.3.min.js"></script>
+    <script src="/assets/javascripts/bootstrap.min.js"></script>
+    <script src="/assets/javascripts/d3.v3.min.js"></script>
+    <script src="/assets/javascripts/display-debate.js"></script>
+</head>
+
+<body>
+<div id="graph_container">
+    <svg id="graph" preserveAspectRatio="none" width="100%" height="808">
+        <defs>
+            <marker id="arrow-support" viewBox="0 0 10 10" refX="0" refY="5"
+                    markerUnits="strokeWidth" orient="auto" fill="green"
+                    markerWidth="3">
+                <polyline points="0,0 10,5 0,10 "></polyline>
+            </marker>
+            <marker id="arrow-oppose" viewBox="0 0 10 10" refX="0" refY="5"
+                    markerUnits="strokeWidth" orient="auto" fill="red"
+                    markerWidth="3">
+                <polyline points="0,0 10,5 0,10 "></polyline>
+            </marker>
+        </defs>
+    </svg>
+</div>
+</body>
+</html>

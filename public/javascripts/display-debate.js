@@ -45,16 +45,19 @@ var relations = [];
 /** The SVG representations of all the relations */
 var links = [];
 
+/** What the different types mean */
+TYPE_MEANINGS = ["support", "oppose"];
+
 
 /**
- * Finds the node with node_id in "nodes"
- * @param {number} node_id The ID of the node which you wish to search for
+ * Finds a node in "nodes"
+ * @param {Node} node The node which you wish to search for
  * @returns {number} If found, the position of the node in the "nodes" array.
  * If not found, -1.
  */
-function indexOfNode(node_id) {
+function indexOfNode(node) {
     for (i = 0; i < nodes.length; i++) {
-        if (nodes[i].id === node_id) {
+        if (nodes[i].id === node.id) {
             return i;
         }
     }
@@ -79,66 +82,58 @@ function indexOfRelation(relation_id) {
 /**
  * Adds incoming and outgoing nodes directly to the "to" and "from" nodes at
  * the opposite ends of a relation. This is for convenience.
- * @param {Relation} relation A relation which should already have its IDs
- * at both ends replaced by actual node objects using "set_relation_id". If
- * this is not the case, however, no harm is done as this funtion checks for
- * that before taking action.
+ * @param {Relation} relation The relation to be modified
  */
 function set_incoming_and_outgoing(relation) {
-    // See if node IDs are already replaced by "set_relation_id"
-    if (get_other_id(relation) === null) {
-        // add the "to" node of this relation to the set of outgoing nodes
-        // relative to the "from" node of this relation
-        relation.from.outgoing.push(relation.to);
-        // add the "to" node of this relation to the set of outgoing nodes
-        // relative to the "from" node of this relation
-        relation.to.incoming.push(relation.from);
-    }
+    // add the "to" node of this relation to the set of outgoing nodes
+    // relative to the "from" node of this relation
+    relation.from.outgoing.push(relation.toArgument);
+    // add the "to" node of this relation to the set of outgoing nodes
+    // relative to the "from" node of this relation
+    relation.toArgument.incoming.push(relation.from);
 }
 
 /**
- * Given a node, replaces the node_id in the relation with the actual node.
- * If appropriate, modifies the incoming and outgoing arrays of the nodes
- * at both ends of the relation.
+ * Sets up incoming and outgoing arrays for the node, and adds it to the
+ * global list of nodes
+ * @param {Node} new_node The new node to be set up
+ */
+function add_node(new_node) {
+    // initialize arrays of incoming and outgoing objects for
+    // "set_incoming_and_outgoing" to take care of later
+    new_node.incoming = [];
+    new_node.outgoing = [];
+    // add new node to array of nodes
+    nodes.push(new_node);
+}
+
+/**
+ * Given a relationship, for each node, either replaces it by the
+ * existing one in the global list of nodes, or adds it to the global
+ * set of nodes. Also modifies the incoming and outgoing arrays of the
+ * nodes at both ends of the relation.
  *
  * This is for convenience, to prevent searching the entire set of nodes
  * every time.
- * @param {Relation} relation A relation which has at least one end which is
- * just a node's ID and not the actual node.
- * @param {Node} node One of the nodes at either side of the relation. One of
- * the ends of the relation should be the ID of this node.
+ * @param {Relation} relation The new relation that is to be modified
  */
-function set_relation_id(relation, node) {
-    // Check if it's the "from" end of a relation that needs to be replaced
-    if (relation.from === node.id) {
-        relation.from = node; // if so, replace it
-    } else if (relation.to === node.id) { // else check if it's the "to" end
-        relation.to = node; // if so, replace it
-    } else { // otherwise this function should not be called. Log the error
-        console.error("Node " + node.id + " not found in relation " + relation.id);
+function set_relation_nodes(relation) {
+    node_index = indexOfNode(relation.from);
+    if (node_index === -1) { // if "from" doesn't yet exist,
+        add_node(relation.from); // set it up
+    } else { // otherwise, replace it with current node
+        relation.from = nodes[node_index];
     }
 
-    // Modify incoming and outgoing arrays of "from" and "to" nodes, if appropriate.
+    var node_index = indexOfNode(relation.toArgument);
+    if (node_index === -1) { // if "to" doesn't yet exist,
+        add_node(relation.toArgument); // set it up
+    } else { // otherwise, replace it with current node
+        relation.toArgument = nodes[node_index];
+    }
+
+    // Modify incoming and outgoing arrays of "from" and "to" nodes
     set_incoming_and_outgoing(relation);
-}
-
-/**
- * Given a relation which already has one of the IDs at either end replaced
- * with an actual node, finds the ID that is yet to be replaced.
- * @param {Relation} relation Should be a relation which has already had
- * "set_relation_id" called on it at least once already.
- * @returns {number} The ID which has not yet been replaced, or null if both
- * IDs have been replaced by actual objects.
- */
-function get_other_id(relation) {
-    // see if the "from" end is still an ID
-    if (typeof relation.from === 'number') {
-        return relation.from; // if so, return it
-    } else if (typeof relation.to === 'number') { // else check "to" end
-        return relation.to; // and if still an ID, return it
-    } else { // otherwise both IDs are replaced
-        return null;
-    }
 }
 
 /**
@@ -151,75 +146,49 @@ function get_other_id(relation) {
  */
 function ajax_get_node(node_id, callback) {
     $.ajax({
-        // use mock JSON files for now, until backend is ready
-        url: "mock_ajax/" + node_id + ".json",
+        url: "/arguments/" + node_id + "/",
         type: "GET",
         dataType: "json",
+        headers: {
+            Accept: "application/json"
+        }
     }).done(function (data) {
-        // initialized arrays of incoming and outgoing objects for
-        // "set_incoming_and_outgoing" to take care of later
-        data.incoming = [];
-        data.outgoing = [];
-        // add new piece of data to array of nodes
-        nodes.push(data);
+        add_node(data);
+        
         // if callback is defined, call it with the new node
         if (typeof callback !== 'undefined') {
             callback(data);
         }
     }).fail(function (jqXHR, textStatus, errorThrown) {
-        // todo: display error message to user
-        console.log("Failed to get node " + node_id + ": " + errorThrown);
+        alert("Failed to get argument " + node_id + ": " + errorThrown);
     });
 }
 
 /**
- * Get callback function for retrieving nodes associated with a "new_relation"
- * @param {Relation} new_relation The newly-retrieved relation which still has
- * IDs at both ends instead of objects
- * @param {Node} existing_node The existing node whose ID must already be at
- * one end of the "new_relation"
- * @returns {Function} A function that when called, will replaced both ends of
- * "new_relation" with the appropriate object, making another asynchronous GET
- * request for a node if necessary
+ * Adds "new_relation" to the global list of relations, if it doesn't already
+ * exist. If it's a new relation, either adds its nodes to the global list of
+ * arguments/relations, or else replaces its nodes with those from the global
+ * list.
+ * @param {Relation} new_relation The newly-retrieved relation
+ * @param {Node} existing_node The existing node which was used to retrieve
+ * the new relation.
  */
-function ajax_get_relation_nodes_function(new_relation, existing_node) {
-    // This function is necessary if you want to bind variables in the function
-    // to different values for different iterations of a for loop.
-    // See http://stackoverflow.com/a/750506/257583
-    return function () {
-        // first check if this relation has already been retrieved
-        //
-        // unlike for nodes, we can't simply not retrieve relations that are
-        // already retrieved. Since two different nodes would be attached to
-        // the same relation, when we ask the server for all relations
-        // associated with a node, it may return some of the same relations
-        // that have already been retrieved
-        if (indexOfRelation(new_relation.id) === -1) {
-            // replace the ID of one end of the relationship with the actual node
-            set_relation_id(new_relation, existing_node);
-            // find what the ID of the other unreplaced end is
-            var missing_id = get_other_id(new_relation);
-            // find where the node with that ID is
-            var missing_index = indexOfNode(missing_id);
-            // if the node with that ID is not found, just retrieve it
-            if (missing_index === -1) {
-                ajax_get_node(missing_id, function (new_node) {
-                    // and once retrieved, replace the other ID with it
-                    set_relation_id(new_relation, new_node);
-                    // add this relation to the array of currently retrieved
-                    // relations
-                    relations.push(new_relation);
-                    // and redraw the graph
-                    draw_graph();
-                    // note: could this add a relation twice?
-                })
-            } else { // node already exists, just use it
-                // replace other ID with actual object
-                set_relation_id(new_relation, nodes[missing_index]);
-                // add this to the array of currently retrieved relations
-                relations.push(new_relation);
-            }
-        }
+function process_new_relation(new_relation) {
+    // first check if this relation has already been retrieved
+    //
+    // unlike for nodes, we can't simply not retrieve relations that are
+    // already retrieved. Since two different nodes would be attached to
+    // the same relation, when we ask the server for all relations
+    // associated with a node, it may return some of the same relations
+    // that have already been retrieved for another node
+    if (indexOfRelation(new_relation.id) === -1) {
+        // set type to be string instead of int
+        new_relation.type = TYPE_MEANINGS[new_relation.type];
+        // remove redundancies associated with nodes at either end of the
+        // relation
+        set_relation_nodes(new_relation);
+        // add this to the array of currently retrieved relations
+        relations.push(new_relation);
     }
 }
 
@@ -231,20 +200,18 @@ function ajax_get_relation_nodes_function(new_relation, existing_node) {
  */
 function ajax_get_relations_of(node) {
     $.ajax({
-        // use mock JSON files until backend is ready
-        url: "mock_ajax/arg_" + node.id + "_relations.json",
+        url: "/arguments/" + node.id + "/relations/",
         type: "GET",
         dataType: "json",
+        headers: {
+            Accept: "application/json"
+        }
     }).done(function (data) {
-        // collect all callback functions first
-        ajax_relation_nodes_functions = []
         for (var i = 0; i < data.length; i++) {
-            ajax_relation_nodes_functions.push(ajax_get_relation_nodes_function(data[i], node));
+            process_new_relation(data[i]);
         }
-        // then call each of those callback functions
-        for (var i = 0; i < ajax_relation_nodes_functions.length; i++) {
-            ajax_relation_nodes_functions[i]();
-        }
+
+        draw_graph();
     }).fail(function (jqXHR, textStatus, errorThrown) {
         // todo: display error message to user
         console.log("Failed to get relations of node " + node.id + ": " + errorThrown);
@@ -297,7 +264,7 @@ function node_visible(node) {
  * @returns Whether or not both ends of the relation are visible
  */
 function relation_visible(relation) {
-    return node_visible(relation.from) && node_visible(relation.to);
+    return node_visible(relation.from) && node_visible(relation.toArgument);
 }
 
 /**
@@ -494,7 +461,7 @@ function pos2str(pos) {
 function compute_link_bezier_curve(link) {
     // for convenience, define these two variables for each end of the link
     var from = link.from;
-    var to = link.to;
+    var to = link.toArgument;
     // calculate the start and end positions of the Bezier curve. It should
     // start at the top-middle of the "from" card and end at the bottom-middle
     // of the "to" card (under the current scheme, "to" cards are always above
@@ -683,7 +650,7 @@ window.onload = function () {
     }
 
     // get our first card. todo: get first card based on what the URL is
-    ajax_get_node(1, function (data) {
+    ajax_get_node(window.location.pathname.split("/")[2], function (data) {
         current_card = data; // set current card
         draw_graph(); // and let "draw_graph" take care of the rest
 
