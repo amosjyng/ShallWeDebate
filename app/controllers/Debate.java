@@ -15,7 +15,7 @@ public class Debate extends Controller
 
         if (request().accepts("text/html"))
         {
-            return ok(views.html.arguments.view.render());
+            return ok(views.html.debate.viewArgument.render());
         }
         else
         {
