@@ -11,6 +11,7 @@ create table argument (
 
 create table relation (
   id                        bigint not null,
+  from_id                   bigint not null,
   to_argument_id            bigint,
   to_relation_id            bigint,
   type                      integer not null,
@@ -21,10 +22,12 @@ create sequence argument_seq;
 
 create sequence relation_seq;
 
-alter table relation add constraint fk_relation_toArgument_1 foreign key (to_argument_id) references argument (id);
-create index ix_relation_toArgument_1 on relation (to_argument_id);
-alter table relation add constraint fk_relation_toRelation_2 foreign key (to_relation_id) references relation (id);
-create index ix_relation_toRelation_2 on relation (to_relation_id);
+alter table relation add constraint fk_relation_from_1 foreign key (from_id) references argument (id);
+create index ix_relation_from_1 on relation (from_id);
+alter table relation add constraint fk_relation_toArgument_2 foreign key (to_argument_id) references argument (id);
+create index ix_relation_toArgument_2 on relation (to_argument_id);
+alter table relation add constraint fk_relation_toRelation_3 foreign key (to_relation_id) references relation (id);
+create index ix_relation_toRelation_3 on relation (to_relation_id);
 
 
 
