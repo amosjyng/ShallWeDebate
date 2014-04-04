@@ -170,8 +170,7 @@ function ajax_get_node(node_id, callback) {
             callback(data);
         }
     }).fail(function (jqXHR, textStatus, errorThrown) {
-        // todo: display error message to user
-        console.log("Failed to get node " + node_id + ": " + errorThrown);
+        alert("Failed to get argument " + node_id + ": " + errorThrown);
     });
 }
 
