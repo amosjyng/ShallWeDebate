@@ -1,6 +1,32 @@
 # arguments
 - !!models.Argument
-    summary: >
+    summary: >-
             Why a max length of 140 characters? Well, it sure as hell works
             for Twitter. Seems like just enough to pack some good info
             into an argument.
+- !!models.Argument
+    summary: >-
+            Taxation is theft.
+- !!models.Argument
+    summary: >-
+            You pay taxes in exchange for voluntarily living in a country and
+            using its public services.
+- !!models.Argument
+    summary: >-
+            You were born involuntarily in a country.
+- !!models.Argument
+    summary: >-
+            If you don't like living in a country and paying its taxes, you
+            are free to leave.
+- !!models.Argument
+    summary: >-
+            Not everyone has the financial resources to uproot their family
+            and leave a country.
+- !!models.Argument
+    summary: >-
+            There is no place to leave to. There is no nation that really
+            recognizes individual rights anymore.
+- !!models.Argument
+    summary: >-
+            It's not a freedom to leave, it's a requirement to leave unless
+            the individual submits to others' wills.
