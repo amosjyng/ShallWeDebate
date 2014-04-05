@@ -547,6 +547,10 @@ function make_cards() {
         // no need to reset the top and bottom row offsets to zero
         // because that's already done in "draw_graph"
 
+        if (current_card != d) { // if different card
+            // change URL to reflect newly selected card
+            window.history.pushState(null, "what is this", argument_address(d.id));
+        }
         // set the current_card to the node of the card that was just clicked
         current_card = d;
         if (!d.gotten) // if its relevant information hasn't been obtained already
@@ -555,8 +559,6 @@ function make_cards() {
             ajax_get_card(d);
             d.gotten = true; // mark it as already having obtained relevant info
         }
-        // change URL to reflect newly selected card
-        window.history.pushState(null, "what is this", argument_address(d.id));
         // redraw graph
         draw_graph();
     })
