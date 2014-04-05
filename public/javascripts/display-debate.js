@@ -663,7 +663,7 @@ window.onload = function () {
         graph_height = window.innerHeight;
     }
 
-    // get our first card. todo: get first card based on what the URL is
+    // get our first card
     ajax_get_node(window.location.pathname.split("/")[2], function (data) {
         current_card = data; // set current card
         draw_graph(); // and let "draw_graph" take care of the rest
