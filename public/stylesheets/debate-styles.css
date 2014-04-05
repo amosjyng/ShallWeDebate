@@ -51,3 +51,12 @@ switch text
 	font-size: 20px;
 	fill: red;
 }
+
+img#spinner
+{
+	position: fixed;
+	top: 5px;
+	right: 5px;
+	width: 75px;
+	height: auto;
+}
