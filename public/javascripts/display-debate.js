@@ -607,6 +607,15 @@ window.onpopstate = function(event) {
     change_current_card_id(argument_id_of_address());
 }
 
+// Functions to show/hide spinner
+$(document).ajaxStart(function(){
+    $("#spinner").show();
+});
+
+$(document).ajaxStop(function(){
+    $("#spinner").hide();
+});
+
 /**
  * Create link representations of all unrepresented relations
  */
