@@ -139,9 +139,20 @@ function set_relation_nodes(relation) {
 /**
  * Gives the URL to the node with the specified ID
  * @param {number} node_id The ID of the node whose URL you want
+ * @returns The URL to a page displaying that Argument
  */
 function argument_address(node_id) {
     return "/arguments/" + node_id + "/";
+}
+
+/**
+ * From the current address bar URL, figure out which Argument we're
+ * supposed to be looking at
+ * @returns The Argument ID of the argument that's currently in the address
+ * bar
+ */
+function argument_id_of_address() {
+    return parseInt(window.location.pathname.split("/")[2]);
 }
 
 /**
@@ -517,6 +528,44 @@ function center_cards() {
 }
 
 /**
+ * Move the window to a newly selected card
+ * @param {Node} The node that is to be the newly selected card
+ */
+function change_current_card(d) {
+    // no need to reset the top and bottom row offsets to zero
+    // because that's already done in "draw_graph"
+
+    // set the current_card to the node of the card that was just clicked
+    current_card = d;
+    if (!d.gotten) // if its relevant information hasn't been obtained already
+    {
+        // get all the related links and nodes associated with the newly selected node
+        ajax_get_card(d);
+        d.gotten = true; // mark it as already having obtained relevant info
+    }
+    // redraw graph
+    draw_graph();
+}
+
+/**
+ * If no card with the specified ID exists, fetches it from the server. Gets either new
+ * card or existing card with that ID and centers it in the graph.
+ * @param {Number} ID The ID of the card to be centered on
+ */
+function change_current_card_id(id) {
+    var node_index = indexOfNode({id: id});
+    if (node_index === -1) {
+        console.log("new one");
+        ajax_get_node(id, function (data) {
+            change_current_card(data);
+        });
+    } else {
+        console.log("existing");
+        change_current_card(nodes[node_index]);
+    }
+}
+
+/**
  * Create card representations of all unrepresented nodes.
  */
 function make_cards() {
@@ -544,24 +593,20 @@ function make_cards() {
         // stop here if the click was merely a drag
         if (d3.event.defaultPrevented) return;
 
-        // no need to reset the top and bottom row offsets to zero
-        // because that's already done in "draw_graph"
-
         if (current_card != d) { // if different card
             // change URL to reflect newly selected card
             window.history.pushState(null, "what is this", argument_address(d.id));
         }
-        // set the current_card to the node of the card that was just clicked
-        current_card = d;
-        if (!d.gotten) // if its relevant information hasn't been obtained already
-        {
-            // get all the related links and nodes associated with the newly selected node
-            ajax_get_card(d);
-            d.gotten = true; // mark it as already having obtained relevant info
-        }
-        // redraw graph
-        draw_graph();
+        
+        change_current_card(d); // always center graph on new card
     })
+}
+
+/**
+ * When back button is clicked on the page, centers graph on previously selected card
+ */
+window.onpopstate = function(event) {
+    change_current_card_id(argument_id_of_address());
 }
 
 /**
@@ -664,10 +709,5 @@ window.onload = function () {
     }
 
     // get our first card
-    ajax_get_node(window.location.pathname.split("/")[2], function (data) {
-        current_card = data; // set current card
-        draw_graph(); // and let "draw_graph" take care of the rest
-
-        ajax_get_relations_of(nodes[0]); // get related cards as well
-    });
+    // it'll already be retrieved by window.onpopstate function, which is called even on initial page load
 }
