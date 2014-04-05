@@ -137,6 +137,14 @@ function set_relation_nodes(relation) {
 }
 
 /**
+ * Gives the URL to the node with the specified ID
+ * @param {number} node_id The ID of the node whose URL you want
+ */
+function argument_address(node_id) {
+    return "/arguments/" + node_id + "/";
+}
+
+/**
  * Asynchronously retrieve a node from the server and push it into the "nodes"
  * array. Do not call this function once a node has already been retrieved.
  * @param {number} node_id The ID of the node to retrieve
@@ -146,7 +154,7 @@ function set_relation_nodes(relation) {
  */
 function ajax_get_node(node_id, callback) {
     $.ajax({
-        url: "/arguments/" + node_id + "/",
+        url: argument_address(node_id),
         type: "GET",
         dataType: "json",
         headers: {
@@ -200,7 +208,7 @@ function process_new_relation(new_relation) {
  */
 function ajax_get_relations_of(node) {
     $.ajax({
-        url: "/arguments/" + node.id + "/relations/",
+        url: argument_address(node.id) + "relations/",
         type: "GET",
         dataType: "json",
         headers: {
@@ -547,10 +555,10 @@ function make_cards() {
             ajax_get_card(d);
             d.gotten = true; // mark it as already having obtained relevant info
         }
+        // change URL to reflect newly selected card
+        window.history.pushState(null, "what is this", argument_address(d.id));
         // redraw graph
         draw_graph();
-
-        // todo: change URL once new card is selected
     })
 }
 
