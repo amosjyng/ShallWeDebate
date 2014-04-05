@@ -555,12 +555,10 @@ function change_current_card(d) {
 function change_current_card_id(id) {
     var node_index = indexOfNode({id: id});
     if (node_index === -1) {
-        console.log("new one");
         ajax_get_node(id, function (data) {
             change_current_card(data);
         });
     } else {
-        console.log("existing");
         change_current_card(nodes[node_index]);
     }
 }
