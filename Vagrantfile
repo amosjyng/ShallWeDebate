@@ -23,9 +23,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.provision "shell", path: "SETUP.sh"
 
-  # automatic restart after provision
-  config.trigger.after :provision, :execute => "vagrant reload"
-
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
   # config.vm.network :private_network, ip: "192.168.33.10"
