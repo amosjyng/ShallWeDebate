@@ -15,6 +15,4 @@ rm /home/vagrant/play.zip
 echo "export PLAY_VERSION=\"${PLAY_VERSION}\"" >> /home/vagrant/.bashrc
 PATH=$PATH:/home/vagrant/play-${PLAY_VERSION}
 echo "export PATH=$PATH" >> /home/vagrant/.bashrc
-cd /vagrant
-sudo -u vagrant /home/vagrant/play-${PLAY_VERSION}/play compile stage
 dos2unix -n /vagrant/play.conf /etc/init/play.conf
