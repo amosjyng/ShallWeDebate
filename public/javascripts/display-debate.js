@@ -8,6 +8,8 @@ var half_card_width = card_width / 2;
 var half_card_height = card_height / 2;
 /** Spacing between adjacent cards in the graph */
 var card_spacing = 10;
+/** Height of toolbar on cards */
+var toolbar_height = 30;
 
 
 /** Index of the next outgoing node (relative to the current node) to be
@@ -384,7 +386,7 @@ function y_pos(node) {
  * @returns The y-coordinate of the toolbar of that node
  */
  function y_pos_toolbar(node) {
-    return y_pos(node) + (card_height - 30);
+    return y_pos(node) + (card_height - toolbar_height);
  }
 
 /**
@@ -608,7 +610,7 @@ function make_cards() {
         change_current_card(d); // always center graph on new card
     })
     // add toolbar
-    new_cards.append("rect").attr("width", card_width).attr("height", 30)
+    new_cards.append("rect").attr("width", card_width).attr("height", toolbar_height)
         .classed("toolbar", true);
 }
 
