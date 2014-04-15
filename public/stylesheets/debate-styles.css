@@ -15,6 +15,12 @@ g.argument rect
 	stroke-width: 1;
 }
 
+g.argument rect.toolbar
+{
+	stroke: #0F0F0F;
+	fill: #0F0F0F;
+}
+
 div.summary
 {
 	padding: 15px;

@@ -379,6 +379,15 @@ function y_pos(node) {
 }
 
 /**
+ * Find the y-coordinate of a node's toolbar.
+ * @param {Node} node The node in question
+ * @returns The y-coordinate of the toolbar of that node
+ */
+ function y_pos_toolbar(node) {
+    return y_pos(node) + (card_height - 30);
+ }
+
+/**
  * How far left (in pixels) can you move the top row?
  * @returns {number} The most negative value that top_row_offset can take on
  * @todo Account for scrollbars
@@ -598,6 +607,9 @@ function make_cards() {
         
         change_current_card(d); // always center graph on new card
     })
+    // add toolbar
+    new_cards.append("rect").attr("width", card_width).attr("height", 30)
+        .classed("toolbar", true);
 }
 
 /**
@@ -661,6 +673,8 @@ function draw_graph(center, transition_time) {
     // transition cards to their new positions within transition_time
     d3.selectAll("g rect").transition().duration(transition_time)
         .attr("x", x_pos).attr("y", y_pos).style("opacity", 1);
+    d3.selectAll("g rect.toolbar").transition().duration(transition_time)
+        .attr("x", x_pos).attr("y", y_pos_toolbar);
     // Can't select for foreignObject directly due to
     // http://stackoverflow.com/a/11743721/257583
     // also, doesn't matter if the text is opaque or not since it's the
