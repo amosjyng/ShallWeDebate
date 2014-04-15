@@ -717,4 +717,6 @@ window.onload = function () {
 
     // get our first card
     // it'll already be retrieved by window.onpopstate function, which is called even on initial page load
+    // apparently there's a Chrome and Safari bug that prevents this from happening
+    window.onpopstate()
 }
