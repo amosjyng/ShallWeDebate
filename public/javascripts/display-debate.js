@@ -584,7 +584,7 @@ function make_cards() {
     new_cards = cards.enter().append("g").classed("argument", true).attr("cursor", "pointer");
     // create background rectangle for the cards
     new_cards.append("rect").attr("width", card_width).attr("height", card_height)
-                .style("opacity", 0).call(drag);
+                .classed("card", true).style("opacity", 0).call(drag);
     // create foreignObject containing node text
     var switch_objects = new_cards.append("switch").call(drag);
     switch_objects.append("foreignObject").classed("foreign-object", true)
@@ -665,7 +665,7 @@ function draw_graph(center, transition_time) {
 
     // recalculate logical positions for each card
     reset_globals();
-    d3.selectAll("g rect").each(determine_i);
+    d3.selectAll("g rect.card").each(determine_i);
 
     // if specified, re-center top and bottom rows of cards
     if (center) {
