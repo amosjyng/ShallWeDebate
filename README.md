@@ -9,7 +9,7 @@ Setup
 For first-time set up:
 
 1. Install [Vagrant](http://www.vagrantup.com/downloads.html)
-2. Run `vagrant up; vagrant reload`
+2. Run `vagrant up; vagrant reload`. You may have to wait for a few minutes after the command appears to have finished.
 3. Go to [127.0.0.1:8080/mockup.html](http://127.0.0.1:8080/).
 
 To re-provision the Vagrant machine after pulling new changes, run `vagrant provision`.

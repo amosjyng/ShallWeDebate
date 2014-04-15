@@ -12,7 +12,8 @@ sudo -u postgres createdb debate
 sudo -u vagrant wget -O /home/vagrant/play.zip http://downloads.typesafe.com/play/${PLAY_VERSION}/play-${PLAY_VERSION}.zip
 sudo -u vagrant unzip /home/vagrant/play.zip -d /home/vagrant
 rm /home/vagrant/play.zip
+mv "/home/vagrant/play-${PLAY_VERSION}" /home/vagrant/play
 echo "export PLAY_VERSION=\"${PLAY_VERSION}\"" >> /home/vagrant/.bashrc
-PATH=$PATH:/home/vagrant/play-${PLAY_VERSION}
+PATH=$PATH:/home/vagrant/play
 echo "export PATH=$PATH" >> /home/vagrant/.bashrc
-dos2unix -n /vagrant/play.conf /etc/init/play.conf
+dos2unix -n /vagrant/play.conf /etc/init/start-play-up.conf
