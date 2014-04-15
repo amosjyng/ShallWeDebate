@@ -611,7 +611,14 @@ function make_cards() {
     })
     // add toolbar
     new_cards.append("rect").attr("width", card_width).attr("height", toolbar_height)
-        .classed("toolbar", true);
+        .classed("toolbar", true).attr("opacity", 0);
+    // define action when card is hovered over
+    new_cards.on("mouseenter", function (d) {
+        d3.select(this).select("rect.toolbar").transition().attr("opacity", 1);
+    });
+    new_cards.on("mouseleave", function (d) {
+        d3.select(this).select("rect.toolbar").transition().attr("opacity", 0);
+    });
 }
 
 /**
