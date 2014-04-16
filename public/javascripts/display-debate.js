@@ -570,7 +570,7 @@ function change_current_card_id(id) {
  */
 function make_cards() {
     // bind node data to cards
-    cards = d3.select("svg#graph").selectAll("svg").data(nodes);
+    cards = d3.select("svg#graph").selectAll("svg.argument").data(nodes);
     // add new card representations of nodes
     new_cards = cards.enter().append("svg").classed("argument", true)
         .attr("cursor", "pointer").attr("opacity", 0).call(drag);
@@ -665,7 +665,7 @@ function draw_graph(center, transition_time) {
 
     // recalculate logical positions for each card
     reset_globals();
-    d3.selectAll("svg rect.card").each(determine_i);
+    d3.selectAll("svg.argument").each(determine_i);
 
     // if specified, re-center top and bottom rows of cards
     if (center) {
