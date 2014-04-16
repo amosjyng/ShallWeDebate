@@ -9,7 +9,7 @@ svg.argument
 
 svg.argument rect
 {
-	stroke: #1B0071;
+	stroke: none;
 	fill: #ECE6FF;
 	shape-rendering: crispEdges;
 	stroke-width: 1;
@@ -17,8 +17,16 @@ svg.argument rect
 
 svg.toolbar rect
 {
-	stroke: #0F0F0F;
-	fill: #0F0F0F;
+	stroke: none;
+	fill: #555;
+}
+
+svg.toolbar svg text
+{
+	fill: #DDD;
+	font-size: 16px;
+	text-anchor: middle;
+	letter-spacing: 2;
 }
 
 div.summary

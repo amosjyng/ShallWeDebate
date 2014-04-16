@@ -602,9 +602,9 @@ function make_cards() {
         change_current_card(d); // always center graph on new card
     })
     // add toolbar
-    var toolbar = new_cards.append("svg").attr("y", card_height - toolbar_height)
-        .classed("toolbar", true).attr("opacity", 0);
-    toolbar.append("rect").attr("width", card_width).attr("height", toolbar_height);
+    var toolbar = new_cards.append("svg").classed("toolbar", true)
+        .attr("width", card_width).attr("height", toolbar_height)
+        .attr("y", card_height - toolbar_height).attr("opacity", 0);
     // define action when card is hovered over
     new_cards.on("mouseenter", function (d) {
         d3.select(this).select("svg.toolbar").transition().attr("opacity", 1);
@@ -612,6 +612,11 @@ function make_cards() {
     new_cards.on("mouseleave", function (d) {
         d3.select(this).select("svg.toolbar").transition().attr("opacity", 0);
     });
+    // add buttons to toolbar
+    var share_button = toolbar.append("svg");
+    share_button.append("rect").attr("width", card_width).attr("height", toolbar_height);
+    share_button.append("text").attr("x", card_width / 2).attr("y", toolbar_height - 8)
+        .text("SHARE")
 }
 
 /**
