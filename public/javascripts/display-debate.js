@@ -581,12 +581,13 @@ function make_cards() {
     // bind node data to cards
     cards = d3.select("svg#graph").selectAll("svg").data(nodes);
     // add new card representations of nodes
-    new_cards = cards.enter().append("svg").classed("argument", true).attr("cursor", "pointer");
+    new_cards = cards.enter().append("svg").classed("argument", true)
+        .attr("cursor", "pointer").attr("opacity", 0).call(drag);
     // create background rectangle for the cards
     new_cards.append("rect").attr("width", card_width).attr("height", card_height)
-                .classed("card", true).style("opacity", 0).call(drag);
+                .classed("card", true);
     // create foreignObject containing node text
-    var switch_objects = new_cards.append("switch").call(drag);
+    var switch_objects = new_cards.append("switch");
     switch_objects.append("foreignObject").classed("foreign-object", true)
             .attr("requiredFeatures", "http://www.w3.org/TR/SVG11/feature#Extensibility")
             .attr("width", card_width).attr("height", card_height)
@@ -611,7 +612,7 @@ function make_cards() {
     })
     // add toolbar
     new_cards.append("rect").attr("width", card_width).attr("height", toolbar_height)
-        .classed("toolbar", true).attr("opacity", 0);
+        .attr("y", card_height - toolbar_height).classed("toolbar", true).attr("opacity", 0);
     // define action when card is hovered over
     new_cards.on("mouseenter", function (d) {
         d3.select(this).select("rect.toolbar").transition().attr("opacity", 1);
@@ -680,16 +681,8 @@ function draw_graph(center, transition_time) {
     }
 
     // transition cards to their new positions within transition_time
-    d3.selectAll("svg rect").transition().duration(transition_time)
+    d3.selectAll("svg.argument").transition().duration(transition_time)
         .attr("x", x_pos).attr("y", y_pos).style("opacity", 1);
-    d3.selectAll("svg rect.toolbar").transition().duration(transition_time)
-        .attr("x", x_pos).attr("y", y_pos_toolbar);
-    // Can't select for foreignObject directly due to
-    // http://stackoverflow.com/a/11743721/257583
-    // also, doesn't matter if the text is opaque or not since it's the
-    // same color as the background
-    d3.selectAll(".foreign-object").transition().duration(transition_time)
-        .attr("x", x_pos).attr("y", y_pos);
 
     // for the record, set whether the card is current/outgoing/incoming so
     // that the next time this is called, the x_pos and y_pos functions know
