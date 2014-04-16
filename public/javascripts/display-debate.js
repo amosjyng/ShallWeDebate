@@ -642,7 +642,7 @@ function make_links() {
  */
 function draw_graph(center, transition_time) {
     // ensure default values for optional arguments
-    center = typeof center === 'undefined' ? true : transition_time;
+    center = typeof center === 'undefined' ? true : center;
     transition_time = typeof transition_time === 'undefined' ? 500 : transition_time;
 
     // bring in the new cards and links
