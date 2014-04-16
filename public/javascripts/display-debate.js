@@ -381,15 +381,6 @@ function y_pos(node) {
 }
 
 /**
- * Find the y-coordinate of a node's toolbar.
- * @param {Node} node The node in question
- * @returns The y-coordinate of the toolbar of that node
- */
- function y_pos_toolbar(node) {
-    return y_pos(node) + (card_height - toolbar_height);
- }
-
-/**
  * How far left (in pixels) can you move the top row?
  * @returns {number} The most negative value that top_row_offset can take on
  * @todo Account for scrollbars
