@@ -3,11 +3,11 @@ svg#graph
 	background-color: #080022;
 }
 
-g.argument
+svg.argument
 {
 }
 
-g.argument rect
+svg.argument rect
 {
 	stroke: #1B0071;
 	fill: #ECE6FF;
@@ -15,7 +15,7 @@ g.argument rect
 	stroke-width: 1;
 }
 
-g.argument rect.toolbar
+svg.argument rect.toolbar
 {
 	stroke: #0F0F0F;
 	fill: #0F0F0F;

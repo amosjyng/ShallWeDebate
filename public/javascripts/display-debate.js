@@ -579,9 +579,9 @@ function change_current_card_id(id) {
  */
 function make_cards() {
     // bind node data to cards
-    cards = d3.select("svg#graph").selectAll("g").data(nodes);
+    cards = d3.select("svg#graph").selectAll("svg").data(nodes);
     // add new card representations of nodes
-    new_cards = cards.enter().append("g").classed("argument", true).attr("cursor", "pointer");
+    new_cards = cards.enter().append("svg").classed("argument", true).attr("cursor", "pointer");
     // create background rectangle for the cards
     new_cards.append("rect").attr("width", card_width).attr("height", card_height)
                 .classed("card", true).style("opacity", 0).call(drag);
@@ -672,7 +672,7 @@ function draw_graph(center, transition_time) {
 
     // recalculate logical positions for each card
     reset_globals();
-    d3.selectAll("g rect.card").each(determine_i);
+    d3.selectAll("svg rect.card").each(determine_i);
 
     // if specified, re-center top and bottom rows of cards
     if (center) {
@@ -680,9 +680,9 @@ function draw_graph(center, transition_time) {
     }
 
     // transition cards to their new positions within transition_time
-    d3.selectAll("g rect").transition().duration(transition_time)
+    d3.selectAll("svg rect").transition().duration(transition_time)
         .attr("x", x_pos).attr("y", y_pos).style("opacity", 1);
-    d3.selectAll("g rect.toolbar").transition().duration(transition_time)
+    d3.selectAll("svg rect.toolbar").transition().duration(transition_time)
         .attr("x", x_pos).attr("y", y_pos_toolbar);
     // Can't select for foreignObject directly due to
     // http://stackoverflow.com/a/11743721/257583
