@@ -15,7 +15,7 @@ svg.argument rect
 	stroke-width: 1;
 }
 
-svg.argument rect.toolbar
+svg.toolbar rect
 {
 	stroke: #0F0F0F;
 	fill: #0F0F0F;

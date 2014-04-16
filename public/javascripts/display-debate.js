@@ -611,14 +611,15 @@ function make_cards() {
         change_current_card(d); // always center graph on new card
     })
     // add toolbar
-    new_cards.append("rect").attr("width", card_width).attr("height", toolbar_height)
-        .attr("y", card_height - toolbar_height).classed("toolbar", true).attr("opacity", 0);
+    var toolbar = new_cards.append("svg").attr("y", card_height - toolbar_height)
+        .classed("toolbar", true).attr("opacity", 0);
+    toolbar.append("rect").attr("width", card_width).attr("height", toolbar_height);
     // define action when card is hovered over
     new_cards.on("mouseenter", function (d) {
-        d3.select(this).select("rect.toolbar").transition().attr("opacity", 1);
+        d3.select(this).select("svg.toolbar").transition().attr("opacity", 1);
     });
     new_cards.on("mouseleave", function (d) {
-        d3.select(this).select("rect.toolbar").transition().attr("opacity", 0);
+        d3.select(this).select("svg.toolbar").transition().attr("opacity", 0);
     });
 }
 
