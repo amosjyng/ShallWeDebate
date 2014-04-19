@@ -15,9 +15,14 @@ svg.argument rect
 	stroke-width: 1;
 }
 
-svg.toolbar rect
+svg.toolbar svg rect
 {
 	stroke: none;
+	fill: #333;
+}
+
+svg.toolbar svg.mouseover rect
+{
 	fill: #555;
 }
 

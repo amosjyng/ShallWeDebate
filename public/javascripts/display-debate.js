@@ -617,6 +617,12 @@ function make_cards() {
     share_button.append("rect").attr("width", card_width).attr("height", toolbar_height);
     share_button.append("text").attr("x", card_width / 2).attr("y", toolbar_height - 8)
         .text("SHARE")
+    share_button.on("mouseenter", function (d) {
+        d3.select(this).classed("mouseover", true);
+    })
+    share_button.on("mouseleave", function (d) {
+        d3.select(this).classed("mouseover", false);
+    })
 }
 
 /**
