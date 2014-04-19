@@ -677,6 +677,27 @@ $(document).ajaxStop(function(){
 });
 
 /**
+ * Returns the type of relation this is
+ * @param {Relation} The relation data associated with the link in question
+ */
+function get_relation_type (d) {
+    return d.type;
+}
+
+/**
+ * Returns the URL to the marker for this particular link
+ * @param {Relation} The relation data associated with the link in question
+ */
+function get_link_marker (d) {
+    if (d.under_construction) {
+        return "url(#arrow-" + d.type + "-under-construction)";
+    }
+    else {
+        return "url(#arrow-" + d.type + ")";
+    }
+}
+
+/**
  * Create link representations of all unrepresented relations
  */
 function make_links() {
@@ -685,16 +706,24 @@ function make_links() {
     // create the paths for every link, and start them off with full
     // transparency so that they can smoothly enter the graph
     links.enter().append("path")
-        .attr("class", function (d) {
-            return d.type;
-        }).classed("under_construction", function (d) {
+        .attr("class", get_relation_type)
+        .classed("under_construction", function (d) {
             return d.under_construction;
-        }).attr("marker-end", function (d) {
+        }).attr("marker-end", get_link_marker)
+        .on("click", function (d) {
             if (d.under_construction) {
-                return "url(#arrow-" + d.type + "-under-construction)";
-            }
-            else {
-                return "url(#arrow-" + d.type + ")";
+                if (d.type == "support") {
+                    d.type = "oppose";
+                } else if (d.type == "oppose") {
+                    d.type = "support";
+                } else {
+                    console.error("Unknown relation type " + d.type);
+                }
+
+                d3.select(this)
+                    .attr("class", get_relation_type)
+                    .classed("under_construction", true)
+                    .attr("marker-end", get_link_marker);
             }
         }).style("opacity", 0);
 }
