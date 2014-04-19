@@ -646,12 +646,12 @@ function make_cards() {
                 under_construction: true
             };
             add_node(new_node);
-            // there should be no need to call process_new_relation
             process_new_relation({
                 id: -1,
                 from: new_node,
                 toArgument: d,
-                type: 1 // oppose
+                type: 1, // oppose
+                under_construction: true
             });
             reply_under_construction = true;
             
@@ -685,10 +685,17 @@ function make_links() {
     // create the paths for every link, and start them off with full
     // transparency so that they can smoothly enter the graph
     links.enter().append("path")
-        .attr("class", function(d) {
+        .attr("class", function (d) {
             return d.type;
-        }).attr("marker-end", function(d) {
-            return "url(#arrow-" + d.type + ")";
+        }).classed("under_construction", function (d) {
+            return d.under_construction;
+        }).attr("marker-end", function (d) {
+            if (d.under_construction) {
+                return "url(#arrow-" + d.type + "-under-construction)";
+            }
+            else {
+                return "url(#arrow-" + d.type + ")";
+            }
         }).style("opacity", 0);
 }
 

@@ -57,12 +57,21 @@ path
 path.support
 {
 	stroke: green;
+}
 
+path.support.under_construction
+{
+	stroke: #80FF80;
 }
 
 path.oppose
 {
 	stroke: red;
+}
+
+path.oppose.under_construction
+{
+	stroke: #FF8080;
 }
 
 switch text
