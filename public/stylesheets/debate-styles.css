@@ -43,7 +43,7 @@ svg p
 	font-weight: bold;
 }
 
-svg.in_construction p
+svg.under_construction p
 {
 	color: gray;
 }

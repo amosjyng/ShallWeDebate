@@ -51,7 +51,7 @@ var links = [];
 TYPE_MEANINGS = ["support", "oppose"];
 
 /** Whether or not the user is editing a new reply */
-var reply_in_construction = false;
+var reply_under_construction = false;
 
 
 /**
@@ -577,8 +577,8 @@ function make_cards() {
     // add new card representations of nodes
     new_cards = cards.enter().append("svg").classed("argument", true)
         .attr("cursor", "pointer").attr("opacity", 0).call(drag)
-        .classed("in_construction", function (d) {
-            return d.in_construction;
+        .classed("under_construction", function (d) {
+            return d.under_construction;
         });
     // create background rectangle for the cards
     new_cards.append("rect").attr("width", card_width).attr("height", card_height)
@@ -635,7 +635,7 @@ function make_cards() {
     reply_button.append("text").attr("x", 1.5 * card_width / 2).attr("y", toolbar_height - 8)
         .text("REPLY");
     reply_button.on("click", function (d) {
-        if (reply_in_construction) {
+        if (reply_under_construction) {
             alert("Sorry, but you are already editing a reply!");
         }
         else {
@@ -643,7 +643,7 @@ function make_cards() {
                 id: -1,
                 gotten: true,
                 summary: "Write a concise and logical reply here. Click on the link to change its type.",
-                in_construction: true
+                under_construction: true
             };
             add_node(new_node);
             // there should be no need to call process_new_relation
@@ -653,7 +653,7 @@ function make_cards() {
                 toArgument: d,
                 type: 1 // oppose
             });
-            reply_in_construction = true;
+            reply_under_construction = true;
             
             draw_graph();
         }
