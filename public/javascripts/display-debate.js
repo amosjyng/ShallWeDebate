@@ -604,7 +604,12 @@ function make_cards() {
  * When back button is clicked on the page, centers graph on previously selected card
  */
 window.onpopstate = function(event) {
-    change_current_card_id(argument_id_of_address());
+    // on initial load, browsers that implement window.onpopstate correctly will have
+    // already called it. So this might be called twice, once from window.onload
+    // and once more from just the page load
+    if (window.history.state != null) {
+        change_current_card_id(argument_id_of_address());
+    }
 }
 
 // Functions to show/hide spinner
@@ -718,5 +723,6 @@ window.onload = function () {
     // get our first card
     // it'll already be retrieved by window.onpopstate function, which is called even on initial page load
     // apparently there's a Chrome and Safari bug that prevents this from happening
-    window.onpopstate()
+
+    change_current_card_id(argument_id_of_address());
 }
