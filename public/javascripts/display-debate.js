@@ -654,6 +654,7 @@ function make_cards() {
                 under_construction: true
             });
             reply_under_construction = true;
+            window.onbeforeunload = warn_argument_under_construction;
             
             draw_graph();
         }
@@ -787,6 +788,14 @@ function draw_graph(center, transition_time) {
             return 0;
         }
     }).attr("d", compute_link_bezier_curve);
+}
+
+/** Make sure that user doesn't accidentally navigate away while editing an
+ * argument
+ */
+function warn_argument_under_construction (e) {
+    // http://stackoverflow.com/a/1119324/257583
+    return "You are about to cancel your reply.";
 }
 
 window.onload = function () {
