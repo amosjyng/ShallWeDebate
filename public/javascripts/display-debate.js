@@ -628,6 +628,23 @@ function make_cards() {
         .attr("x", card_width / 2);
     reply_button.append("text").attr("x", 1.5 * card_width / 2).attr("y", toolbar_height - 8)
         .text("REPLY");
+    reply_button.on("click", function (d) {
+        var new_node = {
+            id: -1,
+            gotten: true,
+            summary: "Write a concise and logical reply here. Click on the link to change its type.",
+            in_construction: true
+        };
+        add_node(new_node);
+        // there should be no need to call process_new_relation
+        process_new_relation({
+            id: -1,
+            from: new_node,
+            toArgument: d,
+            type: 1 // oppose
+        });
+        draw_graph();
+    });
 }
 
 /**
