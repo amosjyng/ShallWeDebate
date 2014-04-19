@@ -614,14 +614,20 @@ function make_cards() {
     });
     // add buttons to toolbar
     var share_button = toolbar.append("svg");
-    share_button.append("rect").attr("width", card_width).attr("height", toolbar_height);
-    share_button.append("text").attr("x", card_width / 2).attr("y", toolbar_height - 8)
+    share_button.append("rect").attr("width", card_width / 2 - 1)
+        .attr("height", toolbar_height);
+    share_button.append("text").attr("x", card_width / 2 / 2).attr("y", toolbar_height - 8)
         .text("SHARE");
     share_button.on("click", function (d) {
         // http://stackoverflow.com/a/6055620/257583
         window.prompt("Avoid redundant discussions. Share this debate:",
                       window.location.origin + argument_address(d.id));
     });
+    var reply_button = toolbar.append("svg");
+    reply_button.append("rect").attr("width", card_width / 2).attr("height", toolbar_height)
+        .attr("x", card_width / 2);
+    reply_button.append("text").attr("x", 1.5 * card_width / 2).attr("y", toolbar_height - 8)
+        .text("REPLY");
 }
 
 /**
