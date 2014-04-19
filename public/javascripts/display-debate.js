@@ -576,7 +576,10 @@ function make_cards() {
     cards = d3.select("svg#graph").selectAll("svg.argument").data(nodes);
     // add new card representations of nodes
     new_cards = cards.enter().append("svg").classed("argument", true)
-        .attr("cursor", "pointer").attr("opacity", 0).call(drag);
+        .attr("cursor", "pointer").attr("opacity", 0).call(drag)
+        .classed("in_construction", function (d) {
+            return d.in_construction;
+        });
     // create background rectangle for the cards
     new_cards.append("rect").attr("width", card_width).attr("height", card_height)
                 .classed("card", true);

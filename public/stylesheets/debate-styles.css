@@ -34,13 +34,18 @@ div.summary
 	padding: 15px;
 }
 
-p
+svg p
 {
 	fill: #ECE6FF;
 	font-family: Garamond, 'Times New Roman';
 	font-size: 20;
 	color: #080022;
 	font-weight: bold;
+}
+
+svg.in_construction p
+{
+	color: gray;
 }
 
 path
