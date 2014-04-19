@@ -21,11 +21,6 @@ svg.toolbar svg rect
 	fill: #333;
 }
 
-svg.toolbar svg.mouseover rect
-{
-	fill: #555;
-}
-
 svg.toolbar svg text
 {
 	fill: #DDD;
