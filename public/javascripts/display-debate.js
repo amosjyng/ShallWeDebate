@@ -623,6 +623,11 @@ function make_cards() {
     share_button.on("mouseleave", function () {
         d3.select(this).classed("mouseover", false);
     });
+    share_button.on("click", function (d) {
+        // http://stackoverflow.com/a/6055620/257583
+        window.prompt("Avoid redundant discussions. Share this debate:",
+                      window.location.origin + argument_address(d.id));
+    });
 }
 
 /**
