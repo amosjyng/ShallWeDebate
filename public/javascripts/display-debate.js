@@ -611,10 +611,8 @@ function make_cards() {
             return d.under_construction;
         }).append("textarea")
         .attr("maxlength", "140")
-        .classed("under_construction", true)
-        .text(function (d) {
-            return d.summary;
-        });
+        .attr("placeholder", "Write a concise and logical reply here. Click on the link to change its type.")
+        .classed("under_construction", true);
     divs.filter(function (d) {
             return !d.under_construction;
         }).append("p")
@@ -674,7 +672,6 @@ function make_cards() {
             var new_node = {
                 id: -1,
                 gotten: true,
-                summary: "Write a concise and logical reply here. Click on the link to change its type.",
                 under_construction: true,
                 as_reply_to: d
             };
