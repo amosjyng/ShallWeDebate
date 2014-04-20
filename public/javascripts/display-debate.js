@@ -49,6 +49,8 @@ var links = [];
 
 /** What the different types mean */
 TYPE_MEANINGS = ["support", "oppose"];
+/** Hashmap for finding int representations of types */
+TYPE_INTS = {"support": 0, "oppose": 1}
 
 /** Whether or not the user is editing a new reply */
 var reply_under_construction = false;
@@ -82,6 +84,22 @@ function indexOfRelation(relation_id) {
         }
     }
     return -1; // not found
+}
+
+/**
+ * Finds the first relation which has the specified node as the from node
+ * @param {number} from_id The ID of the node which is the from node of the relation to be
+ * found
+ * @returns {Relation} If there does exist such a Relation which has the from node with the
+ * ID from_id, then returns the first such Relation. Otherwise, returns null.
+ */
+function relationWithFromId(from_id) {
+    for (i = 0; i < relations.length; i++) {
+        if (relations[i].from.id === from_id) {
+            return relations[i];
+        }
+    }
+    return null; // not found
 }
 
 /**
@@ -593,6 +611,7 @@ function make_cards() {
             return d.under_construction;
         }).append("textarea")
         .attr("maxlength", "140")
+        .classed("under_construction", true)
         .text(function (d) {
             return d.summary;
         });
@@ -656,7 +675,8 @@ function make_cards() {
                 id: -1,
                 gotten: true,
                 summary: "Write a concise and logical reply here. Click on the link to change its type.",
-                under_construction: true
+                under_construction: true,
+                as_reply_to: d
             };
             add_node(new_node);
             process_new_relation({
@@ -681,7 +701,24 @@ function make_cards() {
     save_button.append("text").attr("x", card_width / 2).attr("y", toolbar_height - 8)
         .text("SAVE");
     save_button.on("click", function (d) {
-        alert("TODO: Save new argument");
+        $.ajax({
+            url: argument_address(d.as_reply_to.id),
+            type: "POST",
+            data: JSON.stringify({
+                summary: $("textarea.under_construction")[0].value,
+                type: TYPE_INTS[relationWithFromId(d.id).type] // d.id should always be -1
+            }),
+            dataType: "json",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).done(function (d) {
+            alert("successfully saved!");
+            console.log(d);
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            // todo: display error message to user
+            console.error("Failed to create new argument: " + errorThrown);
+        });
     });
 }
 
