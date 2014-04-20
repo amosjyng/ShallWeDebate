@@ -618,8 +618,11 @@ function make_cards() {
     new_cards.on("mouseleave", function (d) {
         d3.select(this).select("svg.toolbar").transition().attr("opacity", 0);
     });
-    // add buttons to toolbar
-    var share_button = toolbar.append("svg");
+    // add buttons for finished cards to toolbar
+    var constructed_cards_toolbar = toolbar.filter(function (d) {
+        return !d.under_construction;
+    });
+    var share_button = constructed_cards_toolbar.append("svg");
     share_button.append("rect").attr("width", card_width / 2 - 1)
         .attr("height", toolbar_height);
     share_button.append("text").attr("x", card_width / 2 / 2).attr("y", toolbar_height - 8)
@@ -629,7 +632,7 @@ function make_cards() {
         window.prompt("Avoid redundant discussions. Share this debate:",
                       window.location.origin + argument_address(d.id));
     });
-    var reply_button = toolbar.append("svg");
+    var reply_button = constructed_cards_toolbar.append("svg");
     reply_button.append("rect").attr("width", card_width / 2).attr("height", toolbar_height)
         .attr("x", card_width / 2);
     reply_button.append("text").attr("x", 1.5 * card_width / 2).attr("y", toolbar_height - 8)
