@@ -69,5 +69,5 @@ public class Debate extends Controller
             reply.setSummary(summary);
             return ok(Json.toJson(Argument.get(id).replyWith(reply, type)));
         }
-}
+    }
 }
