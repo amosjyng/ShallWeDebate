@@ -662,6 +662,17 @@ function make_cards() {
             draw_graph();
         }
     });
+    // add buttons for cards that are under construction
+    var under_construction_toolbar = toolbar.filter(function (d) {
+        return d.under_construction;
+    });
+    var save_button = under_construction_toolbar.append("svg");
+    save_button.append("rect").attr("width", card_width).attr("height", toolbar_height);
+    save_button.append("text").attr("x", card_width / 2).attr("y", toolbar_height - 8)
+        .text("SAVE");
+    save_button.on("click", function (d) {
+        alert("TODO: Save new argument");
+    });
 }
 
 /**
