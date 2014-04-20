@@ -585,13 +585,23 @@ function make_cards() {
                 .classed("card", true);
     // create foreignObject containing node text
     var switch_objects = new_cards.append("switch");
-    switch_objects.append("foreignObject").classed("foreign-object", true)
-            .attr("requiredFeatures", "http://www.w3.org/TR/SVG11/feature#Extensibility")
-            .attr("width", card_width).attr("height", card_height)
-            .append("xhtml:div").classed("summary", true).append("p")
-            .classed("summary", true).text(function (d) {
-                return d.summary;
-            }).attr("xmlns", "http://www.w3.org/1999/xhtml");
+    var divs = switch_objects.append("foreignObject").classed("foreign-object", true)
+        .attr("requiredFeatures", "http://www.w3.org/TR/SVG11/feature#Extensibility")
+        .attr("width", card_width).attr("height", card_height)
+        .append("xhtml:div").classed("summary", true);
+    divs.filter(function (d) {
+            return d.under_construction;
+        }).append("textarea")
+        .attr("maxlength", "140")
+        .text(function (d) {
+            return d.summary;
+        });
+    divs.filter(function (d) {
+            return !d.under_construction;
+        }).append("p")
+        .classed("summary", true).text(function (d) {
+            return d.summary;
+        }).attr("xmlns", "http://www.w3.org/1999/xhtml");
     // add fallback text in case user's browser doesn't support SVG foreignObject
     switch_objects.append("text").attr("x", 100).attr("y", 100)
         .text("Sorry, your browser is not currently supported.");

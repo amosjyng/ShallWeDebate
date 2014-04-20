@@ -34,18 +34,23 @@ div.summary
 	padding: 15px;
 }
 
-svg p
+div.summary p, div.summary textarea
 {
-	fill: #ECE6FF;
+	background-color: #ECE6FF;
 	font-family: Garamond, 'Times New Roman';
 	font-size: 20;
 	color: #080022;
 	font-weight: bold;
 }
 
-svg.under_construction p
+div.summary textarea
 {
-	color: gray;
+	outline: none;
+	border-style: none; 
+    border-color: Transparent;
+    height: 100%;
+    width: 100%;
+    color: #8880A2;
 }
 
 path
