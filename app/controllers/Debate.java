@@ -62,6 +62,10 @@ public class Debate extends Controller
         {
             return badRequest("Missing parameter [summary]");
         }
+        else if (summary.isEmpty())
+        {
+            return badRequest("Empty summary.");
+        }
         // todo: check for existence of type variable
         else
         {
