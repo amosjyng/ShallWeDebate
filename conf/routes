@@ -11,4 +11,4 @@ GET     /assets/*file               controllers.Assets.at(path="/public", file)
 # Debate data models
 GET     /arguments/:id/             controllers.Debate.viewArgument(id: Long)
 GET     /arguments/:id/relations/   controllers.Debate.viewArgumentRelations(id: Long)
-POST    /arguments/                 controllers.Debate.newArgument
+POST    /arguments/:id/             controllers.Debate.replyToArgument(id: Long)

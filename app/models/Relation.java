@@ -73,6 +73,43 @@ public class Relation extends Model
     }
 
     /**
+     * Modify the "from" end of this relation
+     * @param argument The argument to set the "from" end to
+     */
+    public void setFrom(Argument argument)
+    {
+        from = argument;
+    }
+
+    /**
+     * Modify the "to" end of this relation, if the "to" end is an argument (and is not already set to another relation)
+     * @param argument The argument to set the "to" end to
+     * @throws ToFieldNotNullException when the toRelation field is already set to a non-null value, and this function
+     * is called in an attempt to set the toArgument field as well
+     */
+    public void setToArgument(Argument argument) throws ToFieldNotNullException
+    {
+        if (toRelation == null) // only one of the "to's" should be non-null at any time
+        {
+            toArgument = argument;
+        }
+        else
+        {
+            throw new ToFieldNotNullException();
+        }
+    }
+
+    /**
+     * Modify the type of relation this is.
+     * @param type The new type of Relation this will be. See the documentation for the Relation.type field for the list
+     *             of types that the relation could take on.
+     */
+    public void setType(Integer type)
+    {
+        this.type = type;
+    }
+
+    /**
      * Save a new Relation to the database
      * @param relation The new Relation object that is to be saved
      */
