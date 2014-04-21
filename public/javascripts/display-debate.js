@@ -587,6 +587,53 @@ function change_current_card_id(id) {
 }
 
 /**
+ * Add the SHARE and REPLY buttons to the toolbars of already constructed cards.
+ * @param {D3 selection} constructed_cards_toolbar The selection of toolbars to add such buttons to
+ */
+function add_construction_toolbar_buttons (constructed_cards_toolbar) {
+    var share_button = constructed_cards_toolbar.append("svg");
+    share_button.append("rect").attr("width", card_width / 2 - 1)
+        .attr("height", toolbar_height);
+    share_button.append("text").attr("x", card_width / 2 / 2).attr("y", toolbar_height - 8)
+        .text("SHARE");
+    share_button.on("click", function (d) {
+        // http://stackoverflow.com/a/6055620/257583
+        window.prompt("Avoid redundant discussions. Share this debate:",
+                      window.location.origin + argument_address(d.id));
+    });
+    var reply_button = constructed_cards_toolbar.append("svg");
+    reply_button.append("rect").attr("width", card_width / 2).attr("height", toolbar_height)
+        .attr("x", card_width / 2);
+    reply_button.append("text").attr("x", 1.5 * card_width / 2).attr("y", toolbar_height - 8)
+        .text("REPLY");
+    reply_button.on("click", function (d) {
+        if (reply_under_construction) {
+            alert("Sorry, but you are already editing a reply!");
+        }
+        else {
+            var new_node = {
+                id: -1,
+                gotten: true,
+                under_construction: true,
+                as_reply_to: d
+            };
+            add_node(new_node);
+            process_new_relation({
+                id: -1,
+                from: new_node,
+                toArgument: d,
+                type: 1, // oppose
+                under_construction: true
+            });
+            reply_under_construction = true;
+            window.onbeforeunload = warn_argument_under_construction;
+            
+            draw_graph();
+        }
+    });
+}
+
+/**
  * Create card representations of all unrepresented nodes.
  */
 function make_cards() {
@@ -649,46 +696,7 @@ function make_cards() {
     var constructed_cards_toolbar = toolbar.filter(function (d) {
         return !d.under_construction;
     });
-    var share_button = constructed_cards_toolbar.append("svg");
-    share_button.append("rect").attr("width", card_width / 2 - 1)
-        .attr("height", toolbar_height);
-    share_button.append("text").attr("x", card_width / 2 / 2).attr("y", toolbar_height - 8)
-        .text("SHARE");
-    share_button.on("click", function (d) {
-        // http://stackoverflow.com/a/6055620/257583
-        window.prompt("Avoid redundant discussions. Share this debate:",
-                      window.location.origin + argument_address(d.id));
-    });
-    var reply_button = constructed_cards_toolbar.append("svg");
-    reply_button.append("rect").attr("width", card_width / 2).attr("height", toolbar_height)
-        .attr("x", card_width / 2);
-    reply_button.append("text").attr("x", 1.5 * card_width / 2).attr("y", toolbar_height - 8)
-        .text("REPLY");
-    reply_button.on("click", function (d) {
-        if (reply_under_construction) {
-            alert("Sorry, but you are already editing a reply!");
-        }
-        else {
-            var new_node = {
-                id: -1,
-                gotten: true,
-                under_construction: true,
-                as_reply_to: d
-            };
-            add_node(new_node);
-            process_new_relation({
-                id: -1,
-                from: new_node,
-                toArgument: d,
-                type: 1, // oppose
-                under_construction: true
-            });
-            reply_under_construction = true;
-            window.onbeforeunload = warn_argument_under_construction;
-            
-            draw_graph();
-        }
-    });
+    add_construction_toolbar_buttons(constructed_cards_toolbar);
     // add buttons for cards that are under construction
     var under_construction_toolbar = toolbar.filter(function (d) {
         return d.under_construction;
@@ -698,6 +706,8 @@ function make_cards() {
     save_button.append("text").attr("x", card_width / 2).attr("y", toolbar_height - 8)
         .text("SAVE");
     save_button.on("click", function (d) {
+        // change the summary now, in case user continues to edit the textarea after saving
+        d.summary = $("textarea.under_construction")[0].value;
         $.ajax({
             url: argument_address(d.as_reply_to.id),
             type: "POST",
@@ -709,9 +719,40 @@ function make_cards() {
             headers: {
                 "Content-Type": "application/json"
             }
-        }).done(function (d) {
-            alert("successfully saved!");
-            console.log(d);
+        }).done(function (new_info) {
+            // change the data to be consistent with the new information
+            d3.select("svg.under_construction").each(function (d) {
+                d.id = new_info.new_node_id;
+                d.under_construction = false;
+            });
+            d3.select("path.under_construction").each(function (d) {
+                d.id = new_info.new_relation_id;
+                d.under_construction = false;
+            })
+            // remove the textarea for editing...
+            d3.select("textarea.under_construction").remove();
+            // and replace it with the actual paragraph
+            d3.select("svg.under_construction div.summary")
+                .append("p")
+                .classed("summary", true).text(function (d) {
+                    return d.summary;
+                }).attr("xmlns", "http://www.w3.org/1999/xhtml");
+            // remove the save button now that it's already saved
+            d3.selectAll("svg.under_construction svg.toolbar svg").remove();
+            // add share and reply buttons to the card, just like any other card
+            add_construction_toolbar_buttons(d3.select("svg.under_construction svg.toolbar"));
+            // make the SVG no longer representative of a node that's being edited
+            d3.select("svg.under_construction").classed("under_construction", false);
+            // make the link normal again
+            d3.select("path.under_construction")
+                .classed("under_construction", false)
+                .attr("marker-end", get_link_marker);
+            // change URL to be the ID of the newly created node
+            window.history.pushState(null, "what is this", argument_address(new_info.new_node_id));
+            reply_under_construction = false; // allow new replies to be made
+            window.onbeforeunload = null; // allow user to leave now that reply has been saved
+
+            draw_graph();
         }).fail(function (jqXHR, textStatus, errorThrown) {
             // todo: display error message to user
             console.error("Failed to create new argument: " + errorThrown);

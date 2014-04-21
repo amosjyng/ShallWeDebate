@@ -86,10 +86,10 @@ public class Argument extends Model
      * argument.
      * @param reply The new Argument to be saved as a reply to this one
      * @param type The type of relation between the new Argument and this
-     * @return The ID of the new Relation that is created. The ID of the Relation and not the Argument is returned,
-     * because you can always easily get the ID of the Argument given the Relation.
+     * @return The new Relation that is created. The Relation and not the Argument is returned, because you can always
+     * easily get the Argument given the Relation.
      */
-    public Long replyWith(Argument reply, Integer type)
+    public Relation replyWith(Argument reply, Integer type)
     {
         Ebean.save(reply);
         Relation newRelation = new Relation();
@@ -105,7 +105,7 @@ public class Argument extends Model
         newRelation.setType(type);
         Ebean.save(newRelation);
 
-        return newRelation.id;
+        return newRelation;
     }
 
     /**

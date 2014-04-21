@@ -71,7 +71,12 @@ public class Debate extends Controller
         {
             Argument reply = new Argument();
             reply.setSummary(summary);
-            return ok(Json.toJson(Argument.get(id).replyWith(reply, type)));
+
+            ObjectNode response = Json.newObject();
+            Relation newRelation = Argument.get(id).replyWith(reply, type);
+            response.put("new_node_id", newRelation.from.id);
+            response.put("new_relation_id", newRelation.id);
+            return ok(response);
         }
     }
 }
