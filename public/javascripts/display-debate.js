@@ -202,7 +202,7 @@ function ajax_get_node(node_id, callback) {
             callback(data);
         }
     }).fail(function (jqXHR, textStatus, errorThrown) {
-        alert("Failed to get argument " + node_id + ": " + errorThrown);
+        alert_user("Failed to get argument " + node_id, errorThrown);
     });
 }
 
