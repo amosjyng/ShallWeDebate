@@ -8,6 +8,8 @@ var half_card_width = card_width / 2;
 var half_card_height = card_height / 2;
 /** Spacing between adjacent cards in the graph */
 var card_spacing = 10;
+/** Height of toolbar on cards */
+var toolbar_height = 30;
 
 
 /** Index of the next outgoing node (relative to the current node) to be
@@ -47,6 +49,11 @@ var links = [];
 
 /** What the different types mean */
 TYPE_MEANINGS = ["support", "oppose"];
+/** Hashmap for finding int representations of types */
+TYPE_INTS = {"support": 0, "oppose": 1}
+
+/** Whether or not the user is editing a new reply */
+var reply_under_construction = false;
 
 
 /**
@@ -77,6 +84,22 @@ function indexOfRelation(relation_id) {
         }
     }
     return -1; // not found
+}
+
+/**
+ * Finds the first relation which has the specified node as the from node
+ * @param {number} from_id The ID of the node which is the from node of the relation to be
+ * found
+ * @returns {Relation} If there does exist such a Relation which has the from node with the
+ * ID from_id, then returns the first such Relation. Otherwise, returns null.
+ */
+function relationWithFromId(from_id) {
+    for (i = 0; i < relations.length; i++) {
+        if (relations[i].from.id === from_id) {
+            return relations[i];
+        }
+    }
+    return null; // not found
 }
 
 /**
@@ -535,6 +558,11 @@ function change_current_card(d) {
     // no need to reset the top and bottom row offsets to zero
     // because that's already done in "draw_graph"
 
+    if (current_card != d) { // if different card
+        // change URL to reflect newly selected card
+        window.history.pushState(null, "what is this", argument_address(d.id));
+    }
+
     // set the current_card to the node of the card that was just clicked
     current_card = d;
     if (!d.gotten) // if its relevant information hasn't been obtained already
@@ -564,25 +592,107 @@ function change_current_card_id(id) {
 }
 
 /**
+ * Add the SHARE and REPLY buttons to the toolbars of already constructed cards.
+ * @param {D3 selection} constructed_cards_toolbar The selection of toolbars to add such buttons to
+ */
+function add_construction_toolbar_buttons (constructed_cards_toolbar) {
+    var share_button = constructed_cards_toolbar.append("svg");
+    share_button.append("rect").attr("width", card_width / 2 - 1)
+        .attr("height", toolbar_height);
+    share_button.append("text").attr("x", card_width / 2 / 2).attr("y", toolbar_height - 8)
+        .text("SHARE");
+    share_button.on("click", function (d) {
+        // http://stackoverflow.com/a/6055620/257583
+        window.prompt("Avoid redundant discussions. Share this debate:",
+                      window.location.origin + argument_address(d.id));
+    });
+    var reply_button = constructed_cards_toolbar.append("svg");
+    reply_button.append("rect").attr("width", card_width / 2).attr("height", toolbar_height)
+        .attr("x", card_width / 2);
+    reply_button.append("text").attr("x", 1.5 * card_width / 2).attr("y", toolbar_height - 8)
+        .text("REPLY");
+    reply_button.on("click", function (d) {
+
+        if (reply_under_construction) {
+            alert("Sorry, but you are already editing a reply!");
+        }
+        else {
+            d3.event.stopPropagation();
+
+            var new_node = {
+                id: -1,
+                gotten: true,
+                under_construction: true,
+                as_reply_to: d
+            };
+            add_node(new_node);
+            process_new_relation({
+                id: -1,
+                from: new_node,
+                toArgument: d,
+                type: 1, // oppose
+                under_construction: true
+            });
+            reply_under_construction = true;
+            window.onbeforeunload = warn_argument_under_construction;
+            
+            // make it as if you first went to the d node, and then went to its reply
+            current_card = d;
+            set_cards_previous_locations();
+            // set focus on the textarea in the middle of the page
+            change_current_card(new_node);
+            $("textarea.under_construction").focus();
+        }
+    });
+}
+
+/**
+ * Simply tells you whether something is under construction or not
+ * @param {Node | Relation} d The piece of information in question
+ * @returns True or false depending on whether the user is currently editing something
+ */
+function is_under_construction (d) {
+    return d.under_construction;
+}
+
+/**
+ * Simply tells you whether something is under construction or not
+ * @param {Node | Relation} d The piece of information in question
+ * @returns True or false depending on whether the user is currently editing something
+ */
+function isnt_under_construction (d) {
+    return !d.under_construction;
+}
+
+/**
  * Create card representations of all unrepresented nodes.
  */
 function make_cards() {
     // bind node data to cards
-    cards = d3.select("svg#graph").selectAll("g").data(nodes);
+    cards = d3.select("svg#graph").selectAll("svg.argument").data(nodes);
     // add new card representations of nodes
-    new_cards = cards.enter().append("g").classed("argument", true).attr("cursor", "pointer");
+    new_cards = cards.enter().append("svg").classed("argument", true)
+        .attr("cursor", "pointer").attr("opacity", 0).call(drag)
+        .classed("under_construction", is_under_construction);
     // create background rectangle for the cards
     new_cards.append("rect").attr("width", card_width).attr("height", card_height)
-                .style("opacity", 0).call(drag);
+                .classed("card", true);
     // create foreignObject containing node text
-    var switch_objects = new_cards.append("switch").call(drag);
-    switch_objects.append("foreignObject").classed("foreign-object", true)
-            .attr("requiredFeatures", "http://www.w3.org/TR/SVG11/feature#Extensibility")
-            .attr("width", card_width).attr("height", card_height)
-            .append("xhtml:div").classed("summary", true).append("p")
-            .classed("summary", true).text(function (d) {
-                return d.summary;
-            }).attr("xmlns", "http://www.w3.org/1999/xhtml");
+    var switch_objects = new_cards.append("switch");
+    var divs = switch_objects.append("foreignObject").classed("foreign-object", true)
+        .attr("requiredFeatures", "http://www.w3.org/TR/SVG11/feature#Extensibility")
+        .attr("width", card_width).attr("height", card_height)
+        .append("xhtml:div").classed("summary", true);
+    divs.filter(is_under_construction)
+        .append("textarea")
+        .attr("maxlength", "140")
+        .attr("placeholder", "Write a concise and logical reply here. Click on the link to change its type.")
+        .classed("under_construction", true);
+    divs.filter(isnt_under_construction)
+        .append("p")
+        .classed("summary", true).text(function (d) {
+            return d.summary;
+        }).attr("xmlns", "http://www.w3.org/1999/xhtml");
     // add fallback text in case user's browser doesn't support SVG foreignObject
     switch_objects.append("text").attr("x", 100).attr("y", 100)
         .text("Sorry, your browser is not currently supported.");
@@ -590,14 +700,82 @@ function make_cards() {
     new_cards.on("click", function (d) {
         // stop here if the click was merely a drag
         if (d3.event.defaultPrevented) return;
-
-        if (current_card != d) { // if different card
-            // change URL to reflect newly selected card
-            window.history.pushState(null, "what is this", argument_address(d.id));
-        }
         
         change_current_card(d); // always center graph on new card
     })
+    // add toolbar
+    var toolbar = new_cards.append("svg").classed("toolbar", true)
+        .attr("width", card_width).attr("height", toolbar_height)
+        .attr("y", card_height - toolbar_height).attr("opacity", 0);
+    // define action when card is hovered over
+    new_cards.on("mouseenter", function (d) {
+        d3.select(this).select("svg.toolbar").transition().attr("opacity", 1);
+    });
+    new_cards.on("mouseleave", function (d) {
+        d3.select(this).select("svg.toolbar").transition().attr("opacity", 0);
+    });
+    // add buttons for finished cards to toolbar
+    var constructed_cards_toolbar = toolbar.filter(isnt_under_construction);
+    add_construction_toolbar_buttons(constructed_cards_toolbar);
+    // add buttons for cards that are under construction
+    var under_construction_toolbar = toolbar.filter(is_under_construction);
+    var save_button = under_construction_toolbar.append("svg");
+    save_button.append("rect").attr("width", card_width).attr("height", toolbar_height);
+    save_button.append("text").attr("x", card_width / 2).attr("y", toolbar_height - 8)
+        .text("SAVE");
+    save_button.on("click", function (d) {
+        // change the summary now, in case user continues to edit the textarea after saving
+        d.summary = $("textarea.under_construction")[0].value;
+        $.ajax({
+            url: argument_address(d.as_reply_to.id),
+            type: "POST",
+            data: JSON.stringify({
+                summary: $("textarea.under_construction")[0].value,
+                type: TYPE_INTS[relationWithFromId(d.id).type] // d.id should always be -1
+            }),
+            dataType: "json",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).done(function (new_info) {
+            // change the data to be consistent with the new information
+            d3.select("svg.under_construction").each(function (d) {
+                d.id = new_info.new_node_id;
+                d.under_construction = false;
+            });
+            d3.select("path.under_construction").each(function (d) {
+                d.id = new_info.new_relation_id;
+                d.under_construction = false;
+            })
+            // remove the textarea for editing...
+            d3.select("textarea.under_construction").remove();
+            // and replace it with the actual paragraph
+            d3.select("svg.under_construction div.summary")
+                .append("p")
+                .classed("summary", true).text(function (d) {
+                    return d.summary;
+                }).attr("xmlns", "http://www.w3.org/1999/xhtml");
+            // remove the save button now that it's already saved
+            d3.selectAll("svg.under_construction svg.toolbar svg").remove();
+            // add share and reply buttons to the card, just like any other card
+            add_construction_toolbar_buttons(d3.select("svg.under_construction svg.toolbar"));
+            // make the SVG no longer representative of a node that's being edited
+            d3.select("svg.under_construction").classed("under_construction", false);
+            // make the link normal again
+            d3.select("path.under_construction")
+                .classed("under_construction", false)
+                .attr("marker-end", get_link_marker);
+            // change URL to be the ID of the newly created node
+            window.history.pushState(null, "what is this", argument_address(new_info.new_node_id));
+            reply_under_construction = false; // allow new replies to be made
+            window.onbeforeunload = null; // allow user to leave now that reply has been saved
+
+            draw_graph();
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            // todo: display error message to user
+            console.error("Failed to create new argument: " + errorThrown);
+        });
+    });
 }
 
 /**
@@ -622,6 +800,27 @@ $(document).ajaxStop(function(){
 });
 
 /**
+ * Returns the type of relation this is
+ * @param {Relation} The relation data associated with the link in question
+ */
+function get_relation_type (d) {
+    return d.type;
+}
+
+/**
+ * Returns the URL to the marker for this particular link
+ * @param {Relation} The relation data associated with the link in question
+ */
+function get_link_marker (d) {
+    if (d.under_construction) {
+        return "url(#arrow-" + d.type + "-under-construction)";
+    }
+    else {
+        return "url(#arrow-" + d.type + ")";
+    }
+}
+
+/**
  * Create link representations of all unrepresented relations
  */
 function make_links() {
@@ -630,11 +829,49 @@ function make_links() {
     // create the paths for every link, and start them off with full
     // transparency so that they can smoothly enter the graph
     links.enter().append("path")
-        .attr("class", function(d) {
-            return d.type;
-        }).attr("marker-end", function(d) {
-            return "url(#arrow-" + d.type + ")";
+        .attr("class", get_relation_type)
+        .classed("under_construction", function (d) {
+            return d.under_construction;
+        }).attr("marker-end", get_link_marker)
+        .on("click", function (d) {
+            if (d.under_construction) {
+                if (d.type == "support") {
+                    d.type = "oppose";
+                } else if (d.type == "oppose") {
+                    d.type = "support";
+                } else {
+                    console.error("Unknown relation type " + d.type);
+                }
+
+                d3.select(this)
+                    .attr("class", get_relation_type)
+                    .classed("under_construction", true)
+                    .attr("marker-end", get_link_marker);
+            }
         }).style("opacity", 0);
+}
+
+/**
+ * For the record, set whether the card is current/outgoing/incoming so
+ * that the next time draw_graph is called, the x_pos and y_pos functions
+ * know how to handle cards that are no longer shown
+ */
+function set_cards_previous_locations() {
+    cards.each(function (d) {
+        if (current_card == d) {
+            d.previously_current = true;
+            d.previously_outgoing = false;
+            d.previously_incoming = false;
+        } else if (is_outgoing(d)) {
+            d.previously_current = false;
+            d.previously_outgoing = true;
+            d.previously_incoming = false;
+        } else if (is_incoming(d)) {
+            d.previously_current = false;
+            d.previously_outgoing = false;
+            d.previously_incoming = true;
+        } // else shouldn't happen
+    });
 }
 
 /**
@@ -656,7 +893,7 @@ function draw_graph(center, transition_time) {
 
     // recalculate logical positions for each card
     reset_globals();
-    d3.selectAll("g rect").each(determine_i);
+    d3.selectAll("svg.argument").each(determine_i);
 
     // if specified, re-center top and bottom rows of cards
     if (center) {
@@ -664,33 +901,11 @@ function draw_graph(center, transition_time) {
     }
 
     // transition cards to their new positions within transition_time
-    d3.selectAll("g rect").transition().duration(transition_time)
+    d3.selectAll("svg.argument").transition().duration(transition_time)
         .attr("x", x_pos).attr("y", y_pos).style("opacity", 1);
-    // Can't select for foreignObject directly due to
-    // http://stackoverflow.com/a/11743721/257583
-    // also, doesn't matter if the text is opaque or not since it's the
-    // same color as the background
-    d3.selectAll(".foreign-object").transition().duration(transition_time)
-        .attr("x", x_pos).attr("y", y_pos);
 
-    // for the record, set whether the card is current/outgoing/incoming so
-    // that the next time this is called, the x_pos and y_pos functions know
-    // how to handle cards that are no longer shown
-    cards.each(function (d) {
-        if (current_card == d) {
-            d.previously_current = true;
-            d.previously_outgoing = false;
-            d.previously_incoming = false;
-        } else if (is_outgoing(d)) {
-            d.previously_current = false;
-            d.previously_outgoing = true;
-            d.previously_incoming = false;
-        } else if (is_incoming(d)) {
-            d.previously_current = false;
-            d.previously_outgoing = false;
-            d.previously_incoming = true;
-        } // else shouldn't happen
-    });
+    // set whether the cards were previously in the top, middle, or bottom rows
+    set_cards_previous_locations();
 
     // finally, transition the links to their final paths as well while
     // toggling the opacity for those links that are now invisible/visible
@@ -702,6 +917,14 @@ function draw_graph(center, transition_time) {
             return 0;
         }
     }).attr("d", compute_link_bezier_curve);
+}
+
+/** Make sure that user doesn't accidentally navigate away while editing an
+ * argument
+ */
+function warn_argument_under_construction (e) {
+    // http://stackoverflow.com/a/1119324/257583
+    return "You are about to cancel your reply.";
 }
 
 window.onload = function () {

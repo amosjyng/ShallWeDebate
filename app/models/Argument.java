@@ -1,9 +1,12 @@
 package models;
 
+import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.hibernate.validator.constraints.NotEmpty;
+import play.Logger;
 import play.db.ebean.*;
 import play.data.validation.Constraints.*;
+import scala.util.parsing.combinator.testing.Str;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -67,6 +70,42 @@ public class Argument extends Model
     public static void create(Argument argument)
     {
         argument.save();
+    }
+
+    /**
+     * Update the summary of this Argument to something else
+     * @param summary The new summary for this particular Argument
+     */
+    public void setSummary(String summary)
+    {
+        this.summary = summary;
+    }
+
+    /**
+     * Save an argument to the database as a reply to another argument. A relation will be created in addition to this
+     * argument.
+     * @param reply The new Argument to be saved as a reply to this one
+     * @param type The type of relation between the new Argument and this
+     * @return The new Relation that is created. The Relation and not the Argument is returned, because you can always
+     * easily get the Argument given the Relation.
+     */
+    public Relation replyWith(Argument reply, Integer type)
+    {
+        Ebean.save(reply);
+        Relation newRelation = new Relation();
+        newRelation.setFrom(reply);
+        try
+        {
+            newRelation.setToArgument(this);
+        }
+        catch (ToFieldNotNullException e)
+        {
+            Logger.error("toArgument or toRelation field of new Relation is already set. How is this possible?!");
+        }
+        newRelation.setType(type);
+        Ebean.save(newRelation);
+
+        return newRelation;
     }
 
     /**

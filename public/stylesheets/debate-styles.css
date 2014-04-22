@@ -3,16 +3,30 @@ svg#graph
 	background-color: #080022;
 }
 
-g.argument
+svg.argument
 {
 }
 
-g.argument rect
+svg.argument rect
 {
-	stroke: #1B0071;
+	stroke: none;
 	fill: #ECE6FF;
 	shape-rendering: crispEdges;
 	stroke-width: 1;
+}
+
+svg.toolbar svg rect
+{
+	stroke: none;
+	fill: #555;
+}
+
+svg.toolbar svg text
+{
+	fill: #DDD;
+	font-size: 16px;
+	text-anchor: middle;
+	letter-spacing: 2;
 }
 
 div.summary
@@ -20,13 +34,23 @@ div.summary
 	padding: 15px;
 }
 
-p
+div.summary p, div.summary textarea
 {
-	fill: #ECE6FF;
+	background-color: #ECE6FF;
 	font-family: Garamond, 'Times New Roman';
 	font-size: 20;
 	color: #080022;
 	font-weight: bold;
+}
+
+div.summary textarea
+{
+	outline: none;
+	border-style: none; 
+    border-color: Transparent;
+    height: 100%;
+    width: 100%;
+    color: #8880A2;
 }
 
 path
@@ -38,12 +62,21 @@ path
 path.support
 {
 	stroke: green;
+}
 
+path.support.under_construction
+{
+	stroke: #80FF80;
 }
 
 path.oppose
 {
 	stroke: red;
+}
+
+path.oppose.under_construction
+{
+	stroke: #FF8080;
 }
 
 switch text
