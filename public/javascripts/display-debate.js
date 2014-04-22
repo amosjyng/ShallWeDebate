@@ -184,7 +184,6 @@ function argument_id_of_address() {
  * @param {number} node_id The ID of the node to retrieve
  * @param {Function} [callback] The callback function which, when specified, will
  * be called with the newly retrieved node as the sole argument
- * @todo Display error message onscreen when there's a failure
  */
 function ajax_get_node(node_id, callback) {
     $.ajax({
@@ -262,8 +261,6 @@ function ajax_get_relations_of(node) {
  * After a card is selected (i.e. clicked on), call this function to retrieve
  * all relevant information for the node that the card represents
  * @param {Node} node The node of the card that was clicked on
- * @todo Do nothing except for redrawing the graph if information for this node
- * has already been retrieved
  */
 function ajax_get_card(node) {
     ajax_get_relations_of(node); // get all relevant relations and related nodes
