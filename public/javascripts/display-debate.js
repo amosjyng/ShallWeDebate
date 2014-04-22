@@ -558,6 +558,11 @@ function change_current_card(d) {
     // no need to reset the top and bottom row offsets to zero
     // because that's already done in "draw_graph"
 
+    if (current_card != d) { // if different card
+        // change URL to reflect newly selected card
+        window.history.pushState(null, "what is this", argument_address(d.id));
+    }
+
     // set the current_card to the node of the card that was just clicked
     current_card = d;
     if (!d.gotten) // if its relevant information hasn't been obtained already
@@ -607,10 +612,13 @@ function add_construction_toolbar_buttons (constructed_cards_toolbar) {
     reply_button.append("text").attr("x", 1.5 * card_width / 2).attr("y", toolbar_height - 8)
         .text("REPLY");
     reply_button.on("click", function (d) {
+
         if (reply_under_construction) {
             alert("Sorry, but you are already editing a reply!");
         }
         else {
+            d3.event.stopPropagation();
+
             var new_node = {
                 id: -1,
                 gotten: true,
@@ -628,7 +636,12 @@ function add_construction_toolbar_buttons (constructed_cards_toolbar) {
             reply_under_construction = true;
             window.onbeforeunload = warn_argument_under_construction;
             
-            draw_graph();
+            // make it as if you first went to the d node, and then went to its reply
+            current_card = d;
+            set_cards_previous_locations();
+            // set focus on the textarea in the middle of the page
+            change_current_card(new_node);
+            $("textarea.under_construction").focus();
         }
     });
 }
@@ -687,11 +700,6 @@ function make_cards() {
     new_cards.on("click", function (d) {
         // stop here if the click was merely a drag
         if (d3.event.defaultPrevented) return;
-
-        if (current_card != d) { // if different card
-            // change URL to reflect newly selected card
-            window.history.pushState(null, "what is this", argument_address(d.id));
-        }
         
         change_current_card(d); // always center graph on new card
     })
@@ -839,6 +847,29 @@ function make_links() {
 }
 
 /**
+ * For the record, set whether the card is current/outgoing/incoming so
+ * that the next time draw_graph is called, the x_pos and y_pos functions
+ * know how to handle cards that are no longer shown
+ */
+function set_cards_previous_locations() {
+    cards.each(function (d) {
+        if (current_card == d) {
+            d.previously_current = true;
+            d.previously_outgoing = false;
+            d.previously_incoming = false;
+        } else if (is_outgoing(d)) {
+            d.previously_current = false;
+            d.previously_outgoing = true;
+            d.previously_incoming = false;
+        } else if (is_incoming(d)) {
+            d.previously_current = false;
+            d.previously_outgoing = false;
+            d.previously_incoming = true;
+        } // else shouldn't happen
+    });
+}
+
+/**
  * Redraw the entire graph
  * @param {boolean} [center=true] Whether or not the top and bottom rows should
  * be re-centered. Put false when you want to keep the current offsets.
@@ -868,24 +899,8 @@ function draw_graph(center, transition_time) {
     d3.selectAll("svg.argument").transition().duration(transition_time)
         .attr("x", x_pos).attr("y", y_pos).style("opacity", 1);
 
-    // for the record, set whether the card is current/outgoing/incoming so
-    // that the next time this is called, the x_pos and y_pos functions know
-    // how to handle cards that are no longer shown
-    cards.each(function (d) {
-        if (current_card == d) {
-            d.previously_current = true;
-            d.previously_outgoing = false;
-            d.previously_incoming = false;
-        } else if (is_outgoing(d)) {
-            d.previously_current = false;
-            d.previously_outgoing = true;
-            d.previously_incoming = false;
-        } else if (is_incoming(d)) {
-            d.previously_current = false;
-            d.previously_outgoing = false;
-            d.previously_incoming = true;
-        } // else shouldn't happen
-    });
+    // set whether the cards were previously in the top, middle, or bottom rows
+    set_cards_previous_locations();
 
     // finally, transition the links to their final paths as well while
     // toggling the opacity for those links that are now invisible/visible
