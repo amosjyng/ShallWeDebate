@@ -634,6 +634,24 @@ function add_construction_toolbar_buttons (constructed_cards_toolbar) {
 }
 
 /**
+ * Simply tells you whether something is under construction or not
+ * @param {Node | Relation} d The piece of information in question
+ * @returns True or false depending on whether the user is currently editing something
+ */
+function is_under_construction (d) {
+    return d.under_construction;
+}
+
+/**
+ * Simply tells you whether something is under construction or not
+ * @param {Node | Relation} d The piece of information in question
+ * @returns True or false depending on whether the user is currently editing something
+ */
+function isnt_under_construction (d) {
+    return !d.under_construction;
+}
+
+/**
  * Create card representations of all unrepresented nodes.
  */
 function make_cards() {
@@ -642,9 +660,7 @@ function make_cards() {
     // add new card representations of nodes
     new_cards = cards.enter().append("svg").classed("argument", true)
         .attr("cursor", "pointer").attr("opacity", 0).call(drag)
-        .classed("under_construction", function (d) {
-            return d.under_construction;
-        });
+        .classed("under_construction", is_under_construction);
     // create background rectangle for the cards
     new_cards.append("rect").attr("width", card_width).attr("height", card_height)
                 .classed("card", true);
@@ -654,15 +670,13 @@ function make_cards() {
         .attr("requiredFeatures", "http://www.w3.org/TR/SVG11/feature#Extensibility")
         .attr("width", card_width).attr("height", card_height)
         .append("xhtml:div").classed("summary", true);
-    divs.filter(function (d) {
-            return d.under_construction;
-        }).append("textarea")
+    divs.filter(is_under_construction)
+        .append("textarea")
         .attr("maxlength", "140")
         .attr("placeholder", "Write a concise and logical reply here. Click on the link to change its type.")
         .classed("under_construction", true);
-    divs.filter(function (d) {
-            return !d.under_construction;
-        }).append("p")
+    divs.filter(isnt_under_construction)
+        .append("p")
         .classed("summary", true).text(function (d) {
             return d.summary;
         }).attr("xmlns", "http://www.w3.org/1999/xhtml");
@@ -693,14 +707,10 @@ function make_cards() {
         d3.select(this).select("svg.toolbar").transition().attr("opacity", 0);
     });
     // add buttons for finished cards to toolbar
-    var constructed_cards_toolbar = toolbar.filter(function (d) {
-        return !d.under_construction;
-    });
+    var constructed_cards_toolbar = toolbar.filter(isnt_under_construction);
     add_construction_toolbar_buttons(constructed_cards_toolbar);
     // add buttons for cards that are under construction
-    var under_construction_toolbar = toolbar.filter(function (d) {
-        return d.under_construction;
-    });
+    var under_construction_toolbar = toolbar.filter(is_under_construction);
     var save_button = under_construction_toolbar.append("svg");
     save_button.append("rect").attr("width", card_width).attr("height", toolbar_height);
     save_button.append("text").attr("x", card_width / 2).attr("y", toolbar_height - 8)
