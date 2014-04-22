@@ -770,8 +770,7 @@ function make_cards() {
 
             draw_graph();
         }).fail(function (jqXHR, textStatus, errorThrown) {
-            // todo: display error message to user
-            console.error("Failed to create new argument: " + errorThrown);
+            alert_user("Failed to create new argument", errorThrown);
         });
     });
 }
