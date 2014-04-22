@@ -612,13 +612,13 @@ function add_construction_toolbar_buttons (constructed_cards_toolbar) {
     reply_button.append("text").attr("x", 1.5 * card_width / 2).attr("y", toolbar_height - 8)
         .text("REPLY");
     reply_button.on("click", function (d) {
+        d3.event.stopPropagation();
 
         if (reply_under_construction) {
-            alert("Sorry, but you are already editing a reply!");
+            alert_user("Can't do that", "You're already editing a reply.");
+            change_current_card_id(-1);
         }
         else {
-            d3.event.stopPropagation();
-
             var new_node = {
                 id: -1,
                 gotten: true,
