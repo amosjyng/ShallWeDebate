@@ -238,7 +238,6 @@ function process_new_relation(new_relation) {
  * Get all relations associated with a particular node, and all other nodes
  * associated with those relations as well
  * @param {Node} node The node to retrieve all the relations for
- * @todo Display error message onscreen when there's a failure
  */
 function ajax_get_relations_of(node) {
     $.ajax({
@@ -255,8 +254,7 @@ function ajax_get_relations_of(node) {
 
         draw_graph();
     }).fail(function (jqXHR, textStatus, errorThrown) {
-        // todo: display error message to user
-        console.log("Failed to get relations of node " + node.id + ": " + errorThrown);
+        alert_user("Failed to get relations of node " + node.id, errorThrown);
     });
 }
 
