@@ -7,10 +7,25 @@
     <script src="/assets/javascripts/jquery-2.0.3.min.js"></script>
     <script src="/assets/javascripts/bootstrap.min.js"></script>
     <script src="/assets/javascripts/d3.v3.min.js"></script>
+    <script src="/assets/javascripts/sitewide.js"></script>
     <script src="/assets/javascripts/display-debate.js"></script>
 </head>
 
 <body>
+<div id="modal-info" class="modal fade">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Sample modal notification</h4>
+            </div>
+
+            <div class="modal-body">
+                <p>Sample modal content.</p>
+            </div>
+        </div>
+    </div>
+</div>
 <div id="graph_container">
     <svg id="graph" preserveAspectRatio="none" width="100%" height="808">
         <defs>

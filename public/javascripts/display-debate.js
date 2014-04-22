@@ -184,7 +184,6 @@ function argument_id_of_address() {
  * @param {number} node_id The ID of the node to retrieve
  * @param {Function} [callback] The callback function which, when specified, will
  * be called with the newly retrieved node as the sole argument
- * @todo Display error message onscreen when there's a failure
  */
 function ajax_get_node(node_id, callback) {
     $.ajax({
@@ -202,7 +201,7 @@ function ajax_get_node(node_id, callback) {
             callback(data);
         }
     }).fail(function (jqXHR, textStatus, errorThrown) {
-        alert("Failed to get argument " + node_id + ": " + errorThrown);
+        alert_user("Failed to get argument " + node_id, errorThrown);
     });
 }
 
@@ -238,7 +237,6 @@ function process_new_relation(new_relation) {
  * Get all relations associated with a particular node, and all other nodes
  * associated with those relations as well
  * @param {Node} node The node to retrieve all the relations for
- * @todo Display error message onscreen when there's a failure
  */
 function ajax_get_relations_of(node) {
     $.ajax({
@@ -255,8 +253,7 @@ function ajax_get_relations_of(node) {
 
         draw_graph();
     }).fail(function (jqXHR, textStatus, errorThrown) {
-        // todo: display error message to user
-        console.log("Failed to get relations of node " + node.id + ": " + errorThrown);
+        alert_user("Failed to get relations of node " + node.id, errorThrown);
     });
 }
 
@@ -264,8 +261,6 @@ function ajax_get_relations_of(node) {
  * After a card is selected (i.e. clicked on), call this function to retrieve
  * all relevant information for the node that the card represents
  * @param {Node} node The node of the card that was clicked on
- * @todo Do nothing except for redrawing the graph if information for this node
- * has already been retrieved
  */
 function ajax_get_card(node) {
     ajax_get_relations_of(node); // get all relevant relations and related nodes
@@ -612,13 +607,13 @@ function add_construction_toolbar_buttons (constructed_cards_toolbar) {
     reply_button.append("text").attr("x", 1.5 * card_width / 2).attr("y", toolbar_height - 8)
         .text("REPLY");
     reply_button.on("click", function (d) {
+        d3.event.stopPropagation();
 
         if (reply_under_construction) {
-            alert("Sorry, but you are already editing a reply!");
+            alert_user("Can't do that", "You're already editing a reply.");
+            change_current_card_id(-1);
         }
         else {
-            d3.event.stopPropagation();
-
             var new_node = {
                 id: -1,
                 gotten: true,
@@ -772,8 +767,7 @@ function make_cards() {
 
             draw_graph();
         }).fail(function (jqXHR, textStatus, errorThrown) {
-            // todo: display error message to user
-            console.error("Failed to create new argument: " + errorThrown);
+            alert_user("Failed to create new argument", errorThrown);
         });
     });
 }
