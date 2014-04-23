@@ -11,7 +11,9 @@ var card_spacing = 10;
 /** Height of toolbar on cards */
 var toolbar_height = 30;
 
-
+/** Index of the next current node (may be nonzero when it's a relation
+    being displayed) */
+var current_i = 0;
 /** Index of the next outgoing node (relative to the current node) to be
     displayed (in the top row) */
 var next_outgoing_i = 0;
@@ -20,9 +22,20 @@ var next_outgoing_i = 0;
 var next_incoming_i = 0;
 
 
-/** The currently-selected node whose card is displayed in the middle of the screen
-    @todo Change name to current_node? */
+/**
+ * The currently-selected node whose card is displayed in the middle of the screen.
+ * May be null if there is no currently selected card, but instead a selected
+ * relation.
+ * @todo Rename to current_node?
+ */
 var current_card = null;
+/**
+ * The currently selected relation which is displayed in the middle of the screen
+ * along with both of its relations at either end. May be null if there is no
+ * currently selected relation, but instead a selected node.
+ */
+var current_relation = null;
+  
 
 /** Height of final rendered graph. @todo Make this height scalable */
 var graph_height = null;
@@ -268,21 +281,46 @@ function ajax_get_card(node) {
 }
 
 /**
+ * Is a node currently the selected node, or one of the nodes at either end of
+ * a relation?
+ */
+function is_current(node) {
+    if (current_relation == null) {
+        return node === current_card;
+    } else {
+        return node === current_relation.from
+            || node === current_relation.toArgument;
+    }
+}
+
+/**
  * Is a node part of the outgoing nodes of the currently selected node?
+ *
+ * A relation will never have outgoing nodes, only incoming nodes, so this
+ * will always be false if there is a currently selected relation instead
+ * of node
  * @param {Node} node The node in question
  * @returns Whether or not this node should be displayed in the top row
  */
 function is_outgoing(node) {
-    return current_card.outgoing.indexOf(node) != -1;
+    if (current_relation === null) {
+        return current_card.outgoing.indexOf(node) != -1;
+    }
 }
 
 /**
- * Is a node part of the incoming nodes of the currently selected node?
+ * Is a node part of the incoming nodes of the currently selected
+ * node/relation?
  * @param {Node} node The node in question
  * @returns Whether or not this node should be displayed in the bottom row
  */
 function is_incoming(node) {
-    return current_card.incoming.indexOf(node) != -1;
+    if (current_relation === null) {
+        return current_card.incoming.indexOf(node) != -1;
+    } else {
+        // todo: add incoming field to current_relation
+        return current_relation.incoming.indexOf(node) != -1;
+    }
 }
 
 /**
@@ -310,8 +348,9 @@ function relation_visible(relation) {
  * @param {Node} node The node which the card in question represents
  */
 function determine_i(node) {
-    if (node == current_card) { // if it's the card in the middle of the screen
-        node.i = 0; // it doesn't really matter what i is
+    if (is_current(node)) { // if it's the card in the middle of the screen
+        node.i = current_i;
+        current_i += 2;
     } else if (is_outgoing(node)) { // if it's in the top row
         node.i = next_outgoing_i;
         next_outgoing_i++;
@@ -518,9 +557,10 @@ function compute_link_bezier_curve(link) {
 }
 
 /**
- * Reset "next_outgoing_i" and "next_incoming_i" global variables
+ * Reset global index variables
  */
 function reset_globals() {
+    current_i = 0;
     next_outgoing_i = 0;
     next_incoming_i = 0;
     // don't touch the offsets because "draw_graph" will handle that
@@ -539,6 +579,9 @@ function center_cards_offset(num_cards) {
 /**
  * Updates "top_row_offset" and "bottom_row_offset" to the necessary values in
  * order to (when possible) center the top and bottom rows
+ *
+ * Cards in the center row should always be centered. If you can't even afford
+ * to display two cards horizontally... you need a bigger screen.
  */
 function center_cards() {
     top_row_offset = center_cards_offset(next_outgoing_i);
@@ -600,6 +643,8 @@ function add_construction_toolbar_buttons (constructed_cards_toolbar) {
         $("#argument-address-modal input")
             .attr("value", window.location.origin + argument_address(d.id))
         $("#argument-address-modal").modal();
+        // somehow select doesn't work when modal dialog is still appearing,
+        // so select the input 500 milliseconds after it appears
         setTimeout(function () {
             $("#argument-address-modal input").select();
         }, 500);
@@ -872,7 +917,8 @@ function set_cards_previous_locations() {
 }
 
 /**
- * Redraw the entire graph
+ * Redraw the entire graph. Even if the current card/relation isn't changed,
+ * this will recenter the graph.
  * @param {boolean} [center=true] Whether or not the top and bottom rows should
  * be re-centered. Put false when you want to keep the current offsets.
  * @param {number} [transition=500] The time it takes for all the nodes and
