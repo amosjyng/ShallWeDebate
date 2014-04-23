@@ -542,22 +542,33 @@ function compute_link_bezier_curve(link) {
     // for convenience, define these two variables for each end of the link
     var from = link.from;
     var to = link.toArgument;
-    // calculate the start and end positions of the Bezier curve. It should
-    // start at the top-middle of the "from" card and end at the bottom-middle
-    // of the "to" card (under the current scheme, "to" cards are always above
-    // "from" cards)
-    var start_pos = [x_pos(from, from.i) + half_card_width, y_pos(from, from.i)];
-    var end_pos = [x_pos(to, to.i) + half_card_width,
-                    /* account for arrow: marker-width is 3, stroke-width is 5 */
-                   y_pos(to, to.i) + card_height + (5 * 3)];
-    // find the difference in height between the two cards
-    var height = end_pos[1] - start_pos[1];
-    // have the controls be half-height away from the start/end points
-    var control1 = [start_pos[0], start_pos[1] + (height / 2)];
-    var control2 = [end_pos[0], end_pos[1] - (height / 2)];
-    // build the final string
-    return "M" + pos2str(start_pos) + "C" + pos2str(control1)
-            + pos2str(control2) + pos2str(end_pos);
+    if (is_current(from) && is_current(to)) {
+        // it should start at the right-middle of the from card and end at the
+        // left-middle of the to card
+        var start_pos = [x_pos(from, from.i) + card_width,
+                         y_pos(from, from.i) + half_card_height];
+        // todo: get rid of marker height magic constant
+        var end_pos   = [x_pos(to, to.i) - (5 * 3), y_pos(to, to.i) + half_card_height];
+        // could also use "H" instead of "L"
+        return "M" + pos2str(start_pos) + "L" + pos2str(end_pos);
+    } else {
+        // calculate the start and end positions of the Bezier curve. It should
+        // start at the top-middle of the "from" card and end at the bottom-middle
+        // of the "to" card (under the current scheme, "to" cards are always above
+        // "from" cards)
+        var start_pos = [x_pos(from, from.i) + half_card_width, y_pos(from, from.i)];
+        var end_pos = [x_pos(to, to.i) + half_card_width,
+                       /* account for arrow: marker-width is 3, stroke-width is 5 */
+                       y_pos(to, to.i) + card_height + (5 * 3)];
+        // find the difference in height between the two cards
+        var height = end_pos[1] - start_pos[1];
+        // have the controls be half-height away from the start/end points
+        var control1 = [start_pos[0], start_pos[1] + (height / 2)];
+        var control2 = [end_pos[0], end_pos[1] - (height / 2)];
+        // build the final string
+        return "M" + pos2str(start_pos) + "C" + pos2str(control1)
+                + pos2str(control2) + pos2str(end_pos);
+    }
 }
 
 /**
