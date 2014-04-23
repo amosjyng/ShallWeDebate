@@ -597,9 +597,12 @@ function add_construction_toolbar_buttons (constructed_cards_toolbar) {
     share_button.append("text").attr("x", card_width / 2 / 2).attr("y", toolbar_height - 8)
         .text("SHARE");
     share_button.on("click", function (d) {
-        // http://stackoverflow.com/a/6055620/257583
-        window.prompt("Avoid redundant discussions. Share this debate:",
-                      window.location.origin + argument_address(d.id));
+        $("#argument-address-modal input")
+            .attr("value", window.location.origin + argument_address(d.id))
+        $("#argument-address-modal").modal();
+        setTimeout(function () {
+            $("#argument-address-modal input").select();
+        }, 500);
     });
     var reply_button = constructed_cards_toolbar.append("svg");
     reply_button.append("rect").attr("width", card_width / 2).attr("height", toolbar_height)

@@ -93,3 +93,8 @@ img#spinner
 	width: 75px;
 	height: auto;
 }
+
+div#argument-address-modal input
+{
+	width: 100%;
+}
