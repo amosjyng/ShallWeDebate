@@ -238,6 +238,8 @@ function process_new_relation(new_relation) {
     if (indexOfRelation(new_relation.id) === -1) {
         // set type to be string instead of int
         new_relation.type = TYPE_MEANINGS[new_relation.type];
+        // set incoming to be empty at first
+        new_relation.incoming = [];
         // remove redundancies associated with nodes at either end of the
         // relation
         set_relation_nodes(new_relation);
@@ -590,7 +592,7 @@ function center_cards() {
 
 /**
  * Move the window to a newly selected card
- * @param {Node} The node that is to be the newly selected card
+ * @param {Node} d The node that is to be the newly selected card
  */
 function change_current_card(d) {
     // no need to reset the top and bottom row offsets to zero
@@ -603,11 +605,28 @@ function change_current_card(d) {
 
     // set the current_card to the node of the card that was just clicked
     current_card = d;
-    if (!d.gotten) // if its relevant information hasn't been obtained already
-    {
+    if (!d.gotten) { // if its relevant information hasn't been obtained already
         // get all the related links and nodes associated with the newly selected node
         ajax_get_card(d);
         d.gotten = true; // mark it as already having obtained relevant info
+    }
+    // redraw graph
+    draw_graph();
+}
+
+/**
+ * Move the window to a newly selected relation
+ * @param {Relation} r The relation that is to become the newly selected relation
+ */
+function change_current_relation (r) {
+    // todo: record this in the page history
+
+    // set the current relation to whichever link was just clicked
+    current_relation = r;
+    // todo: add is_debated field to relations
+    if (!r.gotten && !r.is_debated) {
+        // todo: ajax_get_relation(r)
+        r.gotten = true;
     }
     // redraw graph
     draw_graph();
