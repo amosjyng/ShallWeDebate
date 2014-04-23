@@ -43,7 +43,9 @@ var graph_height = null;
     of the arguments */
 var min_graph_height = 808;
 
-
+/** Determines how much the middle row is offset from the left side of the window.
+    This is used for always centering the middle row */
+var middle_row_offset = 0;
 /** Determines how much the top row is offset from the left side of the window.
     Used for scrolling the top row */
 var top_row_offset = 0;
@@ -332,7 +334,7 @@ function is_incoming(node) {
  * its outgoing nodes, or one of its incoming nodes
  */
 function node_visible(node) {
-    return (node == current_card) || is_outgoing(node) || is_incoming(node);
+    return is_current(node) || is_outgoing(node) || is_incoming(node);
 }
 
 /**
@@ -379,15 +381,15 @@ function row_width(num_cards) {
  * @returns The x-coordinate of that node
  */
 function x_pos(node) {
-    if (node == current_card) { // if current card, just center it
-        return (window.innerWidth / 2) - half_card_width;
+    if (is_current(node)) { // if middle row
+        return middle_row_offset + row_width(node.i);
     } else if (is_outgoing(node)) { // if top row
         // since the i attributes of a node in a row start from 0, node.i
         // effectively denotes how many nodes were before this one
         // so simply add "top_row_offset" to how wide a row of all the nodes
         // before this one would be
         return top_row_offset + row_width(node.i);
-    } else if (is_incoming(node)) { // if bottom row, same logic as for top row
+    } else if (is_incoming(node)) { // if breottom row, same logic as for top row
         return bottom_row_offset + row_width(node.i);
     } else { // otherwise it's a hidden node, so move it offscreen
         // if it was previously a current node and no longer displayed
@@ -414,7 +416,7 @@ function x_pos(node) {
  * @returns The y-coordinate of that node
  */
 function y_pos(node) {
-    if (node == current_card) { // if current card, just center it
+    if (is_current(node)) { // if current card, just center it
         return (graph_height / 2) - half_card_height;
     } else if (is_outgoing(node)) { // if it's in the top row
         // position it slightly offset from the top of the graph
@@ -579,13 +581,15 @@ function center_cards_offset(num_cards) {
 }
 
 /**
- * Updates "top_row_offset" and "bottom_row_offset" to the necessary values in
- * order to (when possible) center the top and bottom rows
+ * Updates global offsets to the necessary values in
+ * order to (when possible) center the top, middle, and bottom rows
  *
  * Cards in the center row should always be centered. If you can't even afford
  * to display two cards horizontally... you need a bigger screen.
  */
 function center_cards() {
+    // -1 because current_i is always incremented by 2
+    middle_row_offset = center_cards_offset(current_i - 1);
     top_row_offset = center_cards_offset(next_outgoing_i);
     bottom_row_offset = center_cards_offset(next_incoming_i);
 }
