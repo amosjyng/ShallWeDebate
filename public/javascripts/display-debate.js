@@ -925,7 +925,7 @@ function make_links() {
             if (d.isDebated) {
                 return "10,10";
             }
-        })
+        }).attr("cursor", "pointer")
         .on("click", function (d) {
             if (d.under_construction) {
                 if (d.type == "support") {
