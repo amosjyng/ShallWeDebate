@@ -651,7 +651,7 @@ function change_current_relation (r) {
     // set the current relation to whichever link was just clicked
     current_relation = r;
     // todo: add is_debated field to relations
-    if (!r.gotten && !r.is_debated) {
+    if (!r.gotten && !r.isDebated) {
         // todo: ajax_get_relation(r)
         r.gotten = true;
     }
