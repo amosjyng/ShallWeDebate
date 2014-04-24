@@ -555,8 +555,10 @@ function compute_link_bezier_curve(link) {
                          y_pos(from, from.i) + half_card_height];
         // todo: get rid of marker height magic constant
         var end_pos   = [x_pos(to, to.i) - (5 * 3), y_pos(to, to.i) + half_card_height];
-        // could also use "H" instead of "L"
-        return "M" + pos2str(start_pos) + "L" + pos2str(end_pos);
+        var control1  = [start_pos[0] + (end_pos[0] - start_pos[0]) / 3, start_pos[1]];
+        var control2  = [end_pos[0]   - (end_pos[0] - start_pos[0]) / 3, end_pos[1]]
+        return "M" + pos2str(start_pos) + "C" + pos2str(control1)
+                + pos2str(control2) + pos2str(end_pos);
     } else {
         // calculate the start and end positions of the Bezier curve. It should
         // start at the top-middle of the "from" card and end at the bottom-middle
