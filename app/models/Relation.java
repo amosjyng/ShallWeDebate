@@ -59,7 +59,7 @@ public class Relation extends Model
      * Whether or not this Relation is on the toRelation end of another relation. Needed because usually one wouldn't
      * think of a Relationship as having something else attached to it.
      */
-    @Required @Column(columnDefinition = "boolean default false")
+    @Required @NotNull @Column(columnDefinition = "boolean default false")
     public Boolean isDebated;
 
     /**

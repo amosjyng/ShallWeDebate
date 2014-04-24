@@ -37,27 +37,34 @@
     from: *arg3
     toArgument: *arg1
     type: 0
+    isDebated: false
 - &rel2 !!models.Relation
     from: *arg3
     toArgument: *arg2
     type: 1
+    isDebated: false
 - &rel3 !!models.Relation
     from: *arg4
     toArgument: *arg3
     type: 1
+    isDebated: false
 - &rel4 !!models.Relation
     from: *arg5
     toArgument: *arg3
     type: 0
+    isDebated: false
 - &rel5 !!models.Relation
     from: *arg6
     toArgument: *arg5
     type: 1
+    isDebated: false
 - &rel6 !!models.Relation
     from: *arg7
     toArgument: *arg5
     type: 1
+    isDebated: false
 - &rel7 !!models.Relation
     from: *arg8
     toArgument: *arg5
     type: 1
+    isDebated: false
