@@ -47,11 +47,11 @@
     from: *arg4
     toArgument: *arg3
     type: 1
-    isDebated: false
+    isDebated: true
 - &rel4 !!models.Relation
     from: *arg5
-    toArgument: *arg3
-    type: 0
+    toRelation: *rel3
+    type: 1
     isDebated: false
 - &rel5 !!models.Relation
     from: *arg6

@@ -921,6 +921,11 @@ function make_links() {
         .classed("under_construction", function (d) {
             return d.under_construction;
         }).attr("marker-end", get_link_marker)
+        .attr("stroke-dasharray", function (d) {
+            if (d.isDebated) {
+                return "10,10";
+            }
+        })
         .on("click", function (d) {
             if (d.under_construction) {
                 if (d.type == "support") {
