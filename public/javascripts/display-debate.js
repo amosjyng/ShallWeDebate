@@ -352,9 +352,15 @@ function relation_visible(relation) {
  * @param {Node} node The node which the card in question represents
  */
 function determine_i(node) {
-    if (is_current(node)) { // if it's the card in the middle of the screen
-        node.i = current_i;
-        current_i += 2;
+    if (node === current_card) { // if it's the current node
+        node.i = 0;
+        current_i = 2;
+    } else if (current_relation != null && node === current_relation.from) {
+        node.i = 0;
+        current_i = 4;
+    } else if (current_relation != null && node === current_relation.toArgument) {
+        node.i = 2;
+        // no need to set current_i again
     } else if (is_outgoing(node)) { // if it's in the top row
         node.i = next_outgoing_i;
         next_outgoing_i++;
@@ -613,6 +619,8 @@ function change_current_card(d) {
     // no need to reset the top and bottom row offsets to zero
     // because that's already done in "draw_graph"
 
+    current_relation = null;
+
     if (current_card != d) { // if different card
         // change URL to reflect newly selected card
         window.history.pushState(null, "what is this", argument_address(d.id));
@@ -635,6 +643,8 @@ function change_current_card(d) {
  */
 function change_current_relation (r) {
     // todo: record this in the page history
+
+    current_card = null;
 
     // set the current relation to whichever link was just clicked
     current_relation = r;
@@ -923,6 +933,9 @@ function make_links() {
                     .attr("class", get_relation_type)
                     .classed("under_construction", true)
                     .attr("marker-end", get_link_marker);
+            }
+            else {
+                change_current_relation(d);
             }
         }).style("opacity", 0);
 }
