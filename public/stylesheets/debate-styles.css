@@ -79,6 +79,13 @@ path.oppose.under_construction
 	stroke: #FF8080;
 }
 
+path.clickable
+{
+	stroke: black;
+	stroke-width: 25px;
+	opacity: 0;
+}
+
 switch text
 {
 	font-size: 20px;

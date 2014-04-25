@@ -913,11 +913,13 @@ function get_link_marker (d) {
  */
 function make_links() {
     // bind relation data to links
-    links = d3.select("svg#graph").selectAll("path").data(relations);
+    links = d3.select("svg#graph").selectAll("svg.link").data(relations);
     // create the paths for every link, and start them off with full
     // transparency so that they can smoothly enter the graph
-    links.enter().append("path")
+    var link_svgs = links.enter().append("svg").classed("link", true).style("opacity", 0);
+    link_svgs.append("path")
         .attr("class", get_relation_type)
+        .classed("visible", true)
         .classed("under_construction", function (d) {
             return d.under_construction;
         }).attr("marker-end", get_link_marker)
@@ -925,7 +927,10 @@ function make_links() {
             if (d.isDebated) {
                 return "10,10";
             }
-        }).attr("cursor", "pointer")
+        });
+    link_svgs.append("path")
+        .attr("cursor", "pointer")
+        .classed("clickable", true)
         .on("click", function (d) {
             if (d.under_construction) {
                 if (d.type == "support") {
@@ -936,15 +941,14 @@ function make_links() {
                     console.error("Unknown relation type " + d.type);
                 }
 
-                d3.select(this)
+                d3.select(this).parentNode.select("path.visible")
                     .attr("class", get_relation_type)
-                    .classed("under_construction", true)
                     .attr("marker-end", get_link_marker);
             }
             else {
                 change_current_relation(d);
             }
-        }).style("opacity", 0);
+        });
 }
 
 /**
@@ -1006,14 +1010,16 @@ function draw_graph(center, transition_time) {
 
     // finally, transition the links to their final paths as well while
     // toggling the opacity for those links that are now invisible/visible
-    links.transition().duration(transition_time).style("opacity", function (d) {
-        // if one end of the link is currently displayed, then the other is too
-        if (relation_visible(d)) {
-            return 1;
-        } else {
-            return 0;
-        }
-    }).attr("d", compute_link_bezier_curve);
+    links.transition().duration(transition_time)
+        .style("opacity", function (d) {
+            // if one end of the link is currently displayed, then the other is too
+            if (relation_visible(d)) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
+    d3.selectAll("path").transition().duration(transition_time).attr("d", compute_link_bezier_curve);
 }
 
 /** Make sure that user doesn't accidentally navigate away while editing an
