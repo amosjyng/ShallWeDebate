@@ -63,6 +63,15 @@ public class Relation extends Model
     public Boolean isDebated;
 
     /**
+     * Set isDebated to be false by default (since chances are most relations won't be debated at all).
+     */
+    public Relation()
+    {
+        super();
+        isDebated = false;
+    }
+
+    /**
      * Something you use to write your queries for you.
      */
     @SuppressWarnings("unchecked")
