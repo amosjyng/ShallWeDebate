@@ -941,8 +941,12 @@ function make_links() {
                     console.error("Unknown relation type " + d.type);
                 }
 
-                d3.select(this).parentNode.select("path.visible")
+                d3.select($(this).siblings("path.visible")[0])
                     .attr("class", get_relation_type)
+                    // it's necessary to add these classes that are added
+                    // to every visible path
+                    .classed("visible", true)
+                    .classed("under_construction", true)
                     .attr("marker-end", get_link_marker);
             }
             else {
