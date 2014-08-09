@@ -1024,6 +1024,13 @@ function draw_graph(center, transition_time) {
             }
         });
     d3.selectAll("path").transition().duration(transition_time).attr("d", compute_link_bezier_curve);
+    if (current_relation === null) {
+        d3.select("#link-toolbar").transition().duration(transition_time)
+            .style("opacity", 0);
+    } else { // viewing a relation right now
+        d3.select("#link-toolbar").transition().duration(transition_time)
+            .style("opacity", 1);
+    }
 }
 
 /** Make sure that user doesn't accidentally navigate away while editing an
@@ -1051,7 +1058,7 @@ window.onload = function () {
     }
 
     $("#link-toolbar").attr("width", card_width).attr("height", toolbar_height)
-        .attr("y", card_height - toolbar_height).attr("opacity", 1);
+        .attr("y", card_height - toolbar_height).attr("opacity", 0);
     add_construction_toolbar_buttons(d3.select("#link-toolbar"));
 
     // get our first card
