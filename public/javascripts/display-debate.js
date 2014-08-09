@@ -191,12 +191,29 @@ function argument_address(node_id) {
 }
 
 /**
- * From the current address bar URL, figure out which Argument we're
+ * Gives the URL to the relation with the specified ID
+ * @param {number} relation_id The ID of the relation whose URL you want
+ * @returns The URL to a page displaying that Relation
+ */
+function relation_address(relation_id) {
+    return "/relations/" + relation_id + "/";
+}
+
+/**
+ * Finds out if the URL in the address bar is pointing to an argument
+ * @returns Whether or not we should be looking at a node instead of a relation right now
+ */
+function argument_in_address () {
+    return window.location.pathname.split("/")[1] === "arguments";
+}
+
+/**
+ * From the current address bar URL, figure out which Argument/relation we're
  * supposed to be looking at
- * @returns The Argument ID of the argument that's currently in the address
+ * @returns The Argument/Relation ID of the argument that's currently in the address
  * bar
  */
-function argument_id_of_address() {
+function id_of_address () {
     return parseInt(window.location.pathname.split("/")[2]);
 }
 
@@ -255,6 +272,32 @@ function process_new_relation(new_relation) {
         // add this to the array of currently retrieved relations
         relations.push(new_relation);
     }
+}
+
+/**
+ * Retrieve a relation from the server. This should only be called when initially
+ * loading the page on a relation
+ * @param {number} relation_id The ID of the relation to be retrieved
+ * @param {function} callback What to do after retrieving the relation
+ */
+function ajax_get_relation(relation_id, callback) {
+    $.ajax({
+        url: relation_address(relation_id),
+        type: "GET",
+        dataType: "json",
+        headers: {
+            Accept: "application/json"
+        }
+    }).done(function (data) {
+        process_new_relation(data);
+
+        // if callback is defined, call it with the new node
+        if (typeof callback !== 'undefined') {
+            callback(data);
+        }
+    }).fail(function (jqXHR, textStatus, errorThrown) {
+        alert_user("Failed to get relation " + relation_id, errorThrown);
+    });
 }
 
 /**
@@ -651,7 +694,10 @@ function change_current_card(d) {
  * @param {Relation} r The relation that is to become the newly selected relation
  */
 function change_current_relation (r) {
-    // todo: record this in the page history
+    if (current_relation != r) { // if different link
+        // change URL to reflect newly selected link
+        window.history.pushState(null, "what is this", relation_address(r.id));
+    }
 
     current_card = null;
 
@@ -659,7 +705,7 @@ function change_current_relation (r) {
     current_relation = r;
     // todo: add is_debated field to relations
     if (!r.gotten && r.isDebated) {
-        // todo: ajax_get_relation(r)
+        // todo: ajax_get_relations_of(r)
         r.gotten = true;
     }
     // redraw graph
@@ -671,7 +717,7 @@ function change_current_relation (r) {
  * card or existing card with that ID and centers it in the graph.
  * @param {Number} ID The ID of the card to be centered on
  */
-function change_current_card_id(id) {
+function change_current_card_id (id) {
     var node_index = indexOfNode({id: id});
     if (node_index === -1) {
         ajax_get_node(id, function (data) {
@@ -679,6 +725,34 @@ function change_current_card_id(id) {
         });
     } else {
         change_current_card(nodes[node_index]);
+    }
+}
+
+/**
+ * If no link with the specified ID exists, fetches it from the server. Gets either new
+ * link or existing link with that ID and centers it in the graph.
+ * @param {Number} ID The ID of the link to be centered on
+ */
+function change_current_relation_id (id) {
+    // todo: why does indexOfRelation use id directly?
+    var relation_index = indexOfRelation(id);
+    if (relation_index === -1) {
+        ajax_get_relation(id, function (data) {
+            change_current_relation(data);
+        });
+    } else {
+        change_current_relation(relations[relation_index]);
+    }
+}
+
+/**
+ * Goes to the node or argument to be displayed based on the URL in the address bar
+ */
+function gotoAddress () {
+    if (argument_in_address()) {
+        change_current_card_id(id_of_address());
+    } else { // relation is in address
+        change_current_relation_id(id_of_address());
     }
 }
 
@@ -890,7 +964,7 @@ window.onpopstate = function(event) {
     // already called it. So this might be called twice, once from window.onload
     // and once more from just the page load
     if (window.history.state != null) {
-        change_current_card_id(argument_id_of_address());
+        gotoAddress();
     }
 }
 
@@ -1081,9 +1155,9 @@ window.onload = function () {
         .attr("opacity", 0);
     add_toolbar_buttons(d3.select("#link-toolbar"), link_toolbar_width);
 
-    // get our first card
+    // get our first card (or our first relation)
     // it'll already be retrieved by window.onpopstate function, which is called even on initial page load
     // apparently there's a Chrome and Safari bug that prevents this from happening
 
-    change_current_card_id(argument_id_of_address());
+    gotoAddress();
 }

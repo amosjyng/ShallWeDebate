@@ -26,11 +26,30 @@ public class Debate extends Controller
     {
         if (request().accepts("text/html"))
         {
-            return ok(views.html.debate.viewArgument.render());
+            return ok(views.html.debate.viewDebate.render());
         }
         else
         {
             return ok(Json.toJson(Argument.get(id)));
+        }
+    }
+
+    /**
+     * View either an HTML or JSON representation of a particular Relation
+     * @param id The ID of the Relation to be viewed
+     * @return If plain HTML is accepted, then the generic HTML debate page will be loaded. The Javascript
+     * on that page will request this again, but only accepting JSON, whereupon the JSON version of the
+     * Relation is returned and displayed to the user in a graphical manner
+     */
+    public static Result viewRelation(Long id)
+    {
+        if (request().accepts("text/html"))
+        {
+            return ok(views.html.debate.viewDebate.render());
+        }
+        else
+        {
+            return ok(Json.toJson(Relation.get(id)));
         }
     }
 
