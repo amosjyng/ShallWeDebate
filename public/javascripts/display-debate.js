@@ -10,6 +10,11 @@ var half_card_height = card_height / 2;
 var card_spacing = 10;
 /** Height of toolbar on cards */
 var toolbar_height = 30;
+/** How much to vertically offset the link toolbar from the center of the screen */
+var link_toolbar_offset = -30;
+/** How wide the link toolbar should be (it is jarring to have it take up the same
+    amount of space as a normal toolbar) */
+var link_toolbar_width = card_width * 0.8;
 
 /** Index of the next current node (may be nonzero when it's a relation
     being displayed) */
@@ -37,6 +42,8 @@ var current_card = null;
 var current_relation = null;
   
 
+/** Width of final rendered graph. */
+var graph_width = null;
 /** Height of final rendered graph. @todo Make this height scalable */
 var graph_height = null;
 /** What the minimum height of the final graph should be for optimal display
@@ -676,16 +683,30 @@ function change_current_card_id(id) {
 }
 
 /**
+ * Add SHARE and REPLY buttons, without any functionality, to a toolbar.
+ * @param {D3 selection} toolbars The toolbars to add buttons to
+ * @param {number} toolbar_width The width of the toolbar to be created
+ */
+function add_toolbar_buttons (toolbars, toolbar_width) {
+    var share_button = toolbars.append("svg").classed("share-button", true);
+    share_button.append("rect").attr("width", toolbar_width / 2 - 1)
+        .attr("height", toolbar_height);
+    share_button.append("text").attr("x", toolbar_width / 2 / 2)
+        .attr("y", toolbar_height - 8).text("SHARE");
+    var reply_button = toolbars.append("svg").classed("reply-button", true);
+    reply_button.append("rect").attr("width", toolbar_width / 2)
+        .attr("height", toolbar_height).attr("x", toolbar_width / 2);
+    reply_button.append("text").attr("x", 1.5 * toolbar_width / 2)
+        .attr("y", toolbar_height - 8).text("REPLY");
+}
+
+/**
  * Add the SHARE and REPLY buttons to the toolbars of already constructed cards.
  * @param {D3 selection} constructed_cards_toolbar The selection of toolbars to add such buttons to
  */
 function add_construction_toolbar_buttons (constructed_cards_toolbar) {
-    var share_button = constructed_cards_toolbar.append("svg");
-    share_button.append("rect").attr("width", card_width / 2 - 1)
-        .attr("height", toolbar_height);
-    share_button.append("text").attr("x", card_width / 2 / 2).attr("y", toolbar_height - 8)
-        .text("SHARE");
-    share_button.on("click", function (d) {
+    add_toolbar_buttons(constructed_cards_toolbar, card_width);
+    constructed_cards_toolbar.select("share-button").on("click", function (d) {
         $("#argument-address-modal input")
             .attr("value", window.location.origin + argument_address(d.id))
         $("#argument-address-modal").modal();
@@ -695,12 +716,7 @@ function add_construction_toolbar_buttons (constructed_cards_toolbar) {
             $("#argument-address-modal input").select();
         }, 500);
     });
-    var reply_button = constructed_cards_toolbar.append("svg");
-    reply_button.append("rect").attr("width", card_width / 2).attr("height", toolbar_height)
-        .attr("x", card_width / 2);
-    reply_button.append("text").attr("x", 1.5 * card_width / 2).attr("y", toolbar_height - 8)
-        .text("REPLY");
-    reply_button.on("click", function (d) {
+    constructed_cards_toolbar.select("reply-button").on("click", function (d) {
         d3.event.stopPropagation();
 
         if (reply_under_construction) {
@@ -806,7 +822,7 @@ function make_cards() {
     // add buttons for finished cards to toolbar
     var constructed_cards_toolbar = toolbar.filter(isnt_under_construction);
     add_construction_toolbar_buttons(constructed_cards_toolbar);
-    // add buttons for cards that are under construction
+    // add buttons for the card that is under construction
     var under_construction_toolbar = toolbar.filter(is_under_construction);
     var save_button = under_construction_toolbar.append("svg");
     save_button.append("rect").attr("width", card_width).attr("height", toolbar_height);
@@ -1043,6 +1059,7 @@ function warn_argument_under_construction (e) {
 
 window.onload = function () {
     graph_height = $("#graph").height();
+    graph_width = $("#graph").width();
 
     // if graph height is not as small as the suggested minimum graph height,
     // then chances are there's something very wrong, so try not to alarm the user
@@ -1057,9 +1074,12 @@ window.onload = function () {
         graph_height = window.innerHeight;
     }
 
+    // add a toolbar for sharing and replying to relations
     $("#link-toolbar").attr("width", card_width).attr("height", toolbar_height)
-        .attr("y", card_height - toolbar_height).attr("opacity", 0);
-    add_construction_toolbar_buttons(d3.select("#link-toolbar"));
+        .attr("x", (graph_width / 2) - (link_toolbar_width / 2))
+        .attr("y", (graph_height / 2) - toolbar_height + link_toolbar_offset)
+        .attr("opacity", 0);
+    add_toolbar_buttons(d3.select("#link-toolbar"), link_toolbar_width);
 
     // get our first card
     // it'll already be retrieved by window.onpopstate function, which is called even on initial page load
