@@ -1050,6 +1050,10 @@ window.onload = function () {
         graph_height = window.innerHeight;
     }
 
+    $("#link-toolbar").attr("width", card_width).attr("height", toolbar_height)
+        .attr("y", card_height - toolbar_height).attr("opacity", 1);
+    add_construction_toolbar_buttons(d3.select("#link-toolbar"));
+
     // get our first card
     // it'll already be retrieved by window.onpopstate function, which is called even on initial page load
     // apparently there's a Chrome and Safari bug that prevents this from happening
