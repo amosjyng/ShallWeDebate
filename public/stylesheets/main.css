@@ -24,3 +24,13 @@ body, svg#graph
 	color: #ECE6FF;
 	letter-spacing: 2px;
 }
+
+.navbar a.navbar-brand:hover
+{
+	color: #ECE6FF;
+}
+
+.modal-title
+{
+	color: #000;
+}
