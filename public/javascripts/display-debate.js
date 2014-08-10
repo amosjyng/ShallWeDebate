@@ -675,7 +675,7 @@ function change_current_card(d) {
 
     if (current_card != d) { // if different card
         // change URL to reflect newly selected card
-        window.history.pushState(null, "what is this", argument_address(d.id));
+        History.pushState(null, null, argument_address(d.id));
     }
 
     // set the current_card to the node of the card that was just clicked
@@ -696,7 +696,7 @@ function change_current_card(d) {
 function change_current_relation (r) {
     if (current_relation != r) { // if different link
         // change URL to reflect newly selected link
-        window.history.pushState(null, "what is this", relation_address(r.id));
+        History.pushState(null, null, relation_address(r.id));
     }
 
     current_card = null;
@@ -945,7 +945,7 @@ function make_cards() {
                 .classed("under_construction", false)
                 .attr("marker-end", get_link_marker);
             // change URL to be the ID of the newly created node
-            window.history.pushState(null, "what is this", argument_address(new_info.new_node_id));
+            History.pushState(null, null, argument_address(new_info.new_node_id));
             reply_under_construction = false; // allow new replies to be made
             window.onbeforeunload = null; // allow user to leave now that reply has been saved
 
@@ -959,14 +959,11 @@ function make_cards() {
 /**
  * When back button is clicked on the page, centers graph on previously selected card
  */
-window.onpopstate = function(event) {
-    // on initial load, browsers that implement window.onpopstate correctly will have
-    // already called it. So this might be called twice, once from window.onload
-    // and once more from just the page load
-    if (window.history.state != null) {
+History.Adapter.bind(window,'statechange', function(event) {
+    if (History.getState() != null) {
         gotoAddress();
     }
-}
+})
 
 // Functions to show/hide spinner
 $(document).ajaxStart(function(){
@@ -1156,8 +1153,6 @@ window.onload = function () {
     add_toolbar_buttons(d3.select("#link-toolbar"), link_toolbar_width);
 
     // get our first card (or our first relation)
-    // it'll already be retrieved by window.onpopstate function, which is called even on initial page load
-    // apparently there's a Chrome and Safari bug that prevents this from happening
 
     gotoAddress();
 }
