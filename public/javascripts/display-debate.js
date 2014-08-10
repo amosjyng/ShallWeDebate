@@ -780,7 +780,7 @@ function add_toolbar_buttons (toolbars, toolbar_width) {
  */
 function add_construction_toolbar_buttons (constructed_cards_toolbar) {
     add_toolbar_buttons(constructed_cards_toolbar, card_width);
-    constructed_cards_toolbar.select("share-button").on("click", function (d) {
+    constructed_cards_toolbar.select(".share-button").on("click", function (d) {
         $("#argument-address-modal input")
             .attr("value", window.location.origin + argument_address(d.id))
         $("#argument-address-modal").modal();
@@ -790,7 +790,7 @@ function add_construction_toolbar_buttons (constructed_cards_toolbar) {
             $("#argument-address-modal input").select();
         }, 500);
     });
-    constructed_cards_toolbar.select("reply-button").on("click", function (d) {
+    constructed_cards_toolbar.select(".reply-button").on("click", function (d) {
         d3.event.stopPropagation();
 
         if (reply_under_construction) {
