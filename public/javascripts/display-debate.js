@@ -1144,6 +1144,11 @@ window.onload = function () {
         $("#graph").attr("height", window.innerHeight);
         graph_height = window.innerHeight;
     }
+    // ensure same for graph
+    if (graph_width < window.innerWidth) {
+        $("#graph").attr("width", window.innerWidth);
+        graph_width = window.innerWidth;
+    }
 
     // add a toolbar for sharing and replying to relations
     $("#link-toolbar").attr("width", card_width).attr("height", toolbar_height)
