@@ -1,4 +1,4 @@
-@(scripts: Html = Html(""), javascripts: Html = Html(""))(content: Html)
+@(stylesheets: Html = Html(""), scripts: Html = Html(""))(content: Html)
 
 <html>
 <head>
@@ -6,7 +6,7 @@
     <link rel="stylesheet" type="text/css" href="@routes.Assets.at("stylesheets/bootstrap.min.css")">
     <link rel="stylesheet" type="text/css" href="@routes.Assets.at("stylesheets/bootstrap-theme.min.css")">
     <link rel="stylesheet" type="text/css" href="@routes.Assets.at("stylesheets/main.css")">
-    @javascripts
+    @stylesheets
     <script src="@routes.Assets.at("javascripts/jquery-2.0.3.min.js")" type="text/javascript"></script>
     <script src="@routes.Assets.at("javascripts/bootstrap.min.js")" type="text/javascript"></script>
     <script src="@routes.Assets.at("javascripts/d3.v3.min.js")" type="text/javascript"></script>
