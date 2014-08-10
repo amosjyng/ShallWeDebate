@@ -1,0 +1,26 @@
+body, svg#graph
+{
+	background-color: #080022;
+	color: #ECE6FF;
+}
+
+.navbar
+{
+	background-color: #1B0071;
+}
+
+.navbar
+{
+    background-image: none;
+    border-radius: 0;
+    border: none;
+    border-bottom: 1px solid black;
+}
+
+.navbar a.navbar-brand
+{
+	font-size: 30px;
+	font-weight: bold;
+	color: #ECE6FF;
+	letter-spacing: 2px;
+}
