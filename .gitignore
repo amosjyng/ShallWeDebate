@@ -33,3 +33,6 @@ server.pid
 
 # Ignore auto-generated documentation files
 js/doc
+
+# Ignore AWS private keys
+*.pem
