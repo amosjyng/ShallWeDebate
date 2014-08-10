@@ -1,71 +1,51 @@
-<html>
-<head>
-    <title>Debate Graph Mockup</title>
-    <link rel="stylesheet" type="text/css" href="/assets/stylesheets/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="/assets/stylesheets/bootstrap-theme.min.css">
-    <link rel="stylesheet" type="text/css" href="/assets/stylesheets/debate-styles.css">
-    <script src="/assets/javascripts/jquery-2.0.3.min.js"></script>
-    <script src="/assets/javascripts/bootstrap.min.js"></script>
-    <script src="/assets/javascripts/d3.v3.min.js"></script>
-    <script src="/assets/javascripts/sitewide.js"></script>
-    <script src="/assets/javascripts/display-debate.js"></script>
-</head>
+@stylesheets = {
+    <link rel="stylesheet" type="text/css" href="@routes.Assets.at("stylesheets/debate-styles.css")">
+}
 
-<body>
-<div id="modal-info" class="modal fade">
-    <div class="modal-dialog modal-sm">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">Sample modal notification</h4>
-            </div>
+@scripts = {
+    <script src="@routes.Assets.at("javascripts/display-debate.js")" type="text/javascript"></script>
+}
 
-            <div class="modal-body">
-                <p>Sample modal content.</p>
+@main(stylesheets, scripts){
+    <div id="argument-address-modal" class="modal fade">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Avoid redundant discussions. Share this debate:</h4>
+                </div>
+
+                <div class="modal-body">
+                    <input type="text" value="insert address here">
+                </div>
             </div>
         </div>
     </div>
-</div>
-<div id="argument-address-modal" class="modal fade">
-    <div class="modal-dialog modal-sm">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">Avoid redundant discussions. Share this debate:</h4>
-            </div>
-
-            <div class="modal-body">
-                <input type="text" value="insert address here">
-            </div>
-        </div>
+    <div id="graph_container">
+        <svg id="graph" preserveAspectRatio="none" width="100%" height="808">
+            <defs>
+                <marker id="arrow-support" viewBox="0 0 10 10" refX="0" refY="5"
+                        markerUnits="strokeWidth" orient="auto" fill="green"
+                        markerWidth="3">
+                    <polyline points="0,0 10,5 0,10 "></polyline>
+                </marker>
+                <marker id="arrow-support-under-construction" viewBox="0 0 10 10" refX="0" refY="5"
+                        markerUnits="strokeWidth" orient="auto" fill="#80FF80"
+                        markerWidth="3">
+                    <polyline points="0,0 10,5 0,10 "></polyline>
+                </marker>
+                <marker id="arrow-oppose" viewBox="0 0 10 10" refX="0" refY="5"
+                        markerUnits="strokeWidth" orient="auto" fill="red"
+                        markerWidth="3">
+                    <polyline points="0,0 10,5 0,10 "></polyline>
+                </marker>
+                <marker id="arrow-oppose-under-construction" viewBox="0 0 10 10" refX="0" refY="5"
+                        markerUnits="strokeWidth" orient="auto" fill="#FF8080"
+                        markerWidth="3">
+                    <polyline points="0,0 10,5 0,10 "></polyline>
+                </marker>
+            </defs>
+        </svg>
     </div>
-</div>
-<div id="graph_container">
-    <svg id="graph" preserveAspectRatio="none" width="100%" height="808">
-        <defs>
-            <marker id="arrow-support" viewBox="0 0 10 10" refX="0" refY="5"
-                    markerUnits="strokeWidth" orient="auto" fill="green"
-                    markerWidth="3">
-                <polyline points="0,0 10,5 0,10 "></polyline>
-            </marker>
-            <marker id="arrow-support-under-construction" viewBox="0 0 10 10" refX="0" refY="5"
-                    markerUnits="strokeWidth" orient="auto" fill="#80FF80"
-                    markerWidth="3">
-                <polyline points="0,0 10,5 0,10 "></polyline>
-            </marker>
-            <marker id="arrow-oppose" viewBox="0 0 10 10" refX="0" refY="5"
-                    markerUnits="strokeWidth" orient="auto" fill="red"
-                    markerWidth="3">
-                <polyline points="0,0 10,5 0,10 "></polyline>
-            </marker>
-            <marker id="arrow-oppose-under-construction" viewBox="0 0 10 10" refX="0" refY="5"
-                    markerUnits="strokeWidth" orient="auto" fill="#FF8080"
-                    markerWidth="3">
-                <polyline points="0,0 10,5 0,10 "></polyline>
-            </marker>
-        </defs>
-    </svg>
-</div>
-<img src="/assets/images/spinner.GIF" alt="ajax indicator" id="spinner" style="display: none;">
-</body>
-</html>
+    <img src="/assets/images/spinner.GIF" alt="ajax indicator" id="spinner" style="display: none;">
+}

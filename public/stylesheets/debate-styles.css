@@ -1,12 +1,3 @@
-svg#graph
-{
-	background-color: #080022;
-}
-
-svg.argument
-{
-}
-
 svg.argument rect
 {
 	stroke: none;
