@@ -47,8 +47,11 @@ var graph_width = null;
 /** Height of final rendered graph. @todo Make this height scalable */
 var graph_height = null;
 /** What the minimum height of the final graph should be for optimal display
-    of the arguments */
-var min_graph_height = 808;
+    of the arguments (three rows of cards, plus enough space for links in between) */
+var min_graph_height = (3 * card_height) + (4 * card_spacing) + 210;
+/** What the minimum width of the final graph should be (enough at least to display a
+    relation: three cards in a row, plus enough space between them) */
+var min_graph_width = (3 * card_width) + (4 * card_spacing);
 
 /** Determines how much the middle row is offset from the left side of the window.
     This is used for always centering the middle row */
@@ -1136,6 +1139,11 @@ window.onload = function () {
     // then chances are there's something very wrong, so try not to alarm the user
     if (graph_height < min_graph_height) {
         console.warn("Graph height is only " + graph_height);
+        alert("Whoops, looks like some things won't be displaying correctly. Please tell us about this.");
+    }
+    // same with graph width
+    if (graph_width < min_graph_width) {
+        console.warn("Graph width is only " + graph_width);
         alert("Whoops, looks like some things won't be displaying correctly. Please tell us about this.");
     }
 
