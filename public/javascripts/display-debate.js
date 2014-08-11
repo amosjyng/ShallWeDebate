@@ -136,9 +136,16 @@ function set_incoming_and_outgoing(relation) {
     // add the "to" node of this relation to the set of outgoing nodes
     // relative to the "from" node of this relation
     relation.from.outgoing.push(relation.toArgument);
-    // add the "to" node of this relation to the set of outgoing nodes
-    // relative to the "from" node of this relation
-    relation.toArgument.incoming.push(relation.from);
+
+    if (relation.toArgument !== null) {
+        // add the "to" node of this relation to the set of outgoing nodes
+        // relative to the "from" node of this relation
+        relation.toArgument.incoming.push(relation.from);
+    } else if (relation.toRelation !== null) {
+        relation.toRelation.incoming.push(relation.from);
+    } else {
+        console.error("Relation " + relation.id + " has null toArgument AND toRelation!");
+    }
 }
 
 /**
@@ -161,23 +168,36 @@ function add_node(new_node) {
  * set of nodes. Also modifies the incoming and outgoing arrays of the
  * nodes at both ends of the relation.
  *
+ * Does the same for any Relations found at the end of toRelation as well
+ *
  * This is for convenience, to prevent searching the entire set of nodes
  * every time.
  * @param {Relation} relation The new relation that is to be modified
  */
 function set_relation_nodes(relation) {
-    node_index = indexOfNode(relation.from);
+    var node_index = indexOfNode(relation.from);
     if (node_index === -1) { // if "from" doesn't yet exist,
         add_node(relation.from); // set it up
     } else { // otherwise, replace it with current node
         relation.from = nodes[node_index];
     }
 
-    var node_index = indexOfNode(relation.toArgument);
-    if (node_index === -1) { // if "to" doesn't yet exist,
-        add_node(relation.toArgument); // set it up
-    } else { // otherwise, replace it with current node
-        relation.toArgument = nodes[node_index];
+    if (relation.toArgument !== null) {
+        var node_index = indexOfNode(relation.toArgument);
+        if (node_index === -1) { // if "to" doesn't yet exist,
+            add_node(relation.toArgument); // set it up
+        } else { // otherwise, replace it with current node
+            relation.toArgument = nodes[node_index];
+        }
+    }
+    
+    if (relation.toRelation !== null) {
+        var relation_index = indexOfRelation(relation.toRelation.id);
+        if (relation_index === -1) { // if "to" doesn't yet exist,
+            process_new_relation(relation.toRelation); // set it up
+        } else { // otherwise, replace it with current node
+            relation.toRelation = relations[relation_index];
+        }
     }
 
     // Modify incoming and outgoing arrays of "from" and "to" nodes
@@ -308,7 +328,7 @@ function ajax_get_relation(relation_id, callback) {
  * associated with those relations as well
  * @param {Node} node The node to retrieve all the relations for
  */
-function ajax_get_relations_of(node) {
+function ajax_get_relations_of_node (node) {
     $.ajax({
         url: argument_address(node.id) + "relations/",
         type: "GET",
@@ -328,12 +348,37 @@ function ajax_get_relations_of(node) {
 }
 
 /**
+ * Get all relations pointing to a particular relation, and all nodes
+ * associated with those relations as well
+ * @param {Relation} relation The relation to retrieve all related relations for
+ */
+function ajax_get_relations_of_relation (relation) {
+    $.ajax({
+        url: relation_address(relation.id) + "relations/",
+        type: "GET",
+        dataType: "json",
+        headers: {
+            Accept: "application/json"
+        }
+    }).done(function (data) {
+        for (var i = 0; i < data.length; i++) {
+            process_new_relation(data[i]);
+        }
+
+        draw_graph(); // redraw graph after getting new relations
+    }).fail(function (jqXHR, textStatus, errorThrown) {
+        alert_user("Failed to get relations of node " + node.id, errorThrown);
+    });
+}
+
+
+/**
  * After a card is selected (i.e. clicked on), call this function to retrieve
  * all relevant information for the node that the card represents
  * @param {Node} node The node of the card that was clicked on
  */
-function ajax_get_card(node) {
-    ajax_get_relations_of(node); // get all relevant relations and related nodes
+function ajax_get_card (node) {
+    ajax_get_relations_of_node(node); // get all relevant relations and related nodes
     draw_graph(); // re-center the graph immediately
 }
 
@@ -341,7 +386,7 @@ function ajax_get_card(node) {
  * Is a node currently the selected node, or one of the nodes at either end of
  * a relation?
  */
-function is_current(node) {
+function is_current (node) {
     if (current_relation == null) {
         return node === current_card;
     } else {
@@ -708,7 +753,7 @@ function change_current_relation (r) {
     current_relation = r;
     // todo: add is_debated field to relations
     if (!r.gotten && r.isDebated) {
-        // todo: ajax_get_relations_of(r)
+        ajax_get_relations_of_relation(r);
         r.gotten = true;
     }
     // redraw graph

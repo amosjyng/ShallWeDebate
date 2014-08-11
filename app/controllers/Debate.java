@@ -3,12 +3,9 @@ package controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.Relation;
-import play.*;
 import play.libs.Json;
 import play.mvc.*;
 import models.Argument;
-
-import views.html.*;
 
 /**
  * Controller for all views related to debates on the website
@@ -61,6 +58,16 @@ public class Debate extends Controller
     public static Result viewArgumentRelations(Long id)
     {
         return ok(Json.toJson(Relation.getRelationsOfArgumentWithId(id)));
+    }
+
+    /**
+     * Returns a JSON array of all Relations that have a particular Relation as the "to" part
+     * @param id The ID of the Relation for which you want to view all Relations of
+     * @return JSON array of all Relations that directly involve the specified Relation
+     */
+    public static Result viewRelationRelations(Long id)
+    {
+        return ok(Json.toJson(Relation.getRelationsOfRelationWithId(id)));
     }
 
     /**

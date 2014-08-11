@@ -153,4 +153,15 @@ public class Relation extends Model
         Argument argument = Argument.get(id);
         return find.where().or(Expr.eq("from", argument), Expr.eq("toArgument", argument)).findList();
     }
+
+    /**
+     * Get all Relations which point to the Relation with the given ID.
+     * @param id The ID for the Relation.
+     * @return All relations where the "to" end is the ID of the given Relation.
+     */
+    public static List<Relation> getRelationsOfRelationWithId(Long id)
+    {
+        Relation relation = Relation.get(id);
+        return find.where(Expr.eq("toRelation", relation)).findList();
+    }
 }
