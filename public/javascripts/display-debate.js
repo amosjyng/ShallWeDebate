@@ -778,20 +778,27 @@ function add_toolbar_buttons (toolbars, toolbar_width) {
 }
 
 /**
+ * Given a relative address to the current argument or relation being shown, pops up
+ * a modal dialog for the user to copy the full address to said argument or relation
+ */
+function showShareAddress (address) {
+    $("#argument-address-modal input").attr("value", window.location.origin + address);
+    $("#argument-address-modal").modal();
+    // somehow select doesn't work when modal dialog is still appearing,
+    // so select the input 500 milliseconds after it appears
+    setTimeout(function () {
+        $("#argument-address-modal input").select();
+    }, 500);
+}
+
+/**
  * Add the SHARE and REPLY buttons to the toolbars of already constructed cards.
  * @param {D3 selection} constructed_cards_toolbar The selection of toolbars to add such buttons to
  */
 function add_construction_toolbar_buttons (constructed_cards_toolbar) {
     add_toolbar_buttons(constructed_cards_toolbar, card_width);
     constructed_cards_toolbar.select(".share-button").on("click", function (d) {
-        $("#argument-address-modal input")
-            .attr("value", window.location.origin + argument_address(d.id))
-        $("#argument-address-modal").modal();
-        // somehow select doesn't work when modal dialog is still appearing,
-        // so select the input 500 milliseconds after it appears
-        setTimeout(function () {
-            $("#argument-address-modal input").select();
-        }, 500);
+        showShareAddress(argument_address(d.id));
     });
     constructed_cards_toolbar.select(".reply-button").on("click", function (d) {
         d3.event.stopPropagation();
@@ -1162,8 +1169,11 @@ window.onload = function () {
     $("#link-toolbar").attr("width", card_width).attr("height", toolbar_height)
         .attr("x", (graph_width / 2) - (link_toolbar_width / 2))
         .attr("y", (graph_height / 2) - toolbar_height + link_toolbar_offset)
-        .attr("opacity", 0);
+        .attr("opacity", 0).attr("cursor", "pointer");
     add_toolbar_buttons(d3.select("#link-toolbar"), link_toolbar_width);
+    d3.select("#link-toolbar .share-button").on("click", function () {
+        showShareAddress(relation_address(current_relation.id));
+    });
 
     // get our first card (or our first relation)
 
