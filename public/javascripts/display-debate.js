@@ -858,7 +858,7 @@ function isnt_under_construction (d) {
  */
 function make_cards() {
     // bind node data to cards
-    cards = d3.select("svg#graph").selectAll("svg.argument").data(nodes);
+    cards = d3.select("svg#cards").selectAll("svg.argument").data(nodes);
     // add new card representations of nodes
     new_cards = cards.enter().append("svg").classed("argument", true)
         .attr("cursor", "pointer").attr("opacity", 0).call(drag)
@@ -1010,7 +1010,7 @@ function get_link_marker (d) {
  */
 function make_links() {
     // bind relation data to links
-    links = d3.select("svg#graph").selectAll("svg.link").data(relations);
+    links = d3.select("svg#links").selectAll("svg.link").data(relations);
     // create the paths for every link, and start them off with full
     // transparency so that they can smoothly enter the graph
     var link_svgs = links.enter().append("svg").classed("link", true).style("opacity", 0);
@@ -1045,8 +1045,7 @@ function make_links() {
                     .classed("visible", true)
                     .classed("under_construction", true)
                     .attr("marker-end", get_link_marker);
-            }
-            else {
+            } else {
                 change_current_relation(d);
             }
         });
@@ -1118,6 +1117,12 @@ function draw_graph(center, transition_time) {
                 return 1;
             } else {
                 return 0;
+            }
+        }).attr("pointer-events", function (d) {
+            if (relation_visible(d)) {
+                return "painted";
+            } else { // if hidden relation, then don't activate when clicked
+                return "none";
             }
         });
     d3.selectAll("path").transition().duration(transition_time).attr("d", compute_link_bezier_curve);
