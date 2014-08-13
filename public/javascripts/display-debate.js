@@ -63,6 +63,13 @@ var top_row_offset = 0;
     Used for scrolling the bottom row */
 var bottom_row_offset = 0;
 
+/** How thick the strokes used to draw paths are */
+var stroke_width = 5;
+/** How thick the arrow markers will be as a multiple of stroke_width */
+var marker_width = 3;
+/** How thick the arrow markers will be in pixels */
+var marker_width_px = stroke_width * marker_width;
+
 /** All the arguments currently fetched */
 var nodes = [];
 /** The SVG representations of all the nodes */
@@ -699,7 +706,8 @@ function compute_link_bezier_curve (link) {
         var start_pos = [x_pos(from, from.i) + card_width,
                          y_pos(from, from.i) + half_card_height];
         // todo: get rid of marker height magic constant
-        var end_pos   = [x_pos(to, to.i) - (5 * 3), y_pos(to, to.i) + half_card_height];
+        var end_pos   = [x_pos(to, to.i) - marker_width_px,
+                         y_pos(to, to.i) + half_card_height];
         var control1  = [start_pos[0] + (end_pos[0] - start_pos[0]) / 3, start_pos[1]];
         var control2  = [end_pos[0]   - (end_pos[0] - start_pos[0]) / 3, end_pos[1]]
         return [start_pos, control1, control2, end_pos];
@@ -709,7 +717,7 @@ function compute_link_bezier_curve (link) {
         var rel_link_curve = compute_link_bezier_curve(link.toRelation);
         var end_pos = get_bezier_position(rel_link_curve[0], rel_link_curve[1],
                                           rel_link_curve[2], rel_link_curve[3], 0.525);
-        end_pos[1] += (5 * 3) + (5 / 2);
+        end_pos[1] += marker_width_px + (stroke_width / 2);
         return compute_vertical_bezier_curve(start_pos, end_pos);
     } else { // if we're displaying a relationship between two nodes vertically as usual
         // calculate the start and end positions of the Bezier curve. It should
@@ -720,7 +728,7 @@ function compute_link_bezier_curve (link) {
         var end_pos = [x_pos(to, to.i) + half_card_width,
                        /* account for arrow: marker-width is 3, stroke-width is 5,
                           so marker will be marker-width * stroke-width wide and tall */
-                       y_pos(to, to.i) + card_height + (5 * 3)];
+                       y_pos(to, to.i) + card_height + marker_width_px];
         return compute_vertical_bezier_curve(start_pos, end_pos);
     }
 }
