@@ -641,13 +641,15 @@ function pos2str(pos) {
 }
 
 /**
- * Given two endpoints, create a vertical bezier curve connecting them, taking into
- * account the arrow marker at the end
+ * Given two endpoints, find coordinates for a vertical bezier curve connecting them,
+ * taking into account the arrow marker at the end
  * @param {array} start_pos A two-element arrary specifying the starting x- and y-
  * position of the curve
  * @param {array} end_pos A two-element arrary specifying the ending x- and y-
  * position of the curve
- * @returns {string} A string for the "d" attribute of an SVG "path" object
+ * @returns {Array} A four-element array of two-element arrays. Each two-element
+ * array represents an x- and y-coordinate. The four-element array contains the
+ * start, two control points, and end points of the curve.
  */
 function compute_vertical_bezier_curve (start_pos, end_pos) {
     // find the difference in height between the two endpoints
@@ -655,16 +657,34 @@ function compute_vertical_bezier_curve (start_pos, end_pos) {
     // have the controls be half-height away from the start/end points
     var control1 = [start_pos[0], start_pos[1] + (height / 2)];
     var control2 = [end_pos[0], end_pos[1] - (height / 2)];
-    // build the final string
-    return "M" + pos2str(start_pos) + "C" + pos2str(control1)
-            + pos2str(control2) + pos2str(end_pos);
+    // return the controls
+    return [start_pos, control1, control2, end_pos];
 }
 
 /**
- * Return a string specifying the path of the Bezier curve that a link should
- * be displayed as
- * @param {Link} link The link which is to be displayed
- * @returns {string} A string for the "d" attribute of an SVG "path" object
+ * Get the location (in x- and y-coordinates) of the Bezier curve at a particular
+ * point in time
+ * @param {Array} p0 The first point of the Bezier curve
+ * @param {Array} p1 The second point of the Bezier curve
+ * @param {Array} p2 The third point of the Bezier curve
+ * @param {Array} p3 The fourth point of the Bezier curve
+ * @param {Number} t The portion of the Bezier curve under consideration
+ * @returns {Array} The coordinates of the Bezier curve at the specified time
+ */
+function get_bezier_position (p0, p1, p2, p3, t) {
+    // http://en.wikipedia.org/wiki/B%C3%A9zier_curve#Quadratic_B.C3.A9zier_curves
+    return [(Math.pow(1 - t, 3) * p0[0]) + (3 * Math.pow(1 - t, 2) * t * p1[0])
+            + (3 * (1 - t) * Math.pow(t, 2) * p2[0]) + (Math.pow(t, 3) * p3[0]),
+            (Math.pow(1 - t, 3) * p0[1]) + (3 * Math.pow(1 - t, 2) * t * p1[1])
+            + (3 * (1 - t) * Math.pow(t, 2) * p2[1]) + (Math.pow(t, 3) * p3[1])]
+}
+
+/**
+ * Returns the start, end, and control points of a Bezier curve for a link
+ * @param {Link} link The link for which the Bezier curve should be calculated
+ * @returns {Array} A four-element array of two-element arrays. Each two-element
+ * array represents an x- and y-coordinate. The four-element array contains the
+ * start, two control points, and end points of the curve.
  */
 function compute_link_bezier_curve (link) {
     // for convenience, define these two variables for each end of the link
@@ -682,16 +702,14 @@ function compute_link_bezier_curve (link) {
         var end_pos   = [x_pos(to, to.i) - (5 * 3), y_pos(to, to.i) + half_card_height];
         var control1  = [start_pos[0] + (end_pos[0] - start_pos[0]) / 3, start_pos[1]];
         var control2  = [end_pos[0]   - (end_pos[0] - start_pos[0]) / 3, end_pos[1]]
-        return "M" + pos2str(start_pos) + "C" + pos2str(control1)
-                + pos2str(control2) + pos2str(end_pos);
-    } else if (is_current(link.toRelation)) {
+        return [start_pos, control1, control2, end_pos];
+    } else if (link.toRelation !== null) {
         // if we're displaying a relationship between a node and another relationship
         var start_pos = [x_pos(from, from.i) + half_card_width, y_pos(from, from.i)];
-        var to_from = to.from; // argument on the left
-        var end_pos = [x_pos(to_from, to_from.i) + card_width
-                        + card_spacing + half_card_width,
-                       y_pos(to_from, to_from.i) + half_card_height
-                        + (5 / 2) + (5 * 3)]; // take into account stroke width
+        var rel_link_curve = compute_link_bezier_curve(link.toRelation);
+        var end_pos = get_bezier_position(rel_link_curve[0], rel_link_curve[1],
+                                          rel_link_curve[2], rel_link_curve[3], 0.525);
+        end_pos[1] += (5 * 3) + (5 / 2);
         return compute_vertical_bezier_curve(start_pos, end_pos);
     } else { // if we're displaying a relationship between two nodes vertically as usual
         // calculate the start and end positions of the Bezier curve. It should
@@ -705,6 +723,17 @@ function compute_link_bezier_curve (link) {
                        y_pos(to, to.i) + card_height + (5 * 3)];
         return compute_vertical_bezier_curve(start_pos, end_pos);
     }
+}
+
+/**
+ * Return a string specifying the path of the Bezier curve that a link should
+ * be displayed as
+ * @param {Link} link The link which is to be displayed
+ * @returns {string} A string for the "d" attribute of an SVG "path" object
+ */
+function bezier_string (link) {
+    var b = compute_link_bezier_curve(link);
+    return "M" + pos2str(b[0]) + "C" + pos2str(b[1]) + pos2str(b[2]) + pos2str(b[3]);
 }
 
 /**
@@ -1200,7 +1229,7 @@ function draw_graph(center, transition_time) {
                 return "none";
             }
         });
-    d3.selectAll("path").transition().duration(transition_time).attr("d", compute_link_bezier_curve);
+    d3.selectAll("path").transition().duration(transition_time).attr("d", bezier_string);
     if (current_relation === null) {
         d3.select("#link-toolbar").transition().duration(transition_time)
             .style("opacity", 0);
