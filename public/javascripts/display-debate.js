@@ -384,14 +384,15 @@ function ajax_get_card (node) {
 
 /**
  * Is a node currently the selected node, or one of the nodes at either end of
- * a relation?
+ * the currently selected relation, or the currently selected relation itself?
  */
-function is_current (node) {
+function is_current (node_or_relation) {
     if (current_relation == null) {
-        return node === current_card;
+        return node_or_relation === current_card;
     } else {
-        return node === current_relation.from
-            || node === current_relation.toArgument;
+        return node_or_relation === current_relation
+            || node_or_relation === current_relation.from
+            || node_or_relation === current_relation.toArgument;
     }
 }
 
@@ -441,7 +442,10 @@ function node_visible(node) {
  * @returns Whether or not both ends of the relation are visible
  */
 function relation_visible(relation) {
-    return node_visible(relation.from) && node_visible(relation.toArgument);
+    return node_visible(relation.from)
+        && (relation.toArgument === null ?
+            relation_visible(relation.toRelation) :
+            node_visible(relation.toArgument));
 }
 
 /**
@@ -637,16 +641,39 @@ function pos2str(pos) {
 }
 
 /**
+ * Given two endpoints, create a vertical bezier curve connecting them, taking into
+ * account the arrow marker at the end
+ * @param {array} start_pos A two-element arrary specifying the starting x- and y-
+ * position of the curve
+ * @param {array} end_pos A two-element arrary specifying the ending x- and y-
+ * position of the curve
+ * @returns {string} A string for the "d" attribute of an SVG "path" object
+ */
+function compute_vertical_bezier_curve (start_pos, end_pos) {
+    // find the difference in height between the two endpoints
+    var height = end_pos[1] - start_pos[1];
+    // have the controls be half-height away from the start/end points
+    var control1 = [start_pos[0], start_pos[1] + (height / 2)];
+    var control2 = [end_pos[0], end_pos[1] - (height / 2)];
+    // build the final string
+    return "M" + pos2str(start_pos) + "C" + pos2str(control1)
+            + pos2str(control2) + pos2str(end_pos);
+}
+
+/**
  * Return a string specifying the path of the Bezier curve that a link should
  * be displayed as
  * @param {Link} link The link which is to be displayed
  * @returns {string} A string for the "d" attribute of an SVG "path" object
  */
-function compute_link_bezier_curve(link) {
+function compute_link_bezier_curve (link) {
     // for convenience, define these two variables for each end of the link
     var from = link.from;
-    var to = link.toArgument;
-    if (is_current(from) && is_current(to)) {
+    // the variable `to` can be either a node or an argument, so don't use it
+    // until we're sure what it is
+    var to = link.toArgument === null ? link.toRelation : link.toArgument;
+    // if we're displaying a relationship horizontally
+    if (is_current(from) && is_current(link.toArgument)) {
         // it should start at the right-middle of the from card and end at the
         // left-middle of the to card
         var start_pos = [x_pos(from, from.i) + card_width,
@@ -657,23 +684,26 @@ function compute_link_bezier_curve(link) {
         var control2  = [end_pos[0]   - (end_pos[0] - start_pos[0]) / 3, end_pos[1]]
         return "M" + pos2str(start_pos) + "C" + pos2str(control1)
                 + pos2str(control2) + pos2str(end_pos);
-    } else {
+    } else if (is_current(link.toRelation)) {
+        // if we're displaying a relationship between a node and another relationship
+        var start_pos = [x_pos(from, from.i) + half_card_width, y_pos(from, from.i)];
+        var to_from = to.from; // argument on the left
+        var end_pos = [x_pos(to_from, to_from.i) + card_width
+                        + card_spacing + half_card_width,
+                       y_pos(to_from, to_from.i) + half_card_height
+                        + (5 / 2) + (5 * 3)]; // take into account stroke width
+        return compute_vertical_bezier_curve(start_pos, end_pos);
+    } else { // if we're displaying a relationship between two nodes vertically as usual
         // calculate the start and end positions of the Bezier curve. It should
         // start at the top-middle of the "from" card and end at the bottom-middle
         // of the "to" card (under the current scheme, "to" cards are always above
         // "from" cards)
         var start_pos = [x_pos(from, from.i) + half_card_width, y_pos(from, from.i)];
         var end_pos = [x_pos(to, to.i) + half_card_width,
-                       /* account for arrow: marker-width is 3, stroke-width is 5 */
+                       /* account for arrow: marker-width is 3, stroke-width is 5,
+                          so marker will be marker-width * stroke-width wide and tall */
                        y_pos(to, to.i) + card_height + (5 * 3)];
-        // find the difference in height between the two cards
-        var height = end_pos[1] - start_pos[1];
-        // have the controls be half-height away from the start/end points
-        var control1 = [start_pos[0], start_pos[1] + (height / 2)];
-        var control2 = [end_pos[0], end_pos[1] - (height / 2)];
-        // build the final string
-        return "M" + pos2str(start_pos) + "C" + pos2str(control1)
-                + pos2str(control2) + pos2str(end_pos);
+        return compute_vertical_bezier_curve(start_pos, end_pos);
     }
 }
 
