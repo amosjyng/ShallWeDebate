@@ -428,7 +428,6 @@ function is_incoming(node) {
     if (current_relation === null) {
         return current_card.incoming.indexOf(node) != -1;
     } else {
-        // todo: add incoming field to current_relation
         return current_relation.incoming.indexOf(node) != -1;
     }
 }
