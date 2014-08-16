@@ -1,9 +1,4 @@
 # Arguments
-- &arg1 !!models.Argument
-    summary: >-
-            Why a max length of 140 characters? Well, it sure as hell works
-            for Twitter. Seems like just enough to pack some good info
-            into an argument.
 - &arg2 !!models.Argument
     summary: >-
             Taxation is theft.
@@ -33,10 +28,6 @@
 
 # Relations
 # Type 0: "support"; Type 1: "oppose"
-- &rel1 !!models.Relation
-    from: *arg3
-    toArgument: *arg1
-    type: 0
 - &rel2 !!models.Relation
     from: *arg3
     toArgument: *arg2
