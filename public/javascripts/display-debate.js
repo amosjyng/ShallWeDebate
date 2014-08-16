@@ -1001,6 +1001,40 @@ function showShareAddress (address) {
     }, 500);
 }
 
+function create_reply_node (d, toArgument) {
+    if (reply_under_construction) {
+        alert_user("Can't do that", "You're already editing a reply.");
+        change_current_card_id(-1);
+    }
+    else {
+        var new_node = {
+            id: -1,
+            gotten: true,
+            under_construction: true,
+            as_reply_to: d,
+            as_reply_to_argument: toArgument
+        };
+        add_node(new_node);
+        process_new_relation({
+            id: -1,
+            from: new_node,
+            toArgument: toArgument  ? d : null,
+            toRelation: !toArgument ? d : null,
+            type: 1, // oppose
+            under_construction: true
+        });
+        reply_under_construction = true;
+        window.onbeforeunload = warn_argument_under_construction;
+        
+        // make it as if you first went to the d node, and then went to its reply
+        current_card = d;
+        set_cards_previous_locations();
+        // set focus on the textarea in the middle of the page
+        change_current_card(new_node);
+        $("textarea.under_construction").focus();
+    }
+}
+
 /**
  * Add the SHARE and REPLY buttons to the toolbars of already constructed cards.
  * @param {D3 selection} constructed_cards_toolbar The selection of toolbars to add such buttons to
@@ -1013,35 +1047,7 @@ function add_construction_toolbar_buttons (constructed_cards_toolbar) {
     constructed_cards_toolbar.select(".reply-button").on("click", function (d) {
         d3.event.stopPropagation();
 
-        if (reply_under_construction) {
-            alert_user("Can't do that", "You're already editing a reply.");
-            change_current_card_id(-1);
-        }
-        else {
-            var new_node = {
-                id: -1,
-                gotten: true,
-                under_construction: true,
-                as_reply_to: d
-            };
-            add_node(new_node);
-            process_new_relation({
-                id: -1,
-                from: new_node,
-                toArgument: d,
-                type: 1, // oppose
-                under_construction: true
-            });
-            reply_under_construction = true;
-            window.onbeforeunload = warn_argument_under_construction;
-            
-            // make it as if you first went to the d node, and then went to its reply
-            current_card = d;
-            set_cards_previous_locations();
-            // set focus on the textarea in the middle of the page
-            change_current_card(new_node);
-            $("textarea.under_construction").focus();
-        }
+        create_reply_node(d, true);
     });
 }
 
@@ -1126,7 +1132,9 @@ function make_cards() {
         // change the summary now, in case user continues to edit the textarea after saving
         d.summary = $("textarea.under_construction")[0].value;
         $.ajax({
-            url: argument_address(d.as_reply_to.id),
+            url: d.as_reply_to_argument ?
+                    argument_address(d.as_reply_to.id)
+                    : relation_address(d.as_reply_to.id),
             type: "POST",
             data: JSON.stringify({
                 summary: $("textarea.under_construction")[0].value,
@@ -1388,6 +1396,11 @@ window.onload = function () {
     add_toolbar_buttons(d3.select("#link-toolbar"), link_toolbar_width);
     d3.select("#link-toolbar .share-button").on("click", function () {
         showShareAddress(relation_address(current_relation.id));
+    });
+    d3.select("#link-toolbar .reply-button").on("click", function () {
+        d3.event.stopPropagation();
+
+        create_reply_node(current_relation, false);
     });
 
     // get our first card (or our first relation)
