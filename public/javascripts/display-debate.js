@@ -571,7 +571,7 @@ function determine_i (node) {
                 next_outgoing_i++;
             } else if (rel.toArgument === node) {
                 // save some space for the other end of the relation
-                current_indirects[rel.toArgument.id] = next_outgoing_i;
+                current_indirects[rel.from.id] = next_outgoing_i;
                 next_outgoing_i++;
                 next_outgoing_i++;
                 // then proceed as normal
