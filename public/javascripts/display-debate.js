@@ -618,21 +618,9 @@ function x_pos(node) {
     } else if (is_incoming(node)) { // if breottom row, same logic as for top row
         return bottom_row_offset + row_width(node.i);
     } else { // otherwise it's a hidden node, so move it offscreen
-        // if it was previously a current node and no longer displayed
-        // (impossible under the current scheme since each newly selected node
-        // must have been related to the current node before being selected,
-        // and therefore the current node would still be visible; however, this
-        // may be useful in the future when we have equivlaent nodes, only one
-        // of which is selected), then move it off to the right side of the screen
-        if (node.previously_current) {
-            return window.innerWidth + card_spacing;
-        } else if (node.previously_outgoing || node.previously_incoming) {
-            // otherwise it was previously a node on either the top or the
-            // bottom of the screen. Either way, the x-coordinate will be the
-            // middle of the screen, so that the node will be moved to either
-            // the top-middle or bottom-middle of the screen
-            return (window.innerWidth / 2) - half_card_width;
-        }
+        // either offscreen to the top middle or bottom middle, but still offscreen
+        // either way
+        return (window.innerWidth / 2) - half_card_width;
     }
 }
 
@@ -651,13 +639,11 @@ function y_pos(node) {
         // position it slightly offset from the bottom of the graph
         return graph_height - card_spacing - card_height;
     } else { // otherwise it's a hidden node, so move it offscreen
-        if (node.previously_current) { // if previously current
-            // just center it. Again, not currently used, but may be useful in
-            // the future
-            return (graph_height / 2) - half_card_height;
-        } else if (node.previously_outgoing) { // if previously in the top row
+        if (node.previously_outgoing) { // if previously in the top row
             return -card_spacing - card_height; // move it to the top center
-        } else if (node.previously_incoming) { // else if previously in the bottom row
+        } else if (node.previously_incoming || node.previously_current) {
+            // else if previously in the bottom row, or if previously current
+            // but was pointing to a relation, whose nodes got clicked on
             return graph_height + card_spacing; // move it to the bottom center
         } else { // Inconceivable!
             console.warn("Anomalous node " + node.id + " encountered");
