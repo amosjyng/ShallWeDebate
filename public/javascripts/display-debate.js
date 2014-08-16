@@ -25,6 +25,12 @@ var next_outgoing_i = 0;
 /** Index of the next incoming node (relative to the current node) to be
     displayed (in the bottom row) */
 var next_incoming_i = 0;
+/**
+ * The cards that are currently displayed only because they are part of relations
+ * that are replied to by the current card. This hashmap holds the `i` positions
+ * of such indirect cards that haven't been processed yet.
+ */
+var current_indirects = {};
 
 
 /**
@@ -142,8 +148,18 @@ function relationWithFromId(from_id) {
 function set_incoming_and_outgoing(relation) {
     // add the "to" node of this relation to the set of outgoing nodes
     // relative to the "from" node of this relation
-    relation.from.outgoing.push(relation.toArgument);
-
+    if (relation.toArgument === null) {
+        relation.from.outgoing_relations.push(relation.toRelation);
+        relation.from.indirect_from.push(relation.toRelation.from);
+        if (relation.toRelation.toArgument !== null) {
+            relation.from.indirect_to.push(relation.toRelation.toArgument);
+        } else {
+            console.error("Not sure yet what to do with a relation here");
+        }
+    } else {
+        relation.from.outgoing.push(relation.toArgument);
+    }
+    
     if (relation.toArgument !== null) {
         // add the "to" node of this relation to the set of outgoing nodes
         // relative to the "from" node of this relation
@@ -160,11 +176,17 @@ function set_incoming_and_outgoing(relation) {
  * global list of nodes
  * @param {Node} new_node The new node to be set up
  */
-function add_node(new_node) {
+function add_node (new_node) {
     // initialize arrays of incoming and outgoing objects for
     // "set_incoming_and_outgoing" to take care of later
     new_node.incoming = [];
     new_node.outgoing = [];
+    // keep track of relations this points to
+    new_node.outgoing_relations = [];
+    // if this node points to any relations, then put the nodes of those relations
+    // here
+    new_node.indirect_from = [];
+    new_node.indirect_to = [];
     // add new node to array of nodes
     nodes.push(new_node);
 }
@@ -404,6 +426,50 @@ function is_current (node_or_relation) {
 }
 
 /**
+ * Is a node part of the outgoing nodes because it's the from part of a debated
+ * relation?
+ *
+ * @param {Node} node The node in question
+ * @returns Whether or not this node is displayed because it is the "from" part of
+ * a relation that the current node points to
+ */
+ function is_indirect_from (node) {
+    if (current_relation === null) {
+        return current_card.indirect_from.indexOf(node) != -1;
+    } else {
+        return false;
+    }
+ }
+
+ /**
+ * Is a node part of the outgoing nodes because it's the to part of a debated
+ * relation?
+ *
+ * @param {Node} node The node in question
+ * @returns Whether or not this node is displayed because it is the "to" part of
+ * a relation that the current node points to
+ */
+ function is_indirect_to (node) {
+    if (current_relation === null) {
+        return current_card.indirect_to.indexOf(node) != -1;
+    } else {
+        return false;
+    }
+ }
+
+/**
+ * Is a node part of the outgoing nodes only because it's part of a relation
+ * that's out-going?
+ *
+ * @param {Node} node The node in question
+ * @returns Whether or not this node should be directly connected to the current
+ * node
+ */
+function is_indirect (node) {
+    return is_indirect_from(node) || is_indirect_to(node);
+}
+
+/**
  * Is a node part of the outgoing nodes of the currently selected node?
  *
  * A relation will never have outgoing nodes, only incoming nodes, so this
@@ -412,9 +478,12 @@ function is_current (node_or_relation) {
  * @param {Node} node The node in question
  * @returns Whether or not this node should be displayed in the top row
  */
-function is_outgoing(node) {
+function is_outgoing (node) {
     if (current_relation === null) {
-        return current_card.outgoing.indexOf(node) != -1;
+        return current_card.outgoing.indexOf(node) != -1
+            || is_indirect(node);
+    } else {
+        return false;
     }
 }
 
@@ -424,7 +493,7 @@ function is_outgoing(node) {
  * @param {Node} node The node in question
  * @returns Whether or not this node should be displayed in the bottom row
  */
-function is_incoming(node) {
+function is_incoming (node) {
     if (current_relation === null) {
         return current_card.incoming.indexOf(node) != -1;
     } else {
@@ -438,7 +507,7 @@ function is_incoming(node) {
  * @returns Whether or not this node is the currently selected node, or one of
  * its outgoing nodes, or one of its incoming nodes
  */
-function node_visible(node) {
+function node_visible (node) {
     return is_current(node) || is_outgoing(node) || is_incoming(node);
 }
 
@@ -447,7 +516,7 @@ function node_visible(node) {
  * @param {Relation} relation The relation in question
  * @returns Whether or not both ends of the relation are visible
  */
-function relation_visible(relation) {
+function relation_visible (relation) {
     return node_visible(relation.from)
         && (relation.toArgument === null ?
             relation_visible(relation.toRelation) :
@@ -455,12 +524,32 @@ function relation_visible(relation) {
 }
 
 /**
+ * Given a node which is indirectly related to the current argument, find the
+ * relation which is actually directly related to the current argument
+ * @param {Node} node The indirectly related node in question
+ * @returns {Relation} The relation responsible for node
+ */
+function get_relation_of_indirect (node) {
+    for (i = 0; i < current_card.outgoing_relations.length; i++) {
+        var rel = current_card.outgoing_relations[i];
+        if (rel.toArgument === null) {
+            console.error("Code for case where relation points to relation!");
+        }
+        if (node.id === rel.from.id || node.id === rel.toArgument.id) {
+            return rel;
+        }
+    }
+}
+
+/**
  * Determine the logical (not screen) position of a card in its row. Be sure to
  * call "reset_globals" before calling this function on all nodes.
  * @param {Node} node The node which the card in question represents
  */
-function determine_i(node) {
-    if (node === current_card) { // if it's the current node
+function determine_i (node) {
+    if (current_indirects.hasOwnProperty(node.id)) {
+        node.i = current_indirects[node.id];
+    } else if (node === current_card) { // if it's the current node
         node.i = 0;
         current_i = 2;
     } else if (current_relation != null && node === current_relation.from) {
@@ -470,8 +559,31 @@ function determine_i(node) {
         node.i = 2;
         // no need to set current_i again
     } else if (is_outgoing(node)) { // if it's in the top row
-        node.i = next_outgoing_i;
-        next_outgoing_i++;
+        if (is_indirect(node)) {
+            var rel = get_relation_of_indirect(node);
+            if (rel.from === node) {
+                // proceed as normal...
+                node.i = next_outgoing_i;
+                next_outgoing_i++;
+                // but then save some space for the other end of the relation
+                next_outgoing_i++;
+                current_indirects[rel.toArgument.id] = next_outgoing_i;
+                next_outgoing_i++;
+            } else if (rel.toArgument === node) {
+                // save some space for the other end of the relation
+                current_indirects[rel.toArgument.id] = next_outgoing_i;
+                next_outgoing_i++;
+                next_outgoing_i++;
+                // then proceed as normal
+                node.i = next_outgoing_i;
+                next_outgoing_i++;
+            } else {
+                console.error("Rel-rel indirectness not accounted for!");
+            }
+        } else { // directly associated, proceed as usual
+            node.i = next_outgoing_i;
+            next_outgoing_i++;
+        }
     } else if (is_incoming(node)) { // if it's in the bottom row
         node.i = next_incoming_i;
         next_incoming_i++;
@@ -699,7 +811,7 @@ function compute_link_bezier_curve (link) {
     // until we're sure what it is
     var to = link.toArgument === null ? link.toRelation : link.toArgument;
     // if we're displaying a relationship horizontally
-    if (is_current(from) && is_current(link.toArgument)) {
+    if (is_current(link) || is_indirect(link.from)) {
         // it should start at the right-middle of the from card and end at the
         // left-middle of the to card
         var start_pos = [x_pos(from, from.i) + card_width,
@@ -750,6 +862,7 @@ function reset_globals() {
     current_i = 0;
     next_outgoing_i = 0;
     next_incoming_i = 0;
+    current_indirects = {};
     // don't touch the offsets because "draw_graph" will handle that
 }
 
