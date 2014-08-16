@@ -71,7 +71,8 @@ public class Debate extends Controller
     }
 
     /**
-     * This is supposed to return the ID of a successfully created new Argument.
+     * This is supposed to return the ID of a successfully created new Argument, that
+     * is in reply to an existing Argument.
      * @return The ID of the new Argument, if it succeeded in being created
      */
     @BodyParser.Of(BodyParser.Json.class)
@@ -100,6 +101,43 @@ public class Debate extends Controller
 
             ObjectNode response = Json.newObject();
             Relation newRelation = Argument.get(id).replyWith(reply, type);
+            response.put("new_node_id", newRelation.from.id);
+            response.put("new_relation_id", newRelation.id);
+            return ok(response);
+        }
+    }
+
+    /**
+     * This is supposed to return the ID of a successfully created new Argument, that
+     * is in reply to an existing Relation.
+     * @return The ID of the new Argument, if it succeeded in being created
+     */
+    @BodyParser.Of(BodyParser.Json.class)
+    public static Result replyToRelation(Long id)
+    {
+        JsonNode json = request().body().asJson();
+        if (json == null)
+        {
+            return badRequest("No JSON found.");
+        }
+        String summary = json.findPath("summary").textValue();
+        Integer type = json.findPath("type").intValue();
+        if (summary == null)
+        {
+            return badRequest("Missing parameter [summary]");
+        }
+        else if (summary.isEmpty())
+        {
+            return badRequest("Empty summary.");
+        }
+        // todo: check for existence of type variable
+        else
+        {
+            Argument reply = new Argument();
+            reply.setSummary(summary);
+
+            ObjectNode response = Json.newObject();
+            Relation newRelation = Relation.get(id).replyWith(reply, type);
             response.put("new_node_id", newRelation.from.id);
             response.put("new_relation_id", newRelation.id);
             return ok(response);

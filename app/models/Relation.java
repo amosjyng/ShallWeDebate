@@ -1,10 +1,12 @@
 package models;
 
+import com.avaje.ebean.Ebean;
 import com.avaje.ebean.Expr;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import play.data.validation.Constraints.*;
-import play.db.ebean.Model;
+import play.Logger;
+import play.db.ebean.*;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -116,6 +118,24 @@ public class Relation extends Model
     }
 
     /**
+     * Modify the "to" end of this relation, if the "to" end is a Relation (and is not already set to another relation)
+     * @param relation The Relation to set the "to" end to
+     * @throws ToFieldNotNullException when the toArgument field is already set to a non-null value, and this function
+     * is called in an attempt to set the toRelation field as well
+     */
+    public void setToRelation(Relation relation) throws ToFieldNotNullException
+    {
+        if (toArgument == null) // only one of the "to's" should be non-null at any time
+        {
+            toRelation = relation;
+        }
+        else
+        {
+            throw new ToFieldNotNullException();
+        }
+    }
+
+    /**
      * Modify the type of relation this is.
      * @param type The new type of Relation this will be. See the documentation for the Relation.type field for the list
      *             of types that the relation could take on.
@@ -132,6 +152,41 @@ public class Relation extends Model
     public static void create(Relation relation)
     {
         relation.save();
+    }
+
+    /**
+     * Save an argument to the database as a reply to a Relation. A relation will be created in addition to this
+     * argument.
+     *
+     * Note: All code in this function, except for one line, is identical to the same function in the Argument
+     * replyWith function.
+     * @param reply The new Argument to be saved as a reply to this Relation
+     * @param type The type of relation between the new Argument and this Relation
+     * @return The new Relation that is created. The Relation and not the Argument is returned, because you can always
+     * easily get the Argument given the Relation.
+     */
+    @Transactional
+    public Relation replyWith(Argument reply, Integer type)
+    {
+        Ebean.save(reply);
+        Relation newRelation = new Relation();
+        newRelation.setFrom(reply);
+        try
+        {
+            newRelation.setToRelation(this);
+        }
+        catch (ToFieldNotNullException e)
+        {
+            Logger.error("toArgument or toRelation field of new Relation is already set. How is this possible?!");
+        }
+        newRelation.setType(type);
+        Ebean.save(newRelation);
+
+        // make sure this relation is set as debated too
+        isDebated = true;
+        Ebean.save(this);
+
+        return newRelation;
     }
 
     /**

@@ -131,7 +131,7 @@ function indexOfRelation(relation_id) {
  * @returns {Relation} If there does exist such a Relation which has the from node with the
  * ID from_id, then returns the first such Relation. Otherwise, returns null.
  */
-function relationWithFromId(from_id) {
+function relationWithFromId (from_id) {
     for (i = 0; i < relations.length; i++) {
         if (relations[i].from.id === from_id) {
             return relations[i];
@@ -916,7 +916,6 @@ function change_current_relation (r) {
 
     // set the current relation to whichever link was just clicked
     current_relation = r;
-    // todo: add is_debated field to relations
     if (!r.gotten && r.isDebated) {
         ajax_get_relations_of_relation(r);
         r.gotten = true;
@@ -1145,7 +1144,17 @@ function make_cards() {
                 "Content-Type": "application/json"
             }
         }).done(function (new_info) {
-            // change the data to be consistent with the new information
+            // make link dotted if it now represents a replied-to link
+            var toRelation = true;
+            d3.select("svg.under_construction").each(function (d) {
+                toRelation = !d.as_reply_to_argument;
+            });
+            if (toRelation) {
+                d3.select("svg.under_construction").each(function (d) {
+                    d.outgoing_relations[0].isDebated = true;
+                });
+            }
+            // remove the "under_construction" of cards and links
             d3.select("svg.under_construction").each(function (d) {
                 d.id = new_info.new_node_id;
                 d.under_construction = false;
@@ -1335,6 +1344,10 @@ function draw_graph(center, transition_time) {
                 return 1;
             } else {
                 return 0;
+            }
+        }).attr("stroke-dasharray", function (d) {
+            if (d.isDebated) {
+                return "10,10";
             }
         }).attr("pointer-events", function (d) {
             if (relation_visible(d)) {

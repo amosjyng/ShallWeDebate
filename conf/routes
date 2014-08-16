@@ -14,3 +14,4 @@ GET     /arguments/:id/relations/   controllers.Debate.viewArgumentRelations(id:
 POST    /arguments/:id/             controllers.Debate.replyToArgument(id: Long)
 GET     /relations/:id/             controllers.Debate.viewRelation(id: Long)
 GET     /relations/:id/relations/   controllers.Debate.viewRelationRelations(id: Long)
+POST    /relations/:id/             controllers.Debate.replyToRelation(id: Long)
