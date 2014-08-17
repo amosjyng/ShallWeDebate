@@ -797,7 +797,7 @@ function compute_link_bezier_curve (link) {
     // until we're sure what it is
     var to = link.toArgument === null ? link.toRelation : link.toArgument;
     // if we're displaying a relationship horizontally
-    if (link.toRelation === null && (is_current(link) || is_indirect(link.from))) {
+    if (is_current(link) || (relation_visible(link) && is_indirect(link.from))) {
         // it should start at the right-middle of the from card and end at the
         // left-middle of the to card
         var start_pos = [x_pos(from, from.i) + card_width,
@@ -1027,8 +1027,14 @@ function create_reply_node (d, toArgument) {
         
         // make d debated now rather than later
         d.isDebated = true;
-        // make it as if you first went to the d node, and then went to its reply
-        current_card = d;
+        // make it as if you first went to the d node/relation, and then went to its reply
+        if (toArgument) {
+            current_card = d;
+            current_relation = null;
+        } else {
+            current_card = null;
+            current_relation = d;
+        }
         set_cards_previous_locations();
         // set focus on the textarea in the middle of the page
         change_current_card(new_node);
@@ -1279,7 +1285,7 @@ function make_links() {
  */
 function set_cards_previous_locations() {
     cards.each(function (d) {
-        if (current_card == d) {
+        if (is_current(d)) {
             d.previously_current = true;
             d.previously_outgoing = false;
             d.previously_incoming = false;
@@ -1291,7 +1297,13 @@ function set_cards_previous_locations() {
             d.previously_current = false;
             d.previously_outgoing = false;
             d.previously_incoming = true;
-        } // else shouldn't happen
+        } else if (!(d.previously_current
+                  || d.previously_outgoing
+                  || d.previously_incoming)) {
+            // should definitely be previously one of the above three if it isn't
+            // currently one of them
+            console.error("Argument " + d.id + " isn't previously nor currently anything!");
+        }
     });
 }
 
