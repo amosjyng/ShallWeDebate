@@ -1144,7 +1144,6 @@ function make_cards() {
                 "Content-Type": "application/json"
             }
         }).done(function (new_info) {
-            // make link dotted if it now represents a replied-to link
             var toRelation = true;
             d3.select("svg.under_construction").each(function (d) {
                 toRelation = !d.as_reply_to_argument;
@@ -1345,15 +1344,16 @@ function draw_graph(center, transition_time) {
             } else {
                 return 0;
             }
-        }).attr("stroke-dasharray", function (d) {
-            if (d.isDebated) {
-                return "10,10";
-            }
         }).attr("pointer-events", function (d) {
             if (relation_visible(d)) {
                 return "painted";
             } else { // if hidden relation, then don't activate when clicked
                 return "none";
+            }
+        });
+    d3.selectAll("path.visible").attr("stroke-dasharray", function (d) {
+            if (d.isDebated) {
+                return "10,10";
             }
         });
     d3.selectAll("path").transition().duration(transition_time).attr("d", bezier_string);
