@@ -797,7 +797,7 @@ function compute_link_bezier_curve (link) {
     // until we're sure what it is
     var to = link.toArgument === null ? link.toRelation : link.toArgument;
     // if we're displaying a relationship horizontally
-    if (is_current(link) || is_indirect(link.from)) {
+    if (link.toRelation === null && (is_current(link) || is_indirect(link.from))) {
         // it should start at the right-middle of the from card and end at the
         // left-middle of the to card
         var start_pos = [x_pos(from, from.i) + card_width,
@@ -1273,7 +1273,9 @@ function make_links() {
 /**
  * For the record, set whether the card is current/outgoing/incoming so
  * that the next time draw_graph is called, the x_pos and y_pos functions
- * know how to handle cards that are no longer shown
+ * know how to handle cards that are no longer shown.
+ *
+ * Call this before changing the current card.
  */
 function set_cards_previous_locations() {
     cards.each(function (d) {
