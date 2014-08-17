@@ -1025,6 +1025,8 @@ function create_reply_node (d, toArgument) {
         reply_under_construction = true;
         window.onbeforeunload = warn_argument_under_construction;
         
+        // make d debated now rather than later
+        d.isDebated = true;
         // make it as if you first went to the d node, and then went to its reply
         current_card = d;
         set_cards_previous_locations();
@@ -1144,15 +1146,6 @@ function make_cards() {
                 "Content-Type": "application/json"
             }
         }).done(function (new_info) {
-            var toRelation = true;
-            d3.select("svg.under_construction").each(function (d) {
-                toRelation = !d.as_reply_to_argument;
-            });
-            if (toRelation) {
-                d3.select("svg.under_construction").each(function (d) {
-                    d.outgoing_relations[0].isDebated = true;
-                });
-            }
             // remove the "under_construction" of cards and links
             d3.select("svg.under_construction").each(function (d) {
                 d.id = new_info.new_node_id;
