@@ -154,7 +154,7 @@ function set_incoming_and_outgoing(relation) {
         if (relation.toRelation.toArgument !== null) {
             relation.from.indirect_to.push(relation.toRelation.toArgument);
         } else {
-            console.error("Not sure yet what to do with a relation here");
+            relation.from.indirect_relations.push(relation.toRelation.toRelation);
         }
     } else {
         relation.from.outgoing.push(relation.toArgument);
@@ -187,6 +187,7 @@ function add_node (new_node) {
     // here
     new_node.indirect_from = [];
     new_node.indirect_to = [];
+    new_node.indirect_relations = [];
     // add new node to array of nodes
     nodes.push(new_node);
 }
@@ -512,15 +513,47 @@ function node_visible (node) {
 }
 
 /**
+ * Is a relation visible only because the current node is a reply to it?
+ * @param {Relation} relation The relation in question
+ * @returns Whether or not the current card (if it exists) has this as one of its
+ * indirectly-related-to relations. Like so:
+ *  Y -----> O
+ *      ^
+ *      |
+ *      |
+ *      X
+ * Where the current card X points to a relation between Y and another relation, O.
+ * In this case this function would return true for the relation O. Note that neither
+ * the "from" nor "to" ends of the relation O are visible. So many nested levels of
+ * relationships cannot be shown at one time.
+ * 
+ * On the other hand,
+ *  Y -----> Z
+ *      ^
+ *      |
+ *      |
+ *      X
+ * Should X merely point to a relation between Y and Z, then this function will return
+ * false.
+ */
+function relation_indirectly_visible (relation) {
+    return current_card !== null
+        && current_card.indirect_relations.indexOf(relation) != -1;
+}
+
+/**
  * Should a relation be shown in the graph at all?
  * @param {Relation} relation The relation in question
  * @returns Whether or not both ends of the relation are visible
  */
 function relation_visible (relation) {
-    return node_visible(relation.from)
-        && (relation.toArgument === null ?
-            relation_visible(relation.toRelation) :
-            node_visible(relation.toArgument));
+    if (node_visible(relation.from)) {
+        return relation.toArgument === null ?
+                relation_visible(relation.toRelation) :
+                node_visible(relation.toArgument);
+    } else {
+        return relation_indirectly_visible;
+    }
 }
 
 /**
@@ -799,12 +832,11 @@ function compute_link_bezier_curve (link) {
     // if we're displaying a relationship horizontally
     if (is_current(link) || (relation_visible(link) && is_indirect(link.from))) {
         // it should start at the right-middle of the from card and end at the
-        // left-middle of the to card
+        // left-middle of the to card/relation
         var start_pos = [x_pos(from, from.i) + card_width,
                          y_pos(from, from.i) + half_card_height];
-        // todo: get rid of marker height magic constant
-        var end_pos   = [x_pos(to, to.i) - marker_width_px,
-                         y_pos(to, to.i) + half_card_height];
+        var end_pos   = [start_pos[0] + card_width + (2 * card_spacing) - marker_width_px,
+                         start_pos[1]];
         var control1  = [start_pos[0] + (end_pos[0] - start_pos[0]) / 3, start_pos[1]];
         var control2  = [end_pos[0]   - (end_pos[0] - start_pos[0]) / 3, end_pos[1]]
         return [start_pos, control1, control2, end_pos];
