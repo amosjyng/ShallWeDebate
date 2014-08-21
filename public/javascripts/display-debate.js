@@ -535,10 +535,16 @@ function node_visible (node) {
  *      X
  * Should X merely point to a relation between Y and Z, then this function will return
  * false.
+ *
+ * Note that this function will also return true for simply
+ * Y -----> O
+ * in the middle row as well as the top row
  */
 function relation_indirectly_visible (relation) {
-    return current_card !== null
-        && current_card.indirect_relations.indexOf(relation) != -1;
+    return (current_card !== null
+        && current_card.indirect_relations.indexOf(relation) != -1)
+        || (current_relation !== null
+        && current_relation.toRelation === relation);
 }
 
 /**
@@ -552,7 +558,7 @@ function relation_visible (relation) {
                 relation_visible(relation.toRelation) :
                 node_visible(relation.toArgument);
     } else {
-        return relation_indirectly_visible;
+        return relation_indirectly_visible(relation);
     }
 }
 
