@@ -686,6 +686,10 @@ function y_pos(node) {
             return graph_height + card_spacing; // move it to the bottom center
         } else { // Inconceivable!
             console.warn("Anomalous node " + node.id + " encountered");
+            // it's in the outgoing row because it's part of a relation pointed to
+            // by a relation pointed to by a third relation
+            node.previously_outgoing = true;
+            return y_pos(node); // so do it again
         }
     }
 }
