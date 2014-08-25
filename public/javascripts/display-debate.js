@@ -31,6 +31,8 @@ var next_incoming_i = 0;
  * of such indirect cards that haven't been processed yet.
  */
 var current_indirects = {};
+/** Same as current_indirects, but for links */
+var current_link_indirects = {};
 
 
 /**
@@ -606,7 +608,11 @@ function determine_i (node) {
                 next_outgoing_i++;
                 // but then save some space for the other end of the relation
                 next_outgoing_i++;
-                current_indirects[rel.toArgument.id] = next_outgoing_i;
+                if (rel.toArgument === null) {
+                    current_link_indirects[rel.toRelation.id] = next_outgoing_i;
+                } else {
+                    current_indirects[rel.toArgument.id] = next_outgoing_i;
+                }
                 next_outgoing_i++;
             } else if (rel.toArgument === node) {
                 // save some space for the other end of the relation
@@ -839,20 +845,31 @@ function compute_link_bezier_curve (link) {
     // the variable `to` can be either a node or an argument, so don't use it
     // until we're sure what it is
     var to = link.toArgument === null ? link.toRelation : link.toArgument;
-    // if we're displaying a relationship horizontally
-    if (is_current(link) || (relation_visible(link) && is_indirect(link.from))) {
+    if (current_link_indirects.hasOwnProperty(link.id)
+        || (current_relation !== null && current_relation.toRelation === link)) {
+        // horizontal line for now
+        var start_pos = current_link_indirects.hasOwnProperty(link.id) ?
+            [row_width(current_link_indirects[link.id]) + top_row_offset, card_spacing] :
+            [middle_row_offset + row_width(2), (graph_height / 2) - half_card_height];
+        var end_pos = [start_pos[0] + 50, start_pos[1]];
+        var control1  = [start_pos[0] + (end_pos[0] - start_pos[0]) / 3, start_pos[1]];
+        var control2  = [end_pos[0]   - (end_pos[0] - start_pos[0]) / 3, end_pos[1]]
+        return [start_pos, control1, control2, end_pos];
+    } else if (is_current(link) || (relation_visible(link) && is_indirect(link.from))) {
+        // if we're displaying a relationship horizontally
         // it should start at the right-middle of the from card and end at the
         // left-middle of the to card/relation
-        var start_pos = [x_pos(from, from.i) + card_width,
-                         y_pos(from, from.i) + half_card_height];
+        var start_pos = [x_pos(from) + card_width,
+                         y_pos(from) + half_card_height];
         var end_pos   = [start_pos[0] + card_width + (2 * card_spacing) - marker_width_px,
                          start_pos[1]];
         var control1  = [start_pos[0] + (end_pos[0] - start_pos[0]) / 3, start_pos[1]];
         var control2  = [end_pos[0]   - (end_pos[0] - start_pos[0]) / 3, end_pos[1]]
         return [start_pos, control1, control2, end_pos];
     } else if (link.toRelation !== null) {
-        // if we're displaying a relationship between a node and another relationship
-        var start_pos = [x_pos(from, from.i) + half_card_width, y_pos(from, from.i)];
+        // if we're vertically displaying a relationship between a node and another
+        // relationship
+        var start_pos = [x_pos(from) + half_card_width, y_pos(from)];
         var rel_link_curve = compute_link_bezier_curve(link.toRelation);
         var end_pos = get_bezier_position(rel_link_curve[0], rel_link_curve[1],
                                           rel_link_curve[2], rel_link_curve[3], 0.525);
@@ -863,11 +880,11 @@ function compute_link_bezier_curve (link) {
         // start at the top-middle of the "from" card and end at the bottom-middle
         // of the "to" card (under the current scheme, "to" cards are always above
         // "from" cards)
-        var start_pos = [x_pos(from, from.i) + half_card_width, y_pos(from, from.i)];
-        var end_pos = [x_pos(to, to.i) + half_card_width,
+        var start_pos = [x_pos(from) + half_card_width, y_pos(from)];
+        var end_pos = [x_pos(to) + half_card_width,
                        /* account for arrow: marker-width is 3, stroke-width is 5,
                           so marker will be marker-width * stroke-width wide and tall */
-                       y_pos(to, to.i) + card_height + marker_width_px];
+                       y_pos(to) + card_height + marker_width_px];
         return compute_vertical_bezier_curve(start_pos, end_pos);
     }
 }
@@ -891,6 +908,7 @@ function reset_globals() {
     next_outgoing_i = 0;
     next_incoming_i = 0;
     current_indirects = {};
+    current_link_indirects = {};
     // don't touch the offsets because "draw_graph" will handle that
 }
 
@@ -1368,6 +1386,8 @@ function draw_graph(center, transition_time) {
     make_links();
 
     // recalculate logical positions for each card
+    // be sure to do this before displaying cards, because current_link_indirects
+    // needs to be set
     reset_globals();
     d3.selectAll("svg.argument").each(determine_i);
 
