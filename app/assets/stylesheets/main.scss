@@ -64,6 +64,17 @@ div#content-container
 		color: $primary-light;
 		letter-spacing: 2px;
 		text-shadow: none;
+		text-transform: uppercase;
+		padding-left: 90px;
+
+		img
+		{
+			height: 35px;
+			width: auto;
+			position: absolute;
+			margin-top: -8px;
+			margin-left: -50px;
+		}
 	}
 
 	a.navbar-brand:hover
