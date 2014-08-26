@@ -15,6 +15,11 @@ var link_toolbar_offset = -30;
 /** How wide the link toolbar should be (it is jarring to have it take up the same
     amount of space as a normal toolbar) */
 var link_toolbar_width = card_width * 0.8;
+/** How long should a 2nd-degree relation (a relation pointing to a relation) be
+    when viewed horizontally? */
+var second_degree_link_width = 0.9 * card_width;
+/** How far from the left of a card's x-coordinate should a 2nd-degree link be? */
+var second_degree_offset = (card_width - second_degree_link_width) / 8;
 
 /** Index of the next current node (may be nonzero when it's a relation
     being displayed) */
@@ -568,15 +573,16 @@ function relation_visible (relation) {
  * Given a node which is indirectly related to the current argument, find the
  * relation which is actually directly related to the current argument
  * @param {Node} node The indirectly related node in question
- * @returns {Relation} The relation responsible for node
+ * @returns {Relation} The relation responsible for node's visibility; if there
+ * is no such relation, returns nothing
  */
 function get_relation_of_indirect (node) {
+    // look in the top row
     for (i = 0; i < current_card.outgoing_relations.length; i++) {
+        // and see if there are any relations there
         var rel = current_card.outgoing_relations[i];
-        if (rel.toArgument === null) {
-            console.error("Code for case where relation points to relation!");
-        }
-        if (node.id === rel.from.id || node.id === rel.toArgument.id) {
+        if (node.id === rel.from.id ||
+            (rel.toArgument !== null && node.id === rel.toArgument.id)) {
             return rel;
         }
     }
@@ -794,8 +800,7 @@ function pos2str(pos) {
 }
 
 /**
- * Given two endpoints, find coordinates for a vertical bezier curve connecting them,
- * taking into account the arrow marker at the end
+ * Given two endpoints, find coordinates for a vertical bezier curve connecting them
  * @param {array} start_pos A two-element arrary specifying the starting x- and y-
  * position of the curve
  * @param {array} end_pos A two-element arrary specifying the ending x- and y-
@@ -811,6 +816,25 @@ function compute_vertical_bezier_curve (start_pos, end_pos) {
     var control1 = [start_pos[0], start_pos[1] + (height / 2)];
     var control2 = [end_pos[0], end_pos[1] - (height / 2)];
     // return the controls
+    return [start_pos, control1, control2, end_pos];
+}
+
+/**
+ * Given two endpoints, the second of which is directly to the right of the first one,
+ * find coordinates for a horizontal bezier curve connecting them
+ * @param {array} start_pos A two-element arrary specifying the starting x- and y-
+ * position of the curve
+ * @param {array} end_pos A two-element arrary specifying the ending x- and y-
+ * position of the curve
+ * @returns {Array} A four-element array of two-element arrays. Each two-element
+ * array represents an x- and y-coordinate. The four-element array contains the
+ * start, two control points, and end points of the curve.
+ */
+function compute_horizontal_bezier_curve (start_pos, end_pos) {
+    var length = end_pos[0] - start_pos[0];
+    // I guess it doesn't matter where the control points are for a horizontal line
+    var control1  = [start_pos[0] + length / 3, start_pos[1]];
+    var control2  = [end_pos[0]   - length / 3, end_pos[1]];
     return [start_pos, control1, control2, end_pos];
 }
 
@@ -847,14 +871,25 @@ function compute_link_bezier_curve (link) {
     var to = link.toArgument === null ? link.toRelation : link.toArgument;
     if (current_link_indirects.hasOwnProperty(link.id)
         || (current_relation !== null && current_relation.toRelation === link)) {
-        // horizontal line for now
-        var start_pos = current_link_indirects.hasOwnProperty(link.id) ?
-            [row_width(current_link_indirects[link.id]) + top_row_offset, card_spacing] :
-            [middle_row_offset + row_width(2), (graph_height / 2) - half_card_height];
-        var end_pos = [start_pos[0] + 50, start_pos[1]];
-        var control1  = [start_pos[0] + (end_pos[0] - start_pos[0]) / 3, start_pos[1]];
-        var control2  = [end_pos[0]   - (end_pos[0] - start_pos[0]) / 3, end_pos[1]]
-        return [start_pos, control1, control2, end_pos];
+        // if we're displaying a 2nd-degree relation (a relation that points to
+        // another relation) horizontally without the nodes on either end (because
+        // we're displaying this 2nd-degree relation as one end of a 3rd-degree
+        // relation)
+        var x_index, row_offset, y_coord;
+        if (current_link_indirects.hasOwnProperty(link.id)) { // top row
+            row_offset = top_row_offset;
+            x_index = current_link_indirects[link.id];
+            y_coord = card_spacing;
+        } else { // middle row
+            row_offset = middle_row_offset;
+            x_index = 2
+            y_coord = (graph_height / 2) - half_card_height;
+        }
+        var start_pos = [row_width(x_index) + row_offset + second_degree_offset,
+                         y_coord + (half_card_height / 2)];
+        var end_pos = [start_pos[0] + second_degree_link_width - marker_width_px,
+                       start_pos[1]];
+        return compute_horizontal_bezier_curve(start_pos, end_pos);
     } else if (is_current(link) || (relation_visible(link) && is_indirect(link.from))) {
         // if we're displaying a relationship horizontally
         // it should start at the right-middle of the from card and end at the
@@ -863,9 +898,7 @@ function compute_link_bezier_curve (link) {
                          y_pos(from) + half_card_height];
         var end_pos   = [start_pos[0] + card_width + (2 * card_spacing) - marker_width_px,
                          start_pos[1]];
-        var control1  = [start_pos[0] + (end_pos[0] - start_pos[0]) / 3, start_pos[1]];
-        var control2  = [end_pos[0]   - (end_pos[0] - start_pos[0]) / 3, end_pos[1]]
-        return [start_pos, control1, control2, end_pos];
+        return compute_horizontal_bezier_curve(start_pos, end_pos);
     } else if (link.toRelation !== null) {
         // if we're vertically displaying a relationship between a node and another
         // relationship
