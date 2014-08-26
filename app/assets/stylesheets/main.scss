@@ -1,0 +1,46 @@
+@import 'colors';
+
+body, svg#graph
+{
+	background-color: $primary-darkest;
+	color: $primary-lightest;
+}
+
+p
+{
+	font-size: 16px;
+
+	a, a:hover
+	{
+		color: $green-light;
+	}
+}
+
+.navbar
+{
+	background-color: $primary-dark;
+	background-image: none;
+	border-radius: 0;
+	border: none;
+	border-bottom: 1px solid black;
+	margin-bottom: 0;
+
+	a.navbar-brand
+	{
+		font-size: 30px;
+		font-weight: bold;
+		color: $primary-light;
+		letter-spacing: 2px;
+		text-shadow: none;
+	}
+
+	a.navbar-brand:hover
+	{
+		color: $primary-light;
+	}
+}
+
+.modal-content
+{
+	color: #000;
+}
