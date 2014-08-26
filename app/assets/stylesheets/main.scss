@@ -1,18 +1,41 @@
 @import 'colors';
 
+h1
+{
+	font-size: 50px;
+	word-spacing: 2px;
+	text-transform: uppercase;
+	margin-top: 50px;
+	margin-bottom: 20px;
+}
+
+p
+{
+	font-size: 17px;
+	margin-bottom: 1em;
+
+	a, a:hover
+	{
+		color: $green-light;
+	}
+}
+
 body, svg#graph
 {
 	background-color: $primary-darkest;
 	color: $primary-lightest;
 }
 
-p
+div#content-container
 {
-	font-size: 16px;
+	margin-top: 25px;
+	width: 100%;
 
-	a, a:hover
+	div#content
 	{
-		color: $green-light;
+		width: 60%;
+		margin-left: auto;
+		margin-right: auto;
 	}
 }
 
