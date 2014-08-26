@@ -18,8 +18,13 @@ echo "export PATH=$PATH" >> /home/ec2-user/.bashrc
 # need to make sure sudo has environment variables first
 #dos2unix -n /home/ec2-user/ShallWeDebate/AWS.conf /etc/init/start-play-up.conf
 
-# production setup (use manually)
+# production setup (use manually -- remember to replace RANDOM_STRING and the_production_database_password)
 # echo "export DB_URL=jdbc:postgresql://debate-db-instance.RANDOM_STRING.us-east-1.rds.amazonaws.com/debate" >> /home/ec2-user/.bashrc
 # echo "export DB_ADDRESS=debate-db-instance.RANDOM_STRING.us-east-1.rds.amazonaws.com" >> /home/ec2-user/.bashrc
 # echo "export DB_USER=shallwedebate" >> /home/ec2-user/.bashrc
 # echo "export DB_PASSWORD=the_production_database_password" >> /home/ec2-user/.bashrc
+
+# start the website up
+# play clean compile stage
+# (make sure you put "-E" to preserve environment variables!!!)
+# sudo -E nohup /home/ec2-user/ShallWeDebate/target/universal/stage/bin/shallwedebate -Dhttp.port=80 &
