@@ -8,6 +8,10 @@ var half_card_width = card_width / 2;
 var half_card_height = card_height / 2;
 /** Spacing between adjacent cards in the graph */
 var card_spacing = 10;
+/** Spacing between top/bottom row of cards and top/bottom of graph */
+var graph_top_bottom_spacing = 2 * card_spacing;
+/** Height of the header at the top of the page */
+var header_height = 51;
 /** Height of toolbar on cards */
 var toolbar_height = 30;
 /** How much to vertically offset the link toolbar from the center of the screen */
@@ -61,7 +65,8 @@ var graph_width = null;
 var graph_height = null;
 /** What the minimum height of the final graph should be for optimal display
     of the arguments (three rows of cards, plus enough space for links in between) */
-var min_graph_height = (3 * card_height) + (4 * card_spacing) + 210;
+var min_graph_height = (3 * card_height) + (2 * card_spacing)
+                        + (2 * graph_top_bottom_spacing) + 210;
 /** What the minimum width of the final graph should be (enough at least to display a
     relation: three cards in a row, plus enough space between them) */
 var min_graph_width = (3 * card_width) + (4 * card_spacing);
@@ -685,17 +690,17 @@ function y_pos(node) {
         return (graph_height / 2) - half_card_height;
     } else if (is_outgoing(node)) { // if it's in the top row
         // position it slightly offset from the top of the graph
-        return card_spacing;
+        return graph_top_bottom_spacing;
     } else if (is_incoming(node)) { // if it's in the bottom row
         // position it slightly offset from the bottom of the graph
-        return graph_height - card_spacing - card_height;
+        return graph_height - graph_top_bottom_spacing - card_height;
     } else { // otherwise it's a hidden node, so move it offscreen
         if (node.previously_outgoing) { // if previously in the top row
-            return -card_spacing - card_height; // move it to the top center
+            return -graph_top_bottom_spacing - card_height; // move it to the top center
         } else if (node.previously_incoming || node.previously_current) {
             // else if previously in the bottom row, or if previously current
             // but was pointing to a relation, whose nodes got clicked on
-            return graph_height + card_spacing; // move it to the bottom center
+            return graph_height + graph_top_bottom_spacing; // move it to the bottom center
         } else { // Inconceivable!
             console.warn("Anomalous node " + node.id + " encountered");
             // it's in the outgoing row because it's part of a relation pointed to
@@ -879,7 +884,7 @@ function compute_link_bezier_curve (link) {
         if (current_link_indirects.hasOwnProperty(link.id)) { // top row
             row_offset = top_row_offset;
             x_index = current_link_indirects[link.id];
-            y_coord = card_spacing;
+            y_coord = graph_top_bottom_spacing;
         } else { // middle row
             row_offset = middle_row_offset;
             x_index = 2
@@ -1493,14 +1498,14 @@ window.onload = function () {
     }
 
     // if there's extra space, make sure graph fills entire browser window
-    if (graph_height < window.innerHeight) {
-        $("#graph").attr("height", window.innerHeight);
-        graph_height = window.innerHeight;
+    if (graph_height < window.innerHeight - header_height) {
+        graph_height = window.innerHeight - header_height;
+        $("#graph").attr("height", graph_height);
     }
     // ensure same for graph
     if (graph_width < window.innerWidth) {
-        $("#graph").attr("width", window.innerWidth);
         graph_width = window.innerWidth;
+        $("#graph").attr("width", graph_width);
     }
 
     // add a toolbar for sharing and replying to relations

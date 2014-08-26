@@ -10,3 +10,5 @@ libraryDependencies ++= Seq(
 )     
 
 play.Project.playJavaSettings
+
+net.litola.SassPlugin.sassSettings

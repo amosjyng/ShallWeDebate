@@ -1,0 +1,115 @@
+@import 'colors';
+
+// Make navbar less noticeable
+.navbar a.navbar-brand
+{
+	color: $primary;
+}
+
+// Customize display of cards
+svg.argument
+{
+	rect
+	{
+		stroke: none;
+		fill: $primary-lightest;
+		shape-rendering: crispEdges;
+		stroke-width: 1;
+	}
+
+	switch text
+	{
+		font-size: 20px;
+		fill: red;
+	}
+
+	div.summary
+	{
+		padding: 15px;
+
+		p, textarea
+		{
+			background-color: $primary-lightest;
+			font-family: Garamond, 'Times New Roman';
+			font-size: 20;
+			color: $primary-darkest;
+			font-weight: bold;
+		}
+
+		textarea
+		{
+			outline: none;
+			border-style: none; 
+			border-color: Transparent;
+			height: 100%;
+			width: 100%;
+			color: $primary-dark;
+		}
+	}
+}
+
+// Customize toolbars, which can be for cards and links
+svg.toolbar svg
+{
+	rect
+	{
+		stroke: none;
+		fill: $primary;
+	}
+	
+	text
+	{
+		fill: $primary-lightest;
+		font-size: 16px;
+		text-anchor: middle;
+		letter-spacing: 2;
+	}
+}
+
+// Customize display of links
+path
+{
+	stroke-width: 5px;
+	fill: none;
+}
+
+path.support
+{
+	stroke: $green-dark;
+}
+
+path.support.under_construction
+{
+	stroke: $green-lightest;
+}
+
+path.oppose
+{
+	stroke: $red;
+}
+
+path.oppose.under_construction
+{
+	stroke: $red-lightest;
+}
+
+path.clickable
+{
+	stroke: black;
+	stroke-width: 25px;
+	opacity: 0;
+}
+
+img#spinner
+{
+	position: fixed;
+	top: 5px;
+	right: 5px;
+	width: 75px;
+	height: auto;
+}
+
+div#argument-address-modal input
+{
+	width: 100%;
+}

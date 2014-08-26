@@ -2,7 +2,7 @@ PLAY_VERSION="2.2.2"
 
 # set up general stuff
 apt-get update
-apt-get install -y default-jdk dos2unix unzip postgresql-client-9.1 postgresql-9.1 jsdoc-toolkit make
+apt-get install -y default-jdk ruby-sass dos2unix unzip postgresql-client-9.1 postgresql-9.1 jsdoc-toolkit make
 
 # set up Postgres
 sudo -u postgres psql postgres -c "alter user postgres with password 'dev_password';"
