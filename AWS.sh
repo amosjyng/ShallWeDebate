@@ -1,5 +1,6 @@
 # don't run automatically yet, use this as a guide for AWS setup
-# sudo yum install -y git java-1.7.0-openjdk java-1.7.0-openjdk-devel dos2unix unzip postgresql
+# sudo yum install -y rubygems git java-1.7.0-openjdk java-1.7.0-openjdk-devel dos2unix unzip postgresql
+# sudo gem install sass
 # and then
 # git clone git@github.com:amosjyng/ShallWeDebate.git
 # 
