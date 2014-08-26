@@ -66,7 +66,7 @@ var graph_height = null;
 /** What the minimum height of the final graph should be for optimal display
     of the arguments (three rows of cards, plus enough space for links in between) */
 var min_graph_height = (3 * card_height) + (2 * card_spacing)
-                        + (2 * graph_top_bottom_spacing) + 190;
+                        + (2 * graph_top_bottom_spacing) + 210;
 /** What the minimum width of the final graph should be (enough at least to display a
     relation: three cards in a row, plus enough space between them) */
 var min_graph_width = (3 * card_width) + (4 * card_spacing);
