@@ -1,10 +1,22 @@
-$primary-lightest: #ECE6FF;
-$primary:          #1B0071;
-$primary-dark:     #8880A2;
-$primary-darkest:  #080022;
+// I'm no graphic designer, color scheme is obtained from
+// http://paletton.com/#uid=54g1p0kv8P99YXSlUSrK6umJdfG
 
-$green-lightest: #80FF80;
-$green:          green;
+$primary-lightest: #C5B3F7;
+$primary-light:    #815BEA;
+$primary:          #511EE1;
+$primary-dark:     #330AA6;
+$primary-darkest:  #1B0556;
 
-$red-lightest: #FF8080;
-$red:          red;
+// when changing green and red, be sure to change support/oppose
+// arrow colors in viewDebate.scala.html as well
+$green-lightest: #ACF9B9;
+$green-light:    #4BEF68;
+$green:          #06E92E;
+$green-dark:     #00B920;
+$green-darkest:  #006011;
+
+$red-lightest: #FFB2B0;
+$red-light:    #FF5551;
+$red:          #FF0D07;
+$red-dark:     #F20600;
+$red-darkest:  #7D0300;

@@ -1,5 +1,11 @@
 @import 'colors';
 
+// Make navbar less noticeable
+.navbar a.navbar-brand
+{
+	color: $primary;
+}
+
 // Customize display of cards
 svg.argument
 {
@@ -48,12 +54,12 @@ svg.toolbar svg
 	rect
 	{
 		stroke: none;
-		fill: #555;
+		fill: $primary;
 	}
 	
 	text
 	{
-		fill: #DDD;
+		fill: $primary-lightest;
 		font-size: 16px;
 		text-anchor: middle;
 		letter-spacing: 2;
@@ -69,7 +75,7 @@ path
 
 path.support
 {
-	stroke: $green;
+	stroke: $green-dark;
 }
 
 path.support.under_construction

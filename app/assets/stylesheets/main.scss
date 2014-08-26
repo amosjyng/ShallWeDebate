@@ -6,9 +6,19 @@ body, svg#graph
 	color: $primary-lightest;
 }
 
+p
+{
+	font-size: 16px;
+
+	a, a:hover
+	{
+		color: $green-light;
+	}
+}
+
 .navbar
 {
-	background-color: $primary;
+	background-color: $primary-dark;
 	background-image: none;
 	border-radius: 0;
 	border: none;
@@ -19,17 +29,18 @@ body, svg#graph
 	{
 		font-size: 30px;
 		font-weight: bold;
-		color: $primary-lightest;
+		color: $primary-light;
 		letter-spacing: 2px;
+		text-shadow: none;
 	}
 
 	a.navbar-brand:hover
 	{
-		color: $primary-lightest;
+		color: $primary-light;
 	}
 }
 
-.modal-title
+.modal-content
 {
 	color: #000;
 }
