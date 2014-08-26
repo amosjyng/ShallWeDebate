@@ -1,10 +1,12 @@
+@import 'colors';
+
 // Customize display of cards
 svg.argument
 {
 	rect
 	{
 		stroke: none;
-		fill: #ECE6FF;
+		fill: $primary-lightest;
 		shape-rendering: crispEdges;
 		stroke-width: 1;
 	}
@@ -21,10 +23,10 @@ svg.argument
 
 		p, textarea
 		{
-			background-color: #ECE6FF;
+			background-color: $primary-lightest;
 			font-family: Garamond, 'Times New Roman';
 			font-size: 20;
-			color: #080022;
+			color: $primary-darkest;
 			font-weight: bold;
 		}
 
@@ -35,7 +37,7 @@ svg.argument
 			border-color: Transparent;
 			height: 100%;
 			width: 100%;
-			color: #8880A2;
+			color: $primary-dark;
 		}
 	}
 }
@@ -67,22 +69,22 @@ path
 
 path.support
 {
-	stroke: green;
+	stroke: $green;
 }
 
 path.support.under_construction
 {
-	stroke: #80FF80;
+	stroke: $green-lightest;
 }
 
 path.oppose
 {
-	stroke: red;
+	stroke: $red;
 }
 
 path.oppose.under_construction
 {
-	stroke: #FF8080;
+	stroke: $red-lightest;
 }
 
 path.clickable

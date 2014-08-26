@@ -1,12 +1,14 @@
+@import 'colors';
+
 body, svg#graph
 {
-	background-color: #080022;
-	color: #ECE6FF;
+	background-color: $primary-darkest;
+	color: $primary-lightest;
 }
 
 .navbar
 {
-	background-color: #1B0071;
+	background-color: $primary;
 	background-image: none;
 	border-radius: 0;
 	border: none;
@@ -17,13 +19,13 @@ body, svg#graph
 	{
 		font-size: 30px;
 		font-weight: bold;
-		color: #ECE6FF;
+		color: $primary-lightest;
 		letter-spacing: 2px;
 	}
 
 	a.navbar-brand:hover
 	{
-		color: #ECE6FF;
+		color: $primary-lightest;
 	}
 }
 
