@@ -89,6 +89,7 @@ public class Argument extends Model
      * @return The new Relation that is created. The Relation and not the Argument is returned, because you can always
      * easily get the Argument given the Relation.
      */
+    @Transactional
     public Relation replyWith(Argument reply, Integer type)
     {
         Ebean.save(reply);

@@ -1,9 +1,10 @@
+import models.Argument;
+import models.Relation;
 import org.junit.Test;
 import play.mvc.Content;
 
 import static org.fest.assertions.Assertions.assertThat;
-import static play.test.Helpers.contentAsString;
-import static play.test.Helpers.contentType;
+import static play.test.Helpers.*;
 
 
 /**
@@ -12,14 +13,6 @@ import static play.test.Helpers.contentType;
  */
 public class ApplicationTest
 {
-
-    @Test
-    public void simpleCheck()
-    {
-        int a = 1 + 1;
-        assertThat(a).isEqualTo(2);
-    }
-
     @Test
     public void renderTemplate()
     {
@@ -28,5 +21,21 @@ public class ApplicationTest
         assertThat(contentAsString(html)).contains("Your new application is ready.");
     }
 
+    @Test
+    public void replyToArgument()
+    {
+        running(fakeApplication(), new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                Argument reply = new Argument();
+                String summary = "Taxation blah blah blah...";
+                reply.setSummary(summary);
+                Relation theftRelation = Argument.get(2L).replyWith(reply, 1);
 
+                assertThat(theftRelation.from.summary).isEqualTo(summary);
+            }
+        });
+    }
 }
