@@ -1,49 +1,64 @@
-svg.argument rect
+// Customize display of cards
+svg.argument
 {
-	stroke: none;
-	fill: #ECE6FF;
-	shape-rendering: crispEdges;
-	stroke-width: 1;
+	rect
+	{
+		stroke: none;
+		fill: #ECE6FF;
+		shape-rendering: crispEdges;
+		stroke-width: 1;
+	}
+
+	switch text
+	{
+		font-size: 20px;
+		fill: red;
+	}
+
+	div.summary
+	{
+		padding: 15px;
+
+		p, textarea
+		{
+			background-color: #ECE6FF;
+			font-family: Garamond, 'Times New Roman';
+			font-size: 20;
+			color: #080022;
+			font-weight: bold;
+		}
+
+		textarea
+		{
+			outline: none;
+			border-style: none; 
+			border-color: Transparent;
+			height: 100%;
+			width: 100%;
+			color: #8880A2;
+		}
+	}
 }
 
-svg.toolbar svg rect
+// Customize toolbars, which can be for cards and links
+svg.toolbar svg
 {
-	stroke: none;
-	fill: #555;
+	rect
+	{
+		stroke: none;
+		fill: #555;
+	}
+	
+	text
+	{
+		fill: #DDD;
+		font-size: 16px;
+		text-anchor: middle;
+		letter-spacing: 2;
+	}
 }
 
-svg.toolbar svg text
-{
-	fill: #DDD;
-	font-size: 16px;
-	text-anchor: middle;
-	letter-spacing: 2;
-}
-
-div.summary
-{
-	padding: 15px;
-}
-
-div.summary p, div.summary textarea
-{
-	background-color: #ECE6FF;
-	font-family: Garamond, 'Times New Roman';
-	font-size: 20;
-	color: #080022;
-	font-weight: bold;
-}
-
-div.summary textarea
-{
-	outline: none;
-	border-style: none; 
-    border-color: Transparent;
-    height: 100%;
-    width: 100%;
-    color: #8880A2;
-}
-
+// Customize display of links
 path
 {
 	stroke-width: 5px;
@@ -75,12 +90,6 @@ path.clickable
 	stroke: black;
 	stroke-width: 25px;
 	opacity: 0;
-}
-
-switch text
-{
-	font-size: 20px;
-	fill: red;
 }
 
 img#spinner
