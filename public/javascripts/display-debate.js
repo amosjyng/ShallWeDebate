@@ -8,6 +8,8 @@ var half_card_width = card_width / 2;
 var half_card_height = card_height / 2;
 /** Spacing between adjacent cards in the graph */
 var card_spacing = 10;
+/** Height of the header at the top of the page */
+var header_height = 51;
 /** Height of toolbar on cards */
 var toolbar_height = 30;
 /** How much to vertically offset the link toolbar from the center of the screen */
@@ -1493,14 +1495,14 @@ window.onload = function () {
     }
 
     // if there's extra space, make sure graph fills entire browser window
-    if (graph_height < window.innerHeight) {
-        $("#graph").attr("height", window.innerHeight);
-        graph_height = window.innerHeight;
+    if (graph_height < window.innerHeight - header_height) {
+        graph_height = window.innerHeight - header_height;
+        $("#graph").attr("height", graph_height);
     }
     // ensure same for graph
     if (graph_width < window.innerWidth) {
-        $("#graph").attr("width", window.innerWidth);
         graph_width = window.innerWidth;
+        $("#graph").attr("width", graph_width);
     }
 
     // add a toolbar for sharing and replying to relations
