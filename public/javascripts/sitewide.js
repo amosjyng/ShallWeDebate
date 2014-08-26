@@ -18,3 +18,6 @@ function warn_ie () {
 		alert("Sorry, this website currently does not work at all with Internet Explorer. Please try using another browser.");
 	}
 }
+
+// call the function as soon as this file is loaded
+warn_ie();
