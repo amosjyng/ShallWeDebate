@@ -19,9 +19,17 @@ create table relation (
   constraint pk_relation primary key (id))
 ;
 
+create table subscriber (
+  email                     varchar(255) not null,
+  created_at                timestamp not null,
+  constraint pk_subscriber primary key (email))
+;
+
 create sequence argument_seq;
 
 create sequence relation_seq;
+
+create sequence subscriber_seq;
 
 alter table relation add constraint fk_relation_from_1 foreign key (from_id) references argument (id);
 create index ix_relation_from_1 on relation (from_id);
@@ -38,7 +46,11 @@ drop table if exists argument cascade;
 
 drop table if exists relation cascade;
 
+drop table if exists subscriber cascade;
+
 drop sequence if exists argument_seq;
 
 drop sequence if exists relation_seq;
+
+drop sequence if exists subscriber_seq;
 

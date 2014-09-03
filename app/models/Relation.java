@@ -176,7 +176,7 @@ public class Relation extends Model
             newRelation.setToRelation(this);
         }
         catch (ToFieldNotNullException e)
-        {
+        { // todo: stop further processing when this error is encountered
             Logger.error("toArgument or toRelation field of new Relation is already set. How is this possible?!");
         }
         newRelation.setType(type);
