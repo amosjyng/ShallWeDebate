@@ -96,6 +96,22 @@ div#content-container
 	}
 }
 
+div#footer-container
+{
+	width: 100%;
+	
+	div#footer
+	{
+		width: 200px;
+		margin: 50px auto 30px auto;
+	}
+
+	div#footer, a, a:hover
+	{
+		color: $primary-light;
+	}
+}
+
 .modal-content
 {
 	color: #000;
