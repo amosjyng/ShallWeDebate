@@ -1,3 +1,5 @@
+@(form: Form[Subscriber])
+
 @centered{
 	<h1>A new way to debate</h1>
 
@@ -5,7 +7,7 @@
 
     <p style="margin-bottom: 40px;">The source code to this website will be released on Github once it is finished.</p>
 
-    <div class="container-fluid">
+    <div class="container-fluid" style="margin-bottom:40px">
     	<div class="row">
     		<div class="col-md-6">
     			<h3>Reuse</h3>
@@ -32,4 +34,24 @@
     		</div>
     	</div>
     </div>
+
+    @if(form != null) {
+	    @if(form.hasGlobalErrors) {
+	        <div class="alert alert-danger" role="alert">
+	        	 <strong>Oops.</strong> @form.globalError.message
+	        </div>
+	    } else {
+	    	<div class="alert alert-success" role="alert">
+	        	<strong>Success!</strong> You've been added to the mailing list.
+	        </div>
+	    }
+    }
+    <h2>Keep updated</h2>
+    <form class="form-inline" role="form" action="/addSubscriber/" method="post">
+    	<div class="form-group">
+    		<label class="sr-only" for="subscriber-email">Email address</label>
+    		<input name="email" type="email" class="form-control" id="subscriber-email" placeholder="Enter your email and...">
+    	</div>
+    	<button type="submit" class="btn btn-default">Subscribe to updates!</button>
+    </form>
 }
