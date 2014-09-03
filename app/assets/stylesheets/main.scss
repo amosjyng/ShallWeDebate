@@ -36,6 +36,12 @@ p
 	}
 }
 
+form.form-inline div.form-group
+{
+	width: 100%;
+	max-width: 400px;
+}
+
 body, svg#graph
 {
 	background-color: $primary-darkest;
