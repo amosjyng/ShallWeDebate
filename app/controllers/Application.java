@@ -22,6 +22,15 @@ public class Application extends Controller
 	}
 
 	/**
+	 * Render the Terms of Service page
+	 * @return HTML displaying the TOS
+	 */
+	public static Result tos()
+	{
+		return ok(views.html.legal.tos.render());
+	}
+
+	/**
 	 * Tries to add a subscriber to the database, and returns an HTML page
 	 * displaying the result
 	 * @return The frontpage with a success or failure notification
