@@ -1,5 +1,9 @@
 @import 'colors';
 
+$min-footer-distance: 30px;
+$footer-height: 20px;
+$footer-offset: $min-footer-distance + $footer-height;
+
 h1
 {
 	font-size: 50px;
@@ -36,6 +40,11 @@ p
 	}
 }
 
+html, body
+{
+	height: 100%;
+}
+
 form.form-inline div.form-group
 {
 	width: 100%;
@@ -50,11 +59,14 @@ body, svg#graph
 
 div#content-container
 {
-	margin-top: 25px;
+	min-height: 100%;
 	width: 100%;
+	overflow: auto;
+	padding-bottom: $footer-offset;
 
 	div#content
 	{
+		padding-top: 25px;
 		width: 60%;
 		margin-left: auto;
 		margin-right: auto;
@@ -98,17 +110,20 @@ div#content-container
 
 div#footer-container
 {
-	width: 100%;
+	height: $footer-offset;
+	margin-top: -$footer-offset;
+	position: relative;
 	
 	div#footer
 	{
-		width: 200px;
-		margin: 50px auto 30px auto;
+		width: 100%;
+		padding-top: $min-footer-distance - $footer-height;
+		text-align: center;
 	}
 
 	div#footer, a, a:hover
 	{
-		color: $primary-light;
+		color: $primary;
 	}
 }
 
