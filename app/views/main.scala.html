@@ -1,4 +1,4 @@
-@(stylesheets: Html = Html(""), scripts: Html = Html(""))(content: Html)
+@(stylesheets: Html = Html(""), scripts: Html = Html(""))(content: Html)(footer: Html = Html(""))
 
 <html>
 <head>
@@ -32,23 +32,27 @@
     </div>
 </div>
 
-<nav class="navbar navbar-default" role="navigation">
-    <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
+<div id="content-container">
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
 
-            <a class="navbar-brand" href="/"><img src="@routes.Assets.at("images/logo.png")"> Shall We Debate?</a>
-        </div>
-    </div><!-- /.container-fluid -->
-</nav>
+                <a class="navbar-brand" href="/"><img src="@routes.Assets.at("images/logo.png")"> Shall We Debate?</a>
+            </div>
+        </div><!-- /.container-fluid -->
+    </nav>
 
-@content
+    <div id="content">@content</div>
+</div>
+
+@footer
 
 </body>
 </html>

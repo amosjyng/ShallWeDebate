@@ -1,9 +1,10 @@
 @(centered_content: Html)
 
-@main(){
-    <div id="content-container">
-    	<div id="content">
-    		@centered_content
-    	</div>
-    </div>
+@main()(centered_content){
+	<div id="footer-container">
+			<div id="footer">
+				<a href="/tos/">Terms of Service</a> | <a href="/privacy/">Privacy Policy</a>
+			</div>
+		</div>
+	</div>
 }
