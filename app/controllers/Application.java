@@ -31,6 +31,15 @@ public class Application extends Controller
 	}
 
 	/**
+	 * Render the Privacy Policy page
+	 * @return HTML displaying the privacy policy
+	 */
+	public static Result privacy()
+	{
+		return ok(views.html.legal.privacy.render());
+	}
+
+	/**
 	 * Tries to add a subscriber to the database, and returns an HTML page
 	 * displaying the result
 	 * @return The frontpage with a success or failure notification
