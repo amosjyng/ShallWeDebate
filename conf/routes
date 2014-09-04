@@ -4,6 +4,8 @@
 
 # Home page
 GET     /                           controllers.Application.index()
+GET     /tos/                       controllers.Application.tos()
+GET     /privacy/                   controllers.Application.privacy()
 POST    /addSubscriber/             controllers.Application.addSubscriber()
 
 # Map static resources from the /public folder to the /assets URL path
