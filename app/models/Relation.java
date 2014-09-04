@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import play.data.validation.Constraints.*;
 import play.Logger;
 import play.db.ebean.*;
+import com.avaje.ebean.annotation.CreatedTimestamp;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -15,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.sql.Timestamp;
 
 /**
  * A Relation captures the meaning behind the strong, direct interactions of two different Arguments.
@@ -27,6 +29,12 @@ public class Relation extends Model
      */
     @Id
     public Long id;
+
+    /**
+     * Time at which this Relation was created
+     */
+    @CreatedTimestamp
+    Timestamp createdAt;
 
     /**
      * Which Argument provides the basis for this Relation. The "from" part must always be from an Argument.

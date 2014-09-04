@@ -6,6 +6,7 @@
 create table argument (
   id                        bigint not null,
   summary                   varchar(140),
+  created_at                timestamp not null,
   constraint pk_argument primary key (id))
 ;
 
@@ -16,6 +17,7 @@ create table relation (
   to_relation_id            bigint,
   type                      integer not null,
   is_debated                boolean default false not null,
+  created_at                timestamp not null,
   constraint pk_relation primary key (id))
 ;
 

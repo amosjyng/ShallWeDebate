@@ -7,10 +7,12 @@ import play.Logger;
 import play.db.ebean.*;
 import play.data.validation.Constraints.*;
 import scala.util.parsing.combinator.testing.Str;
+import com.avaje.ebean.annotation.CreatedTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.List;
+import java.sql.Timestamp;
 
 /**
  * An Argument which makes a short statement about the world. May be true or false, logical or illogical. Doesn't
@@ -25,6 +27,12 @@ public class Argument extends Model
      */
     @Id
     public Long id;
+
+    /**
+     * Time at which this Argument was created
+     */
+    @CreatedTimestamp
+    Timestamp createdAt;
 
     /**
      * Short statement about the world. May consider making in the future another field for a more in-depth explanation,
