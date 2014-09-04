@@ -24,6 +24,8 @@ echo "export PATH=$PATH" >> /home/ec2-user/.bashrc
 # echo "export DB_ADDRESS=debate-db-instance.RANDOM_STRING.us-east-1.rds.amazonaws.com" >> /home/ec2-user/.bashrc
 # echo "export DB_USER=shallwedebate" >> /home/ec2-user/.bashrc
 # echo "export DB_PASSWORD=the_production_database_password" >> /home/ec2-user/.bashrc
+#
+# remember to change the application.secret in conf/application.conf
 
 # start the website up
 # play clean compile stage
