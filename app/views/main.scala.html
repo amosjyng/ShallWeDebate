@@ -52,11 +52,13 @@
             <div id="username" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">
                     <li class="dropdown">
-                        @currentAuth() { auth =>
-                            @if(auth == null) {
-                                <a href="#">LOG IN</a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            @currentAuth() { auth =>
+                                @if(auth == null) {
+                                    LOGIN <span class="caret">
+                                }
                             }
-                        }
+                        </a>
                     </li>
                 </ul>
             </div>
