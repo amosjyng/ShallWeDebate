@@ -60,7 +60,11 @@
                             }
                         </a>
                         <ul class="dropdown-menu" role="menu">
-                            <li><a href="#">Facebook</a></li>
+                        @forProviders() { p =>
+                            <li>
+                                <a href="@p.getUrl()">@p.getKey()</a>
+                            </li>
+                        }
                         </ul>
                     </li>
                 </ul>
