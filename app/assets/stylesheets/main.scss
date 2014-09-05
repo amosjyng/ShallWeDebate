@@ -115,7 +115,7 @@ div#content-container
 			}
 		}
 
-		ul
+		ul.navbar-right
 		{
 			$caret-size: 8px;
 
@@ -128,7 +128,8 @@ div#content-container
 				padding-bottom: 0.2em;
 			}
 
-			a
+			// the LOGIN/username button
+			a, li.open ul.dropdown-menu a
 			{
 				padding-left: 20px;
 				padding-right: 20px;
@@ -144,14 +145,38 @@ div#content-container
 				}
 			}
 
-			.open a
+			li.open
 			{
-				color: $primary-darkest;
-				background-color: $primary-lightest;
-
-				.caret
+				// the menu items when the LOGIN button is clicked
+				a
 				{
-					border-top-color: $primary-darkest;
+					color: $primary-darkest;
+					background-color: $primary-lightest;
+
+					.caret
+					{
+						border-top-color: $primary-darkest;
+					}
+				}
+				
+				ul.dropdown-menu
+				{
+					background-color: $primary-lightest;
+					border-radius: 0;
+					margin-top: -1px;
+					margin-right: -1px;
+
+					a, a:hover
+					{
+						color: $primary-darkest;
+						background-color: $primary-lightest;
+						background-image: none;
+					}
+
+					a:hover
+					{
+						color: $primary;
+					}
 				}
 			}
 		}
