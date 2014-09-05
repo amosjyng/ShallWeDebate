@@ -73,7 +73,7 @@ div#content-container
 	}
 }
 
-.navbar
+#navbar
 {
 	background-color: $primary-dark;
 	background-image: none;
@@ -82,29 +82,43 @@ div#content-container
 	border-bottom: 1px solid black;
 	margin-bottom: 0;
 
-	a.navbar-brand
+	div.container-fluid
 	{
-		font-size: 30px;
-		font-weight: bold;
-		color: $primary-light;
-		letter-spacing: 2px;
-		text-shadow: none;
-		text-transform: uppercase;
-		padding-left: 90px;
-
-		img
+		#username
 		{
-			height: 35px;
-			width: auto;
-			position: absolute;
-			margin-top: -8px;
-			margin-left: -50px;
+			margin-right: 30px;
 		}
-	}
 
-	a.navbar-brand:hover
-	{
-		color: $primary-light;
+		a, a:hover
+		{
+			color: $primary-light;
+			font-size: 20px;
+			font-weight: bold;
+			text-shadow: none;
+		}
+
+		a.navbar-brand
+		{
+			font-size: 30px;
+			letter-spacing: 2px;
+			text-shadow: none;
+			text-transform: uppercase;
+			padding-left: 90px;
+
+			img
+			{
+				height: 35px;
+				width: auto;
+				position: absolute;
+				margin-top: -8px;
+				margin-left: -50px;
+			}
+		}
+
+		a.navbar-brand:hover
+		{
+			color: $primary-light;
+		}
 	}
 }
 

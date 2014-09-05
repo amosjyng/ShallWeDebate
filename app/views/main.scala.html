@@ -35,7 +35,7 @@
 </div>
 
 <div id="content-container">
-    <nav class="navbar navbar-default" role="navigation">
+    <nav id="navbar" class="navbar navbar-default" role="navigation">
         <div class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
@@ -49,12 +49,16 @@
                 <a class="navbar-brand" href="/"><img src="@routes.Assets.at("images/logo.png")"> Shall We Debate?</a>
             </div>
 
-            <div id="username">
-                @currentAuth() { auth =>
-                    @if(auth == null) {
-                        <a href="#">Login</a>
-                    }
-                }
+            <div id="username" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        @currentAuth() { auth =>
+                            @if(auth == null) {
+                                <a href="#">LOG IN</a>
+                            }
+                        }
+                    </li>
+                </ul>
             </div>
         </div><!-- /.container-fluid -->
     </nav>
