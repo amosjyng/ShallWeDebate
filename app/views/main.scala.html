@@ -1,5 +1,7 @@
 @(stylesheets: Html = Html(""), scripts: Html = Html(""))(content: Html)(footer: Html = Html(""))
 
+@import com.feth.play.module.pa.views.html._
+
 <html>
 <head>
     <title>Shall We Debate?</title>
@@ -45,6 +47,14 @@
                 </button>
 
                 <a class="navbar-brand" href="/"><img src="@routes.Assets.at("images/logo.png")"> Shall We Debate?</a>
+            </div>
+
+            <div id="username">
+                @currentAuth() { auth =>
+                    @if(auth == null) {
+                        <a href="#">Login</a>
+                    }
+                }
             </div>
         </div><!-- /.container-fluid -->
     </nav>
