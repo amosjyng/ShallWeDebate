@@ -37,6 +37,12 @@ public class Relation extends Model
     Timestamp createdAt;
 
     /**
+     * The User who created this Relation
+     */
+    @Required @ManyToOne(optional = false)
+    public User creator;
+
+    /**
      * Which Argument provides the basis for this Relation. The "from" part must always be from an Argument.
      *
      * I suppose that logically, "if x then y" may sometimes imply "if x' then y'," where x' and x and y' and y are
@@ -44,17 +50,17 @@ public class Relation extends Model
      * you can put "if x then y" as a separate statement, which supports the separate statement "if x' then y'." In any
      * case, probably best to keep it as simple as possible for now.
      */
-    @Required @ManyToOne(fetch = FetchType.LAZY, optional = false) @NotNull @JsonManagedReference
+    @Required @ManyToOne(optional = false) @NotNull @JsonManagedReference
     public Argument from;
     /**
      * The Argument, if any, that is on the "to" end of this Relation. Either this or toRelation must be non-null.
      */
-    @ManyToOne(fetch = FetchType.LAZY) @JsonManagedReference
+    @ManyToOne() @JsonManagedReference
     public Argument toArgument;
     /**
      * The Relation, if any, that is on the "to" end of this Relation. Either this or toArgument must be non-null.
      */
-    @ManyToOne(fetch = FetchType.LAZY) @JsonManagedReference
+    @ManyToOne() @JsonManagedReference
     public Relation toRelation;
     /**
      * The type of Relation that purportedly exists between the "from" and the "to" ends:
@@ -73,12 +79,26 @@ public class Relation extends Model
     public Boolean isDebated;
 
     /**
+     * No-argument constructor for SnakeYAML
+     *
      * Set isDebated to be false by default (since chances are most relations won't be debated at all).
      */
     public Relation()
     {
         super();
+
         isDebated = false;
+    }
+
+    /**
+     * Should always use this constructor for Relation
+     * @param creator The user who is creating this Relation
+     */
+    public Relation(User creator)
+    {
+        this();
+
+        this.creator = creator;
     }
 
     /**
@@ -177,7 +197,7 @@ public class Relation extends Model
     public Relation replyWith(Argument reply, Integer type)
     {
         Ebean.save(reply);
-        Relation newRelation = new Relation();
+        Relation newRelation = new Relation(reply.creator);
         newRelation.setFrom(reply);
         try
         {

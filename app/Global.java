@@ -25,18 +25,6 @@ public class Global extends GlobalSettings
             Ebean.save((List) Yaml.load("dev-data.yml"));
         }
 
-        // make sure security roles exist
-        // https://github.com/joscha/play-authenticate/issues/102
-        if (SecurityRole.find.findRowCount() == 0)
-        {
-            for (final String roleName : Arrays.asList(controllers.Application.USER_ROLE))
-            {
-                final SecurityRole role = new SecurityRole();
-                role.roleName = roleName;
-                role.save();
-            }
-        }
-
         PlayAuthenticate.setResolver(new Resolver()
         {
             // https://raw.githubusercontent.com/joscha/play-authenticate/2.2.x/samples/java/play-authenticate-simple-oauth/app/Global.java

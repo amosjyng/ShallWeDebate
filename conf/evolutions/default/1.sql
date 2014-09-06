@@ -5,6 +5,7 @@
 
 create table argument (
   id                        bigint not null,
+  creator_id                bigint not null,
   summary                   varchar(140),
   created_at                timestamp not null,
   constraint pk_argument primary key (id))
@@ -12,7 +13,7 @@ create table argument (
 
 create table linked_account (
   id                        bigint not null,
-  user_id                   bigint,
+  user_id                   bigint not null,
   provider_user_id          varchar(255),
   provider_key              varchar(255),
   constraint pk_linked_account primary key (id))
@@ -20,6 +21,7 @@ create table linked_account (
 
 create table relation (
   id                        bigint not null,
+  creator_id                bigint not null,
   from_id                   bigint not null,
   to_argument_id            bigint,
   to_relation_id            bigint,
@@ -99,16 +101,20 @@ create sequence users_seq;
 
 create sequence user_permission_seq;
 
-alter table linked_account add constraint fk_linked_account_user_1 foreign key (user_id) references users (id);
-create index ix_linked_account_user_1 on linked_account (user_id);
-alter table relation add constraint fk_relation_from_2 foreign key (from_id) references argument (id);
-create index ix_relation_from_2 on relation (from_id);
-alter table relation add constraint fk_relation_toArgument_3 foreign key (to_argument_id) references argument (id);
-create index ix_relation_toArgument_3 on relation (to_argument_id);
-alter table relation add constraint fk_relation_toRelation_4 foreign key (to_relation_id) references relation (id);
-create index ix_relation_toRelation_4 on relation (to_relation_id);
-alter table token_action add constraint fk_token_action_targetUser_5 foreign key (target_user_id) references users (id);
-create index ix_token_action_targetUser_5 on token_action (target_user_id);
+alter table argument add constraint fk_argument_creator_1 foreign key (creator_id) references users (id);
+create index ix_argument_creator_1 on argument (creator_id);
+alter table linked_account add constraint fk_linked_account_user_2 foreign key (user_id) references users (id);
+create index ix_linked_account_user_2 on linked_account (user_id);
+alter table relation add constraint fk_relation_creator_3 foreign key (creator_id) references users (id);
+create index ix_relation_creator_3 on relation (creator_id);
+alter table relation add constraint fk_relation_from_4 foreign key (from_id) references argument (id);
+create index ix_relation_from_4 on relation (from_id);
+alter table relation add constraint fk_relation_toArgument_5 foreign key (to_argument_id) references argument (id);
+create index ix_relation_toArgument_5 on relation (to_argument_id);
+alter table relation add constraint fk_relation_toRelation_6 foreign key (to_relation_id) references relation (id);
+create index ix_relation_toRelation_6 on relation (to_relation_id);
+alter table token_action add constraint fk_token_action_targetUser_7 foreign key (target_user_id) references users (id);
+create index ix_token_action_targetUser_7 on token_action (target_user_id);
 
 
 

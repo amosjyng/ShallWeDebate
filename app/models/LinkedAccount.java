@@ -1,11 +1,10 @@
 package models;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 import play.db.ebean.Model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.feth.play.module.pa.user.AuthUser;
 
 @Entity
@@ -19,7 +18,7 @@ public class LinkedAccount extends Model
 	@Id
 	public Long id;
 
-	@ManyToOne
+	@ManyToOne(optional = false) @JsonBackReference
 	public User user;
 
 	public String providerUserId;

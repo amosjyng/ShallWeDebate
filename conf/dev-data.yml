@@ -1,32 +1,47 @@
+# Users
+- &userRole !!models.SecurityRole
+    roleName: user
+- &admin !!models.User
+    name: The Administrator
+    roles: [*userRole]
+
 # Arguments
 - &arg1 !!models.Argument
+    creator: *admin
     summary: >-
             Why a max length of 140 characters? Well, it sure as hell works
             for Twitter. Seems like just enough to pack some good info
             into an argument.
 - &arg2 !!models.Argument
+    creator: *admin
     summary: >-
             Taxation is theft.
 - &arg3 !!models.Argument
+    creator: *admin
     summary: >-
             You pay taxes in exchange for voluntarily living in a country and
             using its public services.
 - &arg4 !!models.Argument
+    creator: *admin
     summary: >-
             You were born involuntarily in a country.
 - &arg5 !!models.Argument
+    creator: *admin
     summary: >-
             If you don't like living in a country and paying its taxes, you
             are free to leave.
 - &arg6 !!models.Argument
+    creator: *admin
     summary: >-
             Not everyone has the financial resources to uproot their family
             and leave a country.
 - &arg7 !!models.Argument
+    creator: *admin
     summary: >-
             There is no place to leave to. There is no nation that really
             recognizes individual rights anymore.
 - &arg8 !!models.Argument
+    creator: *admin
     summary: >-
             It's not a freedom to leave, it's a requirement to leave unless
             the individual submits to others' wills.
@@ -34,36 +49,43 @@
 # Relations
 # Type 0: "support"; Type 1: "oppose"
 - &rel1 !!models.Relation
+    creator: *admin
     from: *arg3
     toArgument: *arg1
     type: 0
     isDebated: false
 - &rel2 !!models.Relation
+    creator: *admin
     from: *arg3
     toArgument: *arg2
     type: 1
     isDebated: false
 - &rel3 !!models.Relation
+    creator: *admin
     from: *arg4
     toArgument: *arg3
     type: 1
     isDebated: true
 - &rel4 !!models.Relation
+    creator: *admin
     from: *arg5
     toRelation: *rel3
     type: 1
     isDebated: false
 - &rel5 !!models.Relation
+    creator: *admin
     from: *arg6
     toArgument: *arg5
     type: 1
     isDebated: false
 - &rel6 !!models.Relation
+    creator: *admin
     from: *arg7
     toArgument: *arg5
     type: 1
     isDebated: false
 - &rel7 !!models.Relation
+    creator: *admin
     from: *arg8
     toArgument: *arg5
     type: 1

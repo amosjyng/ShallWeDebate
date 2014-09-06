@@ -59,7 +59,7 @@ public class User extends Model implements Subject
 	@ManyToMany
 	public List<SecurityRole> roles;
 
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
 	public List<LinkedAccount> linkedAccounts;
 
 	@ManyToMany
