@@ -1,6 +1,7 @@
 import com.avaje.ebean.Ebean;
 import play.*;
 import models.Argument;
+import models.SecurityRole;
 import play.libs.Yaml;
 import play.mvc.Call;
 import controllers.routes;
@@ -11,15 +12,29 @@ import com.feth.play.module.pa.exceptions.AccessDeniedException;
 import com.feth.play.module.pa.exceptions.AuthException;
 
 import java.util.List;
+import java.util.Arrays;
 
 public class Global extends GlobalSettings
 {
     @Override
     public void onStart(Application app)
     {
+        // make sure website is populated with arguments on initial creation
         if (Argument.find.findRowCount() == 0)
         {
             Ebean.save((List) Yaml.load("dev-data.yml"));
+        }
+
+        // make sure security roles exist
+        // https://github.com/joscha/play-authenticate/issues/102
+        if (SecurityRole.find.findRowCount() == 0)
+        {
+            for (final String roleName : Arrays.asList(controllers.Application.USER_ROLE))
+            {
+                final SecurityRole role = new SecurityRole();
+                role.roleName = roleName;
+                role.save();
+            }
         }
 
         PlayAuthenticate.setResolver(new Resolver()
