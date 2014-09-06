@@ -2,6 +2,8 @@ name := "ShallWeDebate"
 
 version := "1.0-SNAPSHOT"
 
+resolvers += Resolver.url("Objectify Play Repository", url("http://deadbolt.ws/releases/"))(Resolver.ivyStylePatterns)
+
 libraryDependencies ++= Seq(
   javaJdbc,
   javaEbean,

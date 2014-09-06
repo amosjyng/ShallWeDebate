@@ -1,12 +1,17 @@
 package controllers;
 
 import models.Subscriber;
+import models.User;
 
 import play.*;
 import play.mvc.*;
+import play.mvc.Http.Session;
 import play.libs.Json;
 import play.data.Form;
 import play.Logger;
+
+import com.feth.play.module.pa.PlayAuthenticate;
+import com.feth.play.module.pa.user.AuthUser;
 
 import views.html.*;
 
@@ -16,6 +21,15 @@ public class Application extends Controller
 	 * Used for somehow restricting pages to logged-in users
 	 */
 	public static final String USER_ROLE = "user";
+
+	/**
+	 * Retrieve from the database the User that is currently signed in
+	 * @return Information about the currently logged-in User
+	 */
+	public static User getLocalUser(final Session session)
+	{
+		return User.findByAuthUserIdentity(PlayAuthenticate.getUser(session));
+	}
 
 	/**
 	 * Render the homepage
