@@ -32,7 +32,7 @@ public class Argument extends Model
      * Time at which this Argument was created
      */
     @CreatedTimestamp
-    Timestamp createdAt;
+    public Timestamp createdAt;
 
     /**
      * The User who created this Argument

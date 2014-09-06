@@ -34,7 +34,7 @@ public class Relation extends Model
      * Time at which this Relation was created
      */
     @CreatedTimestamp
-    Timestamp createdAt;
+    public Timestamp createdAt;
 
     /**
      * The User who created this Relation

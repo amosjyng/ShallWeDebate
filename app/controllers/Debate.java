@@ -6,7 +6,9 @@ import models.Relation;
 import play.libs.Json;
 import play.mvc.*;
 import play.mvc.Http.Session;
+
 import models.Argument;
+import models.client.PublicArgument;
 
 /**
  * Controller for all views related to debates on the website
@@ -28,7 +30,7 @@ public class Debate extends Controller
         }
         else
         {
-            return ok(Json.toJson(Argument.get(id)));
+            return ok(Json.toJson(new PublicArgument(Argument.get(id))));
         }
     }
 
