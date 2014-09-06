@@ -13,6 +13,11 @@ import views.html.*;
 public class Application extends Controller
 {
 	/**
+	 * Used for somehow restricting pages to logged-in users
+	 */
+	public static final String USER_ROLE = "user";
+
+	/**
 	 * Render the homepage
 	 * @return HTML of the homepage
 	 */
