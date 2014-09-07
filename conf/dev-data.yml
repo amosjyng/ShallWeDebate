@@ -32,13 +32,12 @@
 - &arg7 !!models.Argument
     creator: *admin
     summary: >-
-            There is no place to leave to. There is no nation that really
-            recognizes individual rights anymore.
+            There is no place to leave to because all nations tax their citizens.
 - &arg8 !!models.Argument
     creator: *admin
     summary: >-
             It's not a freedom to leave, it's a requirement to leave unless
-            the individual submits to others' wills.
+            the individual submits to others' (society's) wills.
 
 # Relations
 # Type 0: "support"; Type 1: "oppose"

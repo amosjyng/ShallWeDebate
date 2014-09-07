@@ -37,7 +37,12 @@ p
 
 a, a:hover
 {
-	color: $green-light;
+	color: $red-light;
+}
+
+.push-bottom
+{
+	margin-bottom: 40px;
 }
 
 html, body
