@@ -7,10 +7,12 @@ import play.Logger;
 import play.db.ebean.*;
 import play.data.validation.Constraints.*;
 import scala.util.parsing.combinator.testing.Str;
+import com.avaje.ebean.annotation.CreatedTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.List;
+import java.sql.Timestamp;
 
 /**
  * An Argument which makes a short statement about the world. May be true or false, logical or illogical. Doesn't
@@ -25,6 +27,18 @@ public class Argument extends Model
      */
     @Id
     public Long id;
+
+    /**
+     * Time at which this Argument was created
+     */
+    @CreatedTimestamp
+    public Timestamp createdAt;
+
+    /**
+     * The User who created this Argument
+     */
+    @Required @ManyToOne(optional = false)
+    public User creator;
 
     /**
      * Short statement about the world. May consider making in the future another field for a more in-depth explanation,
@@ -52,6 +66,27 @@ public class Argument extends Model
     public static Finder<Long, Argument> find = new Finder(Long.class, Argument.class);
 
     /**
+     * No-argument constructor for SnakeYAML
+     */
+    public Argument()
+    {
+        super();
+    }
+
+    /**
+     * Should always use this constructor for Argument
+     * @param creator The user who created this argument
+     * @param summary What the user said
+     */
+    public Argument(User creator, String summary)
+    {
+        this();
+
+        this.creator = creator;
+        this.summary = summary;
+    }
+
+    /**
      * Gets a *reference* to an Argument based on the ID given. This will not (immediately?) return null for an
      * Argument that doesn't yet exist, so if you always assume it does, you'll get a NullPointerException.
      * @param id The ID of the Argument you wish to find.
@@ -73,15 +108,6 @@ public class Argument extends Model
     }
 
     /**
-     * Update the summary of this Argument to something else
-     * @param summary The new summary for this particular Argument
-     */
-    public void setSummary(String summary)
-    {
-        this.summary = summary;
-    }
-
-    /**
      * Save an argument to the database as a reply to another argument. A relation will be created in addition to this
      * argument.
      * @param reply The new Argument to be saved as a reply to this one
@@ -93,7 +119,7 @@ public class Argument extends Model
     public Relation replyWith(Argument reply, Integer type)
     {
         Ebean.save(reply);
-        Relation newRelation = new Relation();
+        Relation newRelation = new Relation(reply.creator);
         newRelation.setFrom(reply);
         try
         {

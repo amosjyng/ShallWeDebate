@@ -2,9 +2,13 @@ name := "ShallWeDebate"
 
 version := "1.0-SNAPSHOT"
 
+resolvers += Resolver.url("Objectify Play Repository", url("http://deadbolt.ws/releases/"))(Resolver.ivyStylePatterns)
+
 libraryDependencies ++= Seq(
   javaJdbc,
   javaEbean,
+  "be.objectify"  %%  "deadbolt-java"     % "2.2.1-RC2",
+  "com.feth"      %%  "play-authenticate" % "0.5.2-SNAPSHOT",
   "postgresql" % "postgresql" % "9.1-901-1.jdbc4",
   cache
 )     
