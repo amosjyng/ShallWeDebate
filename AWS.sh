@@ -29,6 +29,8 @@ echo "export PATH=$PATH" >> /home/ec2-user/.bashrc
 #
 # remember to change the application.secret in conf/application.conf
 
+# remove previous running instances
+# sudo killall java
 # start the website up
 # play clean compile stage
 # (make sure you put "-E" to preserve environment variables!!!)
