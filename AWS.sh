@@ -28,10 +28,4 @@ echo "export PATH=$PATH" >> /home/ec2-user/.bashrc
 # echo "export FB_CLIENT_SECRET=APP_SECRET" >> /home/ec2-user/.bashrc
 #
 # remember to change the application.secret in conf/application.conf
-
-# remove previous running instances
-# sudo killall java
-# start the website up
-# play clean compile stage
-# (make sure you put "-E" to preserve environment variables!!!)
-# sudo -E nohup /home/ec2-user/ShallWeDebate/target/universal/stage/bin/shallwedebate -Dhttp.port=80 &
+# run `deploy.sh` when ready

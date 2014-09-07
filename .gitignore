@@ -36,3 +36,6 @@ js/doc
 
 # Ignore AWS private keys
 *.pem
+
+# ignore background process log
+nohup.out
