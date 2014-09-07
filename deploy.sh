@@ -1,5 +1,6 @@
 #!/bin/bash
-killall java
+git pull
+sudo killall java
 sudo rm /home/ec2-user/ShallWeDebate/nohup.out
 play clean compile stage
 sudo -E nohup /home/ec2-user/ShallWeDebate/target/universal/stage/bin/shallwedebate -Dhttp.port=80 &
