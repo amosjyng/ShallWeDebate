@@ -26,6 +26,8 @@ svg.argument
 	div.summary
 	{
 		padding: 15px;
+		height: 100%;
+		width: 100%;
 
 		p, textarea
 		{
@@ -43,7 +45,31 @@ svg.argument
 			border-color: Transparent;
 			height: 100%;
 			width: 100%;
-			color: $primary-dark;
+			resize: none;
+			color: $primary-darkest;
+		}
+
+		// http://stackoverflow.com/a/2610741/257583
+		::-webkit-input-placeholder
+		{ /* WebKit browsers */
+			color: $primary-light;
+		}
+
+		:-moz-placeholder
+		{ /* Mozilla Firefox 4 to 18 */
+			color: $primary-light;
+			opacity:  1;
+		}
+
+		::-moz-placeholder
+		{ /* Mozilla Firefox 19+ */
+			color: $primary-light;
+			opacity:  1;
+		}
+
+		:-ms-input-placeholder
+		{ /* Internet Explorer 10+ */
+			color: $primary-light;
 		}
 	}
 }
