@@ -5,7 +5,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.Relation;
 import play.libs.Json;
 import play.mvc.*;
+import play.mvc.Http.Session;
+
 import models.Argument;
+import models.client.*;
 
 /**
  * Controller for all views related to debates on the website
@@ -27,7 +30,7 @@ public class Debate extends Controller
         }
         else
         {
-            return ok(Json.toJson(Argument.get(id)));
+            return ok(Json.toJson(new PublicArgument(Argument.get(id))));
         }
     }
 
@@ -46,7 +49,7 @@ public class Debate extends Controller
         }
         else
         {
-            return ok(Json.toJson(Relation.get(id)));
+            return ok(Json.toJson(new PublicRelation(Relation.get(id))));
         }
     }
 
@@ -57,7 +60,7 @@ public class Debate extends Controller
      */
     public static Result viewArgumentRelations(Long id)
     {
-        return ok(Json.toJson(Relation.getRelationsOfArgumentWithId(id)));
+        return ok(Json.toJson(Relation.getPublicRelations(Relation.getRelationsOfArgumentWithId(id))));
     }
 
     /**
@@ -67,7 +70,7 @@ public class Debate extends Controller
      */
     public static Result viewRelationRelations(Long id)
     {
-        return ok(Json.toJson(Relation.getRelationsOfRelationWithId(id)));
+        return ok(Json.toJson(Relation.getPublicRelations(Relation.getRelationsOfRelationWithId(id))));
     }
 
     /**
@@ -96,8 +99,7 @@ public class Debate extends Controller
         // todo: check for existence of type variable
         else
         {
-            Argument reply = new Argument();
-            reply.setSummary(summary);
+            Argument reply = new Argument(Application.getLocalUser(session()), summary);
 
             ObjectNode response = Json.newObject();
             Relation newRelation = Argument.get(id).replyWith(reply, type);
@@ -133,8 +135,7 @@ public class Debate extends Controller
         // todo: check for existence of type variable
         else
         {
-            Argument reply = new Argument();
-            reply.setSummary(summary);
+            Argument reply = new Argument(Application.getLocalUser(session()), summary);
 
             ObjectNode response = Json.newObject();
             Relation newRelation = Relation.get(id).replyWith(reply, type);

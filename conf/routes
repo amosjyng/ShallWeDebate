@@ -6,7 +6,11 @@
 GET     /                           controllers.Application.index()
 GET     /tos/                       controllers.Application.tos()
 GET     /privacy/                   controllers.Application.privacy()
-POST    /addSubscriber/             controllers.Application.addSubscriber()
+POST    /addSubscriber/             controllers.Application.addSubscriber() 
+
+# Authentication routes
+GET     /logout/                     com.feth.play.module.pa.controllers.Authenticate.logout
+GET     /login/:provider/            com.feth.play.module.pa.controllers.Authenticate.authenticate(provider: String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

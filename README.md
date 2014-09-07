@@ -11,6 +11,7 @@ For first-time set up:
 1. Install [Vagrant](http://www.vagrantup.com/downloads.html)
 2. Run `vagrant up; vagrant reload`. You may have to wait for 5 minutes after the command appears to have finished, before Step 3 will work (compiling the source code takes quite some time).
 3. Go to [127.0.0.1:8080/](http://127.0.0.1:8080/).
+4. For authentication setup, set `FB_CLIENT_ID` and `FB_CLIENT_SECRET` environment variables
 
 To re-provision the Vagrant machine after pulling new changes, run `vagrant provision`.
 

@@ -1,0 +1,4 @@
+# https://raw.githubusercontent.com/joscha/play-authenticate/323f33d94a3addfd9cc0b253cd60878ec81811a6/samples/java/play-authenticate-usage/conf/play.plugins
+10020:com.feth.play.module.pa.providers.oauth2.facebook.FacebookAuthProvider
+10005:service.DebaterServicePlugin
+10000:be.objectify.deadbolt.java.DeadboltPlugin

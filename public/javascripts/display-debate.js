@@ -1141,6 +1141,19 @@ function create_reply_node (d, toArgument) {
 }
 
 /**
+ * Check if the user is logged in. If not, ask the user to login. If so, calls the
+ * specified callback function.
+ * @param {function} callback The function to be called if the user is logged in.
+ */
+function login_check (callback) {
+    if (logged_in) {
+        callback();
+    } else {
+        alert_user("Login needed", "Please login on the top right first before replying.")
+    }
+}
+
+/**
  * Add the SHARE and REPLY buttons to the toolbars of already constructed cards.
  * @param {D3 selection} constructed_cards_toolbar The selection of toolbars to add such buttons to
  */
@@ -1152,7 +1165,9 @@ function add_construction_toolbar_buttons (constructed_cards_toolbar) {
     constructed_cards_toolbar.select(".reply-button").on("click", function (d) {
         d3.event.stopPropagation();
 
-        create_reply_node(d, true);
+        login_check(function () {
+            create_reply_node(d, true);
+        });
     });
 }
 
@@ -1520,7 +1535,9 @@ window.onload = function () {
     d3.select("#link-toolbar .reply-button").on("click", function () {
         d3.event.stopPropagation();
 
-        create_reply_node(current_relation, false);
+        login_check(function () {
+            create_reply_node(current_relation, false);
+        });
     });
 
     // get our first card (or our first relation)
