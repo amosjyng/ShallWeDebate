@@ -16,7 +16,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.ArrayList;
 import java.sql.Timestamp;
+
+import models.client.PublicRelation;
 
 /**
  * A Relation captures the meaning behind the strong, direct interactions of two different Arguments.
@@ -246,5 +249,15 @@ public class Relation extends Model
     {
         Relation relation = Relation.get(id);
         return find.where(Expr.eq("toRelation", relation)).findList();
+    }
+
+    public static List<PublicRelation> getPublicRelations(List<Relation> rs)
+    {
+        List<PublicRelation> prs = new ArrayList<PublicRelation>();
+        for (Relation r : rs)
+        {
+            prs.add(new PublicRelation(r));
+        }
+        return prs;
     }
 }

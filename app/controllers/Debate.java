@@ -8,7 +8,7 @@ import play.mvc.*;
 import play.mvc.Http.Session;
 
 import models.Argument;
-import models.client.PublicArgument;
+import models.client.*;
 
 /**
  * Controller for all views related to debates on the website
@@ -49,7 +49,7 @@ public class Debate extends Controller
         }
         else
         {
-            return ok(Json.toJson(Relation.get(id)));
+            return ok(Json.toJson(new PublicRelation(Relation.get(id))));
         }
     }
 
@@ -60,7 +60,7 @@ public class Debate extends Controller
      */
     public static Result viewArgumentRelations(Long id)
     {
-        return ok(Json.toJson(Relation.getRelationsOfArgumentWithId(id)));
+        return ok(Json.toJson(Relation.getPublicRelations(Relation.getRelationsOfArgumentWithId(id))));
     }
 
     /**
@@ -70,7 +70,7 @@ public class Debate extends Controller
      */
     public static Result viewRelationRelations(Long id)
     {
-        return ok(Json.toJson(Relation.getRelationsOfRelationWithId(id)));
+        return ok(Json.toJson(Relation.getPublicRelations(Relation.getRelationsOfRelationWithId(id))));
     }
 
     /**
