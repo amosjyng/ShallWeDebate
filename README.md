@@ -8,7 +8,7 @@ Setup
 
 1. Install `docker` and `docker-compose`
 2. Run the docker daemon `docker -d` and then `docker-compose up`
-3. Go to [127.0.0.1:80](http://127.0.0.1:80/)
+3. Go to [127.0.0.1](http://127.0.0.1/)
 
 Environment Variables
 ---------------------
