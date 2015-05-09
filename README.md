@@ -6,9 +6,10 @@ This is the source code of an [open source website](http://www.shallwedebate.com
 Setup
 -----
 
-1. Install `docker` and `docker-compose`
-2. Run the docker daemon `docker -d` and then `docker-compose up`
-3. Go to [127.0.0.1](http://127.0.0.1/)
+1. **If developing,** checkout the branch `develop`.
+2. Install `docker` and `docker-compose`
+3. Run the docker daemon `docker -d` and then `docker-compose up`
+4. Go to [127.0.0.1](http://127.0.0.1/)
 
 Environment Variables
 ---------------------
