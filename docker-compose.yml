@@ -1,0 +1,10 @@
+database:
+  image: postgres
+web:
+  image: ingensi/play-framework
+  volumes:
+    - /ShallWeDebate:/app:rw
+  links:
+    - database
+  ports:
+    - "80:9000"
