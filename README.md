@@ -7,9 +7,10 @@ Setup
 -----
 
 1. **If developing,** checkout the branch `develop`.
-2. Install `docker` and `docker-compose`
-3. Run the docker daemon `docker -d` and then `docker-compose up`
-4. Go to [127.0.0.1](http://127.0.0.1/)
+2. Make a symlink from the source folder to `/ShallWeDebate`
+3. Install `docker` and `docker-compose`
+4. Run the docker daemon `docker -d` and then `docker-compose up`
+5. Go to [127.0.0.1](http://127.0.0.1/)
 
 Environment Variables
 ---------------------
