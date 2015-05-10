@@ -24,9 +24,9 @@ Environment Variables
 
 All of the development environment variables, as well as
 
-* `DB_URL`
 * `DB_ADDRESS`
 * `DB_USER`
 * `DB_PASSWORD`
+* `POSTGRES_PASSWORD` (so Postgres knows what password to set)
 
 Also be sure to change `application.secret` in `conf/application.conf`.
