@@ -2,15 +2,14 @@ database:
   image: postgres:9.1
   volumes:
     - /ShallWeDebate/postgres-entrypoint:/docker-entrypoint-initdb.d:ro
-  environment:
-    - POSTGRES_PASSWORD
+  env_file:
+    - ./vars.env
 web:
   image: ingensi/play-framework
   volumes:
     - /ShallWeDebate:/app:rw
-  environment:
-    - DB_USER
-    - DB_PASSWORD
+  env_file:
+    - ./vars.env
   links:
     - database
   ports:

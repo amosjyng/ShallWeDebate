@@ -6,27 +6,25 @@ This is the source code of an [open source website](http://www.shallwedebate.com
 Setup
 -----
 
-1. **If developing,** checkout the branch `develop`.
-2. Make a symlink from the source folder to `/ShallWeDebate`
-3. Install `docker` and `docker-compose`
-4. Run the docker daemon `docker -d` and then `docker-compose up`
-5. Go to [127.0.0.1](http://127.0.0.1/)
+### Context
 
-Environment Variables
----------------------
+**If developing,** checkout the branch `develop`.
 
-### For development
+**If production,** change `application.secret` in `conf/application.conf`.
 
+### Environment Variables
+
+Put the following inside `vars.env`:
+
+* `DB_USER`
+* `DB_PASSWORD`
+* `POSTGRES_PASSWORD` (should be same as `DB_PASSWORD`)
 * `FB_CLIENT_ID`
 * `FB_CLIENT_SECRET`
 
-### For production
+### Bash
 
-All of the development environment variables, as well as
-
-* `DB_ADDRESS`
-* `DB_USER`
-* `DB_PASSWORD`
-* `POSTGRES_PASSWORD` (so Postgres knows what password to set)
-
-Also be sure to change `application.secret` in `conf/application.conf`.
+1. Make a symlink from the source folder to `/ShallWeDebate`
+2. Install `docker` and `docker-compose`
+3. Run the docker daemon `docker -d` and then `docker-compose up`
+4. Go to [127.0.0.1](http://127.0.0.1/)
