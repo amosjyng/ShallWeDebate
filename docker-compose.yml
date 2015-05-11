@@ -5,9 +5,7 @@ database:
   env_file:
     - ./vars.env
 web:
-  image: ingensi/play-framework
-  volumes:
-    - /ShallWeDebate:/app:rw
+  build: .
   env_file:
     - ./vars.env
   links:
