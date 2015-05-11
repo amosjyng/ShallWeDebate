@@ -31,6 +31,9 @@ server.pid
 *.iml
 *.eml
 
+# Ignore environment variables file
+vars.env
+
 # Ignore auto-generated documentation files
 js/doc
 
