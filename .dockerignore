@@ -1,9 +1,7 @@
-# Extracted from https://github.com/ulrich/macaron-factory/blob/master/.gitignore
-# Ignore all dotfiles...
-.*
-# except for ignore files
-!.gitignore
-!.dockerignore
+# Just copy everything from .gitignore
+.gitignore
+.dockerignore
+.git
 
 # Ignore Play! working directory #
 db
