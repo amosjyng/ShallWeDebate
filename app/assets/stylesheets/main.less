@@ -1,8 +1,8 @@
-@import 'colors';
+@import '_colors';
 
-$min-footer-distance: 30px;
-$footer-height: 20px;
-$footer-offset: $min-footer-distance + $footer-height;
+@min-footer-distance: 30px;
+@footer-height: 20px;
+@footer-offset: @min-footer-distance + @footer-height;
 
 h1
 {
@@ -37,7 +37,7 @@ p
 
 a, a:hover
 {
-	color: $red-light;
+	color: @red-light;
 }
 
 .push-bottom
@@ -58,8 +58,8 @@ form.form-inline div.form-group
 
 body, svg#graph
 {
-	background-color: $primary-darkest;
-	color: $primary-lightest;
+	background-color: @primary-darkest;
+	color: @primary-lightest;
 }
 
 div#content-container
@@ -67,7 +67,7 @@ div#content-container
 	min-height: 100%;
 	width: 100%;
 	overflow: auto;
-	padding-bottom: $footer-offset;
+	padding-bottom: @footer-offset;
 
 	div#content
 	{
@@ -80,7 +80,7 @@ div#content-container
 
 #navbar
 {
-	background-color: $primary-dark;
+	background-color: @primary-dark;
 	background-image: none;
 	border-radius: 0;
 	border: none;
@@ -96,7 +96,7 @@ div#content-container
 
 		a, a:hover
 		{
-			color: $primary-light;
+			color: @primary-light;
 			font-size: 20px;
 			font-weight: bold;
 			text-shadow: none;
@@ -122,13 +122,13 @@ div#content-container
 
 		ul.navbar-right
 		{
-			$caret-size: 8px;
+			@caret-size: 8px;
 
 			.caret
 			{
-				border-left: $caret-size solid transparent;
-				border-right: $caret-size solid transparent;
-				border-top: $caret-size solid $primary-light;
+				border-left: @caret-size solid transparent;
+				border-right: @caret-size solid transparent;
+				border-top: @caret-size solid @primary-light;
 				vertical-align: middle;
 				padding-bottom: 0.2em;
 			}
@@ -142,11 +142,11 @@ div#content-container
 			
 			a:hover
 			{
-				color: $primary-lightest;
+				color: @primary-lightest;
 
 				.caret
 				{
-					border-top-color: $primary-lightest;
+					border-top-color: @primary-lightest;
 				}
 			}
 
@@ -155,32 +155,32 @@ div#content-container
 				// the menu items when the LOGIN button is clicked
 				a
 				{
-					color: $primary-darkest;
-					background-color: $primary-lightest;
+					color: @primary-darkest;
+					background-color: @primary-lightest;
 
 					.caret
 					{
-						border-top-color: $primary-darkest;
+						border-top-color: @primary-darkest;
 					}
 				}
 				
 				ul.dropdown-menu
 				{
-					background-color: $primary-lightest;
+					background-color: @primary-lightest;
 					border-radius: 0;
 					margin-top: -1px;
 					margin-right: -1px;
 
 					a, a:hover
 					{
-						color: $primary-darkest;
-						background-color: $primary-lightest;
+						color: @primary-darkest;
+						background-color: @primary-lightest;
 						background-image: none;
 					}
 
 					a:hover
 					{
-						color: $primary;
+						color: @primary;
 					}
 				}
 			}
@@ -190,20 +190,20 @@ div#content-container
 
 div#footer-container
 {
-	height: $footer-offset;
-	margin-top: -$footer-offset;
+	height: @footer-offset;
+	margin-top: -@footer-offset;
 	position: relative;
 	
 	div#footer
 	{
 		width: 100%;
-		padding-top: $min-footer-distance - $footer-height;
+		padding-top: @min-footer-distance - @footer-height;
 		text-align: center;
 	}
 
 	div#footer, a, a:hover
 	{
-		color: $primary;
+		color: @primary;
 	}
 }
 
