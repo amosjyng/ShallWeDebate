@@ -16,6 +16,8 @@ resolvers += Resolver.url("play-authenticate (release)", url("http://joscha.gith
 
 resolvers += Resolver.url("play-authenticate (snapshot)", url("http://joscha.github.io/play-authenticate/repo/snapshots/"))(Resolver.ivyStylePatterns)
 
+resolvers += Resolver.typesafeRepo("releases")
+
 libraryDependencies ++= Seq(
   javaCore,
   javaJdbc,
@@ -24,7 +26,11 @@ libraryDependencies ++= Seq(
   "com.feth"     %% "play-authenticate" % "0.6.8",
   "postgresql"   %  "postgresql"        % "9.1-901-1.jdbc4",
   cache
-)     
+)
+
+includeFilter in (Assets, LessKeys.less) := "*.less"
+
+excludeFilter in (Assets, LessKeys.less) := "_*.less"
 
 lazy val root = project.in(file("."))
   .enablePlugins(PlayJava, SbtWeb)
