@@ -6,19 +6,15 @@ This is the source code of an [open source website](http://www.shallwedebate.com
 Setup
 -----
 
-### Context
-
 **If developing,** checkout the branch `develop`.
-
-**If production,** change `application.secret` in `conf/application.conf`.
 
 ### Environment Variables
 
 Put the following inside `vars.env`:
 
+* `APP_SECRET`
 * `DB_USER`
-* `DB_PASSWORD`
-* `POSTGRES_PASSWORD` (should be same as `DB_PASSWORD`)
+* `POSTGRES_PASSWORD`
 * `FB_CLIENT_ID`
 * `FB_CLIENT_SECRET`
 
@@ -26,5 +22,5 @@ Put the following inside `vars.env`:
 
 1. Make a symlink from the source folder to `/ShallWeDebate`
 2. Install `docker` and `docker-compose`
-3. Run the docker daemon `docker -d` and then `docker-compose up`
+3. Run the docker daemon `docker -d` and then `sudo docker-compose run --service-ports web activator run` (for development) or `docker-compose up -d` (for production)
 4. Go to [127.0.0.1](http://127.0.0.1/)
