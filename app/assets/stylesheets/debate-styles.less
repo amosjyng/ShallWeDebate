@@ -1,4 +1,4 @@
-@import 'colors';
+@import '_colors';
 
 div#content-container, div#content-container div#content
 {
@@ -12,7 +12,7 @@ svg.argument
 	rect
 	{
 		stroke: none;
-		fill: $primary-lightest;
+		fill: @primary-lightest;
 		shape-rendering: crispEdges;
 		stroke-width: 1;
 	}
@@ -31,10 +31,10 @@ svg.argument
 
 		p, textarea
 		{
-			background-color: $primary-lightest;
-			font-family: Garamond, 'Times New Roman';
+			background-color: @primary-lightest;
+			font-family: Garamond, 'Times New Roman', serif;
 			font-size: 20px;
-			color: $primary-darkest;
+			color: @primary-darkest;
 			font-weight: bold;
 		}
 
@@ -46,30 +46,30 @@ svg.argument
 			height: 100%;
 			width: 100%;
 			resize: none;
-			color: $primary-darkest;
+			color: @primary-darkest;
 		}
 
 		// http://stackoverflow.com/a/2610741/257583
 		::-webkit-input-placeholder
 		{ /* WebKit browsers */
-			color: $primary-light;
+			color: @primary-light;
 		}
 
 		:-moz-placeholder
 		{ /* Mozilla Firefox 4 to 18 */
-			color: $primary-light;
+			color: @primary-light;
 			opacity:  1;
 		}
 
 		::-moz-placeholder
 		{ /* Mozilla Firefox 19+ */
-			color: $primary-light;
+			color: @primary-light;
 			opacity:  1;
 		}
 
 		:-ms-input-placeholder
 		{ /* Internet Explorer 10+ */
-			color: $primary-light;
+			color: @primary-light;
 		}
 	}
 }
@@ -80,15 +80,15 @@ svg.toolbar svg
 	rect
 	{
 		stroke: none;
-		fill: $primary;
+		fill: @primary;
 	}
 	
 	text
 	{
-		fill: $primary-lightest;
+		fill: @primary-lightest;
 		font-size: 16px;
 		text-anchor: middle;
-		letter-spacing: 2;
+		letter-spacing: 2px;
 	}
 }
 
@@ -101,22 +101,22 @@ path
 
 path.support
 {
-	stroke: $green-dark;
+	stroke: @green-dark;
 }
 
 path.support.under_construction
 {
-	stroke: $green-lightest;
+	stroke: @green-lightest;
 }
 
 path.oppose
 {
-	stroke: $red;
+	stroke: @red;
 }
 
 path.oppose.under_construction
 {
-	stroke: $red-lightest;
+	stroke: @red-lightest;
 }
 
 path.clickable

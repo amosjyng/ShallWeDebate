@@ -6,13 +6,25 @@ This is the source code of an [open source website](http://www.shallwedebate.com
 Setup
 -----
 
-For first-time set up:
+### Context
 
-1. Install [Vagrant](http://www.vagrantup.com/downloads.html)
-2. Run `vagrant up; vagrant reload`. You may have to wait for 5 minutes after the command appears to have finished, before Step 3 will work (compiling the source code takes quite some time).
-3. Go to [127.0.0.1:8080/](http://127.0.0.1:8080/).
-4. For authentication setup, set `FB_CLIENT_ID` and `FB_CLIENT_SECRET` environment variables
+**If developing,** checkout the branch `develop`.
 
-To re-provision the Vagrant machine after pulling new changes, run `vagrant provision`.
+**If production,** change `application.secret` in `conf/application.conf`.
 
-Note that the project directory on your host computer is linked to the `/vagrant/` directory of the Vagrant virtual machine.
+### Environment Variables
+
+Put the following inside `vars.env`:
+
+* `DB_USER`
+* `DB_PASSWORD`
+* `POSTGRES_PASSWORD` (should be same as `DB_PASSWORD`)
+* `FB_CLIENT_ID`
+* `FB_CLIENT_SECRET`
+
+### Bash
+
+1. Make a symlink from the source folder to `/ShallWeDebate`
+2. Install `docker` and `docker-compose`
+3. Run the docker daemon `docker -d` and then `docker-compose up`
+4. Go to [127.0.0.1](http://127.0.0.1/)
