@@ -5,7 +5,7 @@ database:
   env_file:
     - ./vars.env
 web:
-  image: ingensi/play-framework
+  image: ingensi/play-framework:2.3.8
   volumes:
     - /ShallWeDebate:/app:rw
   env_file:
@@ -14,3 +14,4 @@ web:
     - database
   ports:
     - "80:9000"
+  stdin_open: true

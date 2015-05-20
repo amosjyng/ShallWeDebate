@@ -16,8 +16,6 @@ resolvers += Resolver.url("play-authenticate (release)", url("http://joscha.gith
 
 resolvers += Resolver.url("play-authenticate (snapshot)", url("http://joscha.github.io/play-authenticate/repo/snapshots/"))(Resolver.ivyStylePatterns)
 
-resolvers += Resolver.typesafeRepo("releases")
-
 libraryDependencies ++= Seq(
   javaCore,
   javaJdbc,
