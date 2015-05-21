@@ -39,3 +39,6 @@ js/doc
 
 # Ignore AWS private keys
 *.pem
+
+# Ignore editor files
+*~

@@ -6,7 +6,6 @@
 GET     /                           controllers.Application.index()
 GET     /tos/                       controllers.Application.tos()
 GET     /privacy/                   controllers.Application.privacy()
-POST    /addSubscriber/             controllers.Application.addSubscriber() 
 
 # Authentication routes
 GET     /logout/                     com.feth.play.module.pa.controllers.Authenticate.logout

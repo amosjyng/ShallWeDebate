@@ -31,5 +31,5 @@ includeFilter in (Assets, LessKeys.less) := "*.less"
 excludeFilter in (Assets, LessKeys.less) := "_*.less"
 
 lazy val root = project.in(file("."))
-  .enablePlugins(PlayJava, SbtWeb)
+  .enablePlugins(PlayScala, SbtWeb)
 
